@@ -1,0 +1,32 @@
+[project]
+name = "QualiManager"
+version = "2.1.0"
+description = "Gestion Qualité QHSE - Non-Conformités, Inspections, Laboratoire, Veille"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "QualiManager Dev Team", email = "contact@example.com" }
+]
+dependencies = [
+    "flet==0.28.3",
+    "pandas",
+    "openpyxl", 
+    "reportlab",
+    "matplotlib"
+]
+
+[tool.flet]
+org = "com.qualimanager"
+product = "QualiManager"
+company = "QualiManager"
+copyright = "Copyright (C) 2025 QualiManager"
+build_number = 1
+
+[tool.flet.app]
+path = "."
+module = "app_erp"
+
+[tool.flet.windows]
+product_name = "QualiManager - Gestion Qualité QHSE"
+file_description = "QualiManager - Gestion Qualité QHSE"
+product_version = "2.1.0"

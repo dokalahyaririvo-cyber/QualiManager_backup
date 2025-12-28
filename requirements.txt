@@ -1,0 +1,14 @@
+# QualiManager - Dépendances Python
+# Système de Management de la Qualité (SMQ)
+
+# Framework UI moderne (Flutter-based)
+flet>=0.21.0
+
+# Compilation en exécutable
+pyinstaller>=6.0.0
+
+# Export de données
+openpyxl>=3.1.0     # Export Excel
+reportlab>=4.0.0    # Export PDF
+matplotlib>=3.7.0   # Export graphiques en image
+

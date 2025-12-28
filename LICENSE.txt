@@ -1,0 +1,15 @@
+QualiManager - Système de Gestion Qualité
+Version 1.0.0
+
+Copyright (c) 2024 Votre Entreprise
+Tous droits réservés.
+
+Ce logiciel est fourni "tel quel", sans garantie d'aucune sorte, 
+expresse ou implicite. En aucun cas, les auteurs ne pourront être 
+tenus responsables de tout dommage résultant de l'utilisation de 
+ce logiciel.
+
+L'utilisation de ce logiciel est soumise aux conditions suivantes:
+1. Ce logiciel ne peut être redistribué sans autorisation écrite.
+2. Ce logiciel ne peut être modifié sans autorisation écrite.
+3. Cette notice de licence doit être incluse dans toute copie.
