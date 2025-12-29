@@ -53,7 +53,7 @@ class InspectionsPage(ft.Container):
                                 spacing=0,
                                 controls=[
                                     ft.Text(
-                                        "🔍 Inspections Terrain",
+                                        "[Recherche] Inspections Terrain",
                                         size=22,
                                         weight=ft.FontWeight.BOLD,
                                         color=Theme.TEXT_PRIMARY,
@@ -82,9 +82,9 @@ class InspectionsPage(ft.Container):
             animation_duration=200,
             on_change=self._on_tab_change,
             tabs=[
-                ft.Tab(text="📋 Checklist", icon=ft.Icons.CHECKLIST),
-                ft.Tab(text="📚 Historique", icon=ft.Icons.HISTORY),
-                ft.Tab(text="🎯 Scoring", icon=ft.Icons.ANALYTICS),
+                ft.Tab(text="[ID] Checklist", icon=ft.Icons.CHECKLIST),
+                ft.Tab(text="[Source] Historique", icon=ft.Icons.HISTORY),
+                ft.Tab(text="[Origine] Scoring", icon=ft.Icons.ANALYTICS),
             ],
         )
         
@@ -100,7 +100,7 @@ class InspectionsPage(ft.Container):
             controls=[
                 header,
                 ft.Container(
-                    padding=ft.padding.symmetric(horizontal=20),
+                    padding=ft.Padding(left=20, right=20, top=0, bottom=0),
                     content=self.tabs,
                 ),
                 self.tab_content,
@@ -285,12 +285,12 @@ class InspectionsPage(ft.Container):
                 controls=[
                     ft.Radio(
                         value="Conforme",
-                        label="✅ Conforme",
+                        label="[OK] Conforme",
                         fill_color={ft.ControlState.SELECTED: Theme.SUCCESS},
                     ),
                     ft.Radio(
                         value="Non Conforme",
-                        label="❌ Non Conforme",
+                        label="[Erreur] Non Conforme",
                         fill_color={ft.ControlState.SELECTED: Theme.DANGER},
                     ),
                     ft.Radio(
@@ -321,7 +321,12 @@ class InspectionsPage(ft.Container):
             padding=15,
             border_radius=10,
             bgcolor=bg_color,
-            border=ft.border.all(1, Theme.BG_TERTIARY),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            ),
             content=ft.Column(
                 spacing=10,
                 controls=[
@@ -336,7 +341,7 @@ class InspectionsPage(ft.Container):
                                         height=30,
                                         border_radius=15,
                                         bgcolor=Theme.PRIMARY,
-                                        alignment=ft.alignment.center,
+                                        alignment=ft.Alignment(0, 0),
                                         content=ft.Text(
                                             str(index),
                                             size=14,
@@ -353,7 +358,7 @@ class InspectionsPage(ft.Container):
                                 ],
                             ),
                             ft.Container(
-                                padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                                padding=ft.Padding(left=8, right=8, top=4, bottom=4),
                                 border_radius=8,
                                 bgcolor=Theme.BG_TERTIARY,
                                 content=ft.Text(
@@ -383,7 +388,12 @@ class InspectionsPage(ft.Container):
             padding=15,
             border_radius=12,
             bgcolor=Theme.BG_SECONDARY,
-            border=ft.border.all(1, Theme.BG_TERTIARY),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            ),
             on_click=lambda e, i=insp: self._open_inspection(i),
             ink=True,
             content=ft.Column(
@@ -555,7 +565,7 @@ class InspectionsPage(ft.Container):
         atelier = next((a for a in ateliers if a['nom'] == e.control.value), None)
         if atelier:
             zones = self.db.get_zones_for_atelier(atelier['id'])
-            zones_field.options = [ft.dropdown.Option(z['nom']) for z in zones]
+            zones_field.options = [z['nom'] for z in zones]
             zones_field.value = None
             zones_field.update()
     
@@ -664,7 +674,7 @@ class InspectionsPage(ft.Container):
                         ft.DataCell(ft.Text(insp.get('date_inspection', '-'), size=12, color=Theme.TEXT_MUTED)),
                         ft.DataCell(
                             ft.Container(
-                                padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                                padding=ft.Padding(left=8, right=8, top=4, bottom=4),
                                 border_radius=8,
                                 bgcolor=score_color,
                                 content=ft.Text(f"{score}%", size=12, color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD),
@@ -696,7 +706,12 @@ class InspectionsPage(ft.Container):
                 ft.DataColumn(ft.Text("Actions", size=12, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY, no_wrap=True)),
             ],
             rows=rows,
-            border=ft.border.all(1, Theme.BG_TERTIARY),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            ),
             border_radius=8,
             column_spacing=15,
             heading_row_color=Theme.BG_TERTIARY,

@@ -36,7 +36,7 @@ class CustomCalendar(ft.AlertDialog):
             title=ft.Row(
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 controls=[
-                    ft.Text("📅 Sélectionner une date", size=18, weight=ft.FontWeight.BOLD),
+                    ft.Text("[Date] Sélectionner une date", size=18, weight=ft.FontWeight.BOLD),
                     ft.IconButton(
                         icon=ft.Icons.CLOSE,
                         on_click=lambda e: self._close(),
@@ -74,7 +74,7 @@ class CustomCalendar(ft.AlertDialog):
                                 ft.Dropdown(
                                     label="Année",
                                     value=str(self.selected_year),
-                                    options=[ft.dropdown.Option(str(y)) for y in range(2020, 2031)],
+                                    options=[str(y) for y in range(2020, 2031)],
                                     width=100,
                                     text_size=12,
                                     on_change=lambda e: self._change_year(int(e.control.value)),
@@ -82,7 +82,7 @@ class CustomCalendar(ft.AlertDialog):
                                 ft.Dropdown(
                                     label="Mois",
                                     value=str(self.selected_month),
-                                    options=[ft.dropdown.Option(str(m)) for m in range(1, 13)],
+                                    options=[str(m) for m in range(1, 13)],
                                     width=80,
                                     text_size=12,
                                     on_change=lambda e: self._change_month(int(e.control.value)),
@@ -166,7 +166,7 @@ class CustomCalendar(ft.AlertDialog):
                             color=text_color,
                             text_align=ft.TextAlign.CENTER,
                         ),
-                        alignment=ft.alignment.center,
+                        alignment=ft.Alignment(0, 0),
                         on_click=lambda e, d=day: self._select_day(d),
                         ink=True,
                     )

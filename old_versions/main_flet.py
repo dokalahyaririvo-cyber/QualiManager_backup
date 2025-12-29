@@ -336,13 +336,13 @@ def main(page: ft.Page):
                                                     ft.DataCell(ft.Text("18/12/2024", color=ModernTheme.TEXT_SECONDARY)),
                                                     ft.DataCell(ft.Text("Produit", color=ModernTheme.TEXT_SECONDARY)),
                                                     ft.DataCell(ft.Container(
-                                                        padding=ft.padding.symmetric(8, 12),
+                                                        padding=ft.Padding(left=8, right=8, top=12, bottom=12),
                                                         border_radius=8,
                                                         bgcolor=ft.Colors.with_opacity(0.15, ModernTheme.DANGER),
                                                         content=ft.Text("Critique", color=ModernTheme.DANGER, size=12),
                                                     )),
                                                     ft.DataCell(ft.Container(
-                                                        padding=ft.padding.symmetric(8, 12),
+                                                        padding=ft.Padding(left=8, right=8, top=12, bottom=12),
                                                         border_radius=8,
                                                         bgcolor=ft.Colors.with_opacity(0.15, ModernTheme.WARNING),
                                                         content=ft.Text("En cours", color=ModernTheme.WARNING, size=12),
@@ -353,13 +353,13 @@ def main(page: ft.Page):
                                                     ft.DataCell(ft.Text("17/12/2024", color=ModernTheme.TEXT_SECONDARY)),
                                                     ft.DataCell(ft.Text("Process", color=ModernTheme.TEXT_SECONDARY)),
                                                     ft.DataCell(ft.Container(
-                                                        padding=ft.padding.symmetric(8, 12),
+                                                        padding=ft.Padding(left=8, right=8, top=12, bottom=12),
                                                         border_radius=8,
                                                         bgcolor=ft.Colors.with_opacity(0.15, ModernTheme.WARNING),
                                                         content=ft.Text("Majeure", color=ModernTheme.WARNING, size=12),
                                                     )),
                                                     ft.DataCell(ft.Container(
-                                                        padding=ft.padding.symmetric(8, 12),
+                                                        padding=ft.Padding(left=8, right=8, top=12, bottom=12),
                                                         border_radius=8,
                                                         bgcolor=ft.Colors.with_opacity(0.15, ModernTheme.SUCCESS),
                                                         content=ft.Text("Résolu", color=ModernTheme.SUCCESS, size=12),
@@ -501,7 +501,7 @@ def main(page: ft.Page):
         for i in range(5):
             why_controls.append(
                 ft.Container(
-                    margin=ft.margin.only(bottom=15),
+                    margin=ft.Margin.only(bottom=15),
                     padding=20,
                     border_radius=16,
                     bgcolor=ModernTheme.BG_SECONDARY,

@@ -111,7 +111,7 @@ class Theme:
             cls.OUTLINE = cls.OUTLINE_DARK
             cls.BORDER = cls.BORDER_DARK
             cls.TEXT_INVERSE = "#F8FAFC"
-            print(f"   ✅ Mode DARK appliqué - BG_PRIMARY={cls.BG_PRIMARY}")
+            print(f"   [OK] Mode DARK applique - BG_PRIMARY={cls.BG_PRIMARY}")
         else:
             cls.BG_PRIMARY = cls.BG_PRIMARY_LIGHT
             cls.BG_SECONDARY = cls.BG_SECONDARY_LIGHT
@@ -125,7 +125,7 @@ class Theme:
             cls.OUTLINE = cls.OUTLINE_LIGHT
             cls.BORDER = cls.BORDER_LIGHT
             cls.TEXT_INVERSE = "#0F172A"
-            print(f"   ✅ Mode LIGHT appliqué - BG_PRIMARY={cls.BG_PRIMARY}")
+            print(f"   [OK] Mode LIGHT applique - BG_PRIMARY={cls.BG_PRIMARY}")
     
     # Propriétés de compatibilité - INITIALISÉES EN DARK PAR DÉFAUT
     # Ces variables DOIVENT être mises à jour via _update_theme_properties()

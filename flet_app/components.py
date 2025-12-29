@@ -4,6 +4,8 @@ QualiManager - Composants UI réutilisables
 """
 
 import flet as ft
+# Flet 0.28: Option est défini dans flet_core.dropdown
+from flet_core.dropdown import Option as DropdownOption
 from typing import Optional, Callable, List
 from .theme import Theme, Styles
 
@@ -166,18 +168,20 @@ def create_dropdown(
     """Crée une liste déroulante stylisée avec icône et animation.
     
     Args:
-        enable_add_new: Si True, ajoute une option "➕ Ajouter..." au début
-        on_add_new: Callback appelé quand l'utilisateur sélectionne "➕ Ajouter..."
+        enable_add_new: Si True, ajoute une option "[+] Ajouter..." au début
+        on_add_new: Callback appelé quand l'utilisateur sélectionne "[+] Ajouter..."
     """
-    # Ajouter l'option "➕ Ajouter..." au début si demandé
-    dropdown_options = []
+    # Ajouter l'option "[+] Ajouter..." au début si demandé
+    dropdown_options: List[str] = []
     if enable_add_new:
-        dropdown_options.append(ft.dropdown.Option("➕ Ajouter..."))
-    dropdown_options.extend([ft.dropdown.Option(opt) for opt in options])
+        dropdown_options.append("[+] Ajouter...")
+    dropdown_options.extend([opt for opt in options])
+
+    # Flet 0.28 requiert des Option, pas des chaînes nues
+    option_controls = [DropdownOption(opt) for opt in dropdown_options]
     
     return ft.Dropdown(
         label=label,
-        options=dropdown_options,
         value=value,
         border_radius=Styles.RADIUS_MD,
         filled=True,
@@ -187,7 +191,8 @@ def create_dropdown(
         on_change=on_change,
         expand=expand,
         prefix_icon=prefix_icon,
-        menu_height=240,  # Limite à 5 items visibles (48px par item × 5 = 240px)
+        menu_height=240,  # Limite à 5 items visibles (48px par item x 5 = 240px)
+        options=option_controls,
         **kwargs
     )
 
@@ -219,7 +224,7 @@ def create_button(
         style=ft.ButtonStyle(
             bgcolor=bgcolor,
             color=textcolor,
-            padding=ft.padding.symmetric(15, 20),
+            padding=ft.Padding(left=15, right=15, top=20, bottom=20),
             shape=ft.RoundedRectangleBorder(radius=Styles.RADIUS_MD),
         ),
         on_click=on_click,
@@ -255,7 +260,7 @@ def create_badge(
 ) -> ft.Container:
     """Crée un badge coloré."""
     return ft.Container(
-        padding=ft.padding.symmetric(6, 10),
+        padding=ft.Padding(left=6, right=6, top=10, bottom=10),
         border_radius=Styles.RADIUS_SM,
         bgcolor=Theme.BG_TERTIARY,
         content=ft.Text(
@@ -366,7 +371,7 @@ def create_loading_indicator() -> ft.Container:
     """Crée un indicateur de chargement."""
     return ft.Container(
         expand=True,
-        alignment=ft.alignment.center,
+        alignment=ft.Alignment(0, 0),
         content=ft.Column(
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             alignment=ft.MainAxisAlignment.CENTER,
@@ -404,7 +409,7 @@ def create_empty_state(
     
     return ft.Container(
         expand=True,
-        alignment=ft.alignment.center,
+        alignment=ft.Alignment(0, 0),
         content=ft.Column(
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             alignment=ft.MainAxisAlignment.CENTER,

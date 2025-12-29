@@ -5,6 +5,7 @@ Page dédiée à la génération de rapports personnalisés
 """
 
 import flet as ft
+from flet_core.dropdown import Option as DropdownOption
 from typing import Dict, Any, Callable
 from .theme import Theme
 
@@ -26,7 +27,6 @@ class ReportsPage(ft.Container):
             expand=True,
             bgcolor=Theme.BG_PRIMARY,
             padding=30,
-            alignment=ft.alignment.top_left,
             content=self._build(),
         )
     
@@ -56,7 +56,7 @@ class ReportsPage(ft.Container):
                                         spacing=0,
                                         controls=[
                                             ft.Text(
-                                                "📄 Rapports",
+                                                "[PDF] Rapports",
                                                 size=28,
                                                 weight=ft.FontWeight.BOLD,
                                                 color=Theme.TEXT_PRIMARY,
@@ -82,7 +82,7 @@ class ReportsPage(ft.Container):
                         spacing=15,
                         controls=[
                             ft.Text(
-                                "🔧 Rapport Personnalisé",
+                                "[Outil] Rapport Personnalisé",
                                 size=18,
                                 weight=ft.FontWeight.BOLD,
                                 color=Theme.TEXT_PRIMARY,
@@ -114,10 +114,10 @@ class ReportsPage(ft.Container):
                                         hint_text="Tous",
                                         width=200,
                                         options=[
-                                            ft.dropdown.Option("Tous"),
-                                            ft.dropdown.Option("Interne"),
-                                            ft.dropdown.Option("Client"),
-                                            ft.dropdown.Option("Fournisseur"),
+                                            DropdownOption("Tous"),
+                                            DropdownOption("Interne"),
+                                            DropdownOption("Client"),
+                                            DropdownOption("Fournisseur"),
                                         ],
                                     ),
                                 ],
@@ -126,14 +126,14 @@ class ReportsPage(ft.Container):
                                 spacing=15,
                                 controls=[
                                     ft.ElevatedButton(
-                                        "📄 Générer PDF",
+                                        "[PDF] Générer PDF",
                                         icon=ft.Icons.PICTURE_AS_PDF,
                                         on_click=lambda e: self._generate_report("pdf"),
                                         bgcolor=Theme.PRIMARY,
                                         color="#FFFFFF",
                                     ),
                                     ft.ElevatedButton(
-                                        "📊 Exporter Excel",
+                                        "[Stats] Exporter Excel",
                                         icon=ft.Icons.TABLE_CHART,
                                         on_click=lambda e: self._generate_report("excel"),
                                         bgcolor=ft.Colors.GREEN_600,

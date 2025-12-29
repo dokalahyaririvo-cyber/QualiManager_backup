@@ -334,7 +334,7 @@ class DatabaseManager:
             return dict(row) if row else None
 
     def find_nc(self, query: str) -> Optional[Dict[str, Any]]:
-        """Recherche une NC par référence ou n° de lot."""
+        """Recherche une NC par référence ou no de lot."""
         with self.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''

@@ -33,7 +33,7 @@ def StandardTable(
     if not rows:
         return ft.Container(
             padding=40,
-            alignment=ft.alignment.center,
+            alignment=ft.Alignment(0, 0),
             content=ft.Column(
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
@@ -49,7 +49,7 @@ def StandardTable(
         cell = ft.Container(
             width=col.get('width'),
             expand=col.get('width') is None,
-            padding=ft.padding.symmetric(horizontal=8, vertical=12),
+            padding=ft.Padding(left=8, right=8, top=12, bottom=12),
             content=ft.Text(
                 col['name'],
                 weight=ft.FontWeight.BOLD,
@@ -62,7 +62,7 @@ def StandardTable(
     
     header_row = ft.Container(
         bgcolor=header_bgcolor,
-        border_radius=ft.border_radius.only(top_left=8, top_right=8),
+        border_radius=ft.BorderRadius(8, 8, 0, 0),
         content=ft.Row(controls=header_cells, spacing=0),
     )
     
@@ -134,7 +134,7 @@ def StandardTable(
             cell = ft.Container(
                 width=col.get('width'),
                 expand=col.get('width') is None,
-                padding=ft.padding.symmetric(horizontal=8, vertical=8),
+                padding=ft.Padding(left=8, right=8, top=8, bottom=8),
                 content=cell_content,
             )
             row_cells.append(cell)
@@ -144,7 +144,7 @@ def StandardTable(
         
         row_container = ft.Container(
             bgcolor=row_bgcolor,
-            border=ft.border.only(bottom=ft.BorderSide(1, Theme.BG_TERTIARY)),
+            border=ft.Border(bottom=ft.BorderSide(1, Theme.BG_TERTIARY)),
             content=ft.Row(controls=row_cells, spacing=0),
             on_click=lambda e, rid=row_id: on_row_click(rid) if on_row_click else None,
             ink=True if on_row_click else False,
@@ -204,10 +204,15 @@ def StatusBadge(status: str) -> ft.Container:
     color, icon = status_config.get(status, (Theme.TEXT_MUTED, ft.Icons.CIRCLE))
     
     return ft.Container(
-        padding=ft.padding.symmetric(horizontal=10, vertical=5),
+        padding=ft.Padding(left=10, right=10, top=5, bottom=5),
         border_radius=12,
         bgcolor=Theme.BG_TERTIARY,
-        border=ft.border.all(1, color),
+        border=ft.Border(
+                top=ft.BorderSide(1, color),
+                right=ft.BorderSide(1, color),
+                bottom=ft.BorderSide(1, color),
+                left=ft.BorderSide(1, color),
+            ),
         content=ft.Row(
             spacing=4,
             controls=[
@@ -228,10 +233,15 @@ def SeverityBadge(severity: str) -> ft.Container:
     color, icon = severity_config.get(severity, (Theme.TEXT_MUTED, ft.Icons.CIRCLE))
     
     return ft.Container(
-        padding=ft.padding.symmetric(horizontal=10, vertical=5),
+        padding=ft.Padding(left=10, right=10, top=5, bottom=5),
         border_radius=12,
         bgcolor=Theme.BG_TERTIARY,
-        border=ft.border.all(1, color),
+        border=ft.Border(
+                top=ft.BorderSide(1, color),
+                right=ft.BorderSide(1, color),
+                bottom=ft.BorderSide(1, color),
+                left=ft.BorderSide(1, color),
+            ),
         content=ft.Row(
             spacing=4,
             controls=[
@@ -253,7 +263,7 @@ def PriorityBadge(priority: str) -> ft.Container:
     color = colors.get(priority, Theme.TEXT_MUTED)
     
     return ft.Container(
-        padding=ft.padding.symmetric(horizontal=8, vertical=4),
+        padding=ft.Padding(left=8, right=8, top=4, bottom=4),
         border_radius=12,
         bgcolor=Theme.BG_TERTIARY,
         content=ft.Text(priority or "-", size=11, color=color, weight=ft.FontWeight.W_500, no_wrap=True),
@@ -294,7 +304,12 @@ def KPICard(
         padding=20,
         border_radius=16,
         bgcolor=Theme.BG_SECONDARY,
-        border=ft.border.all(1, Theme.BORDER),
+        border=ft.Border(
+                top=ft.BorderSide(1, Theme.BORDER),
+                right=ft.BorderSide(1, Theme.BORDER),
+                bottom=ft.BorderSide(1, Theme.BORDER),
+                left=ft.BorderSide(1, Theme.BORDER),
+            ),
         ink=True if on_click else False,
         on_click=on_click,
         on_hover=lambda e: _card_hover(e),
@@ -324,9 +339,19 @@ def KPICard(
 def _card_hover(e):
     """Animation survol carte."""
     if e.data == "true":
-        e.control.border = ft.border.all(1, Theme.PRIMARY)
+        e.control.border = ft.Border(
+                top=ft.BorderSide(1, Theme.PRIMARY),
+                right=ft.BorderSide(1, Theme.PRIMARY),
+                bottom=ft.BorderSide(1, Theme.PRIMARY),
+                left=ft.BorderSide(1, Theme.PRIMARY),
+            )
     else:
-        e.control.border = ft.border.all(1, Theme.BORDER)
+        e.control.border = ft.Border(
+                top=ft.BorderSide(1, Theme.BORDER),
+                right=ft.BorderSide(1, Theme.BORDER),
+                bottom=ft.BorderSide(1, Theme.BORDER),
+                left=ft.BorderSide(1, Theme.BORDER),
+            )
     e.control.update()
 
 
@@ -349,7 +374,7 @@ def TileCard(
     badge = None
     if badge_count is not None and badge_count > 0:
         badge = ft.Container(
-            padding=ft.padding.symmetric(horizontal=8, vertical=4),
+            padding=ft.Padding(left=8, right=8, top=4, bottom=4),
             border_radius=12,
             bgcolor=badge_color,
             content=ft.Text(str(badge_count), size=12, color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD),
@@ -361,7 +386,12 @@ def TileCard(
         padding=20,
         border_radius=16,
         bgcolor=Theme.BG_SECONDARY,
-        border=ft.border.all(1, Theme.BORDER),
+        border=ft.Border(
+                top=ft.BorderSide(1, Theme.BORDER),
+                right=ft.BorderSide(1, Theme.BORDER),
+                bottom=ft.BorderSide(1, Theme.BORDER),
+                left=ft.BorderSide(1, Theme.BORDER),
+            ),
         ink=True,
         on_click=on_click,
         on_hover=lambda e: _tile_hover(e, color),
@@ -395,10 +425,20 @@ def TileCard(
 def _tile_hover(e, color):
     """Animation survol tuile."""
     if e.data == "true":
-        e.control.border = ft.border.all(2, color)
+        e.control.border = ft.Border(
+                top=ft.BorderSide(2, color),
+                right=ft.BorderSide(2, color),
+                bottom=ft.BorderSide(2, color),
+                left=ft.BorderSide(2, color),
+            )
         e.control.bgcolor = Theme.BG_TERTIARY
     else:
-        e.control.border = ft.border.all(1, Theme.BORDER)
+        e.control.border = ft.Border(
+                top=ft.BorderSide(1, Theme.BORDER),
+                right=ft.BorderSide(1, Theme.BORDER),
+                bottom=ft.BorderSide(1, Theme.BORDER),
+                left=ft.BorderSide(1, Theme.BORDER),
+            )
         e.control.bgcolor = Theme.BG_SECONDARY
     e.control.update()
 
@@ -416,7 +456,7 @@ def TimelineWidget(
     if not events:
         return ft.Container(
             height=height,
-            alignment=ft.alignment.center,
+            alignment=ft.Alignment(0, 0),
             content=ft.Text("Aucun événement", color=Theme.TEXT_MUTED),
         )
     
@@ -441,7 +481,12 @@ def TimelineWidget(
             height=16,
             border_radius=8,
             bgcolor=color,
-            border=ft.border.all(3, Theme.BG_SECONDARY),
+            border=ft.Border(
+                top=ft.BorderSide(3, Theme.BG_SECONDARY),
+                right=ft.BorderSide(3, Theme.BG_SECONDARY),
+                bottom=ft.BorderSide(3, Theme.BG_SECONDARY),
+                left=ft.BorderSide(3, Theme.BG_SECONDARY),
+            ),
         )
         
         line = ft.Container(
@@ -538,7 +583,12 @@ def ScoringIndicator(
         padding=s["padding"],
         border_radius=12,
         bgcolor=Theme.BG_SECONDARY,
-        border=ft.border.all(2, color),
+        border=ft.Border(
+                top=ft.BorderSide(2, color),
+                right=ft.BorderSide(2, color),
+                bottom=ft.BorderSide(2, color),
+                left=ft.BorderSide(2, color),
+            ),
         content=ft.Column(
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=4,
@@ -572,7 +622,7 @@ def ScoringIndicator(
 def CostIndicator(
     total_cost: float,
     breakdown: Dict[str, float] = None,
-    currency: str = "€",
+    currency: str = "EUR",
 ) -> ft.Container:
     """Grand indicateur de coût de non-qualité."""
     
@@ -602,7 +652,12 @@ def CostIndicator(
         padding=20,
         border_radius=16,
         bgcolor=Theme.BG_SECONDARY,
-        border=ft.border.all(2, color),
+        border=ft.Border(
+                top=ft.BorderSide(2, color),
+                right=ft.BorderSide(2, color),
+                bottom=ft.BorderSide(2, color),
+                left=ft.BorderSide(2, color),
+            ),
         content=ft.Column(
             spacing=12,
             controls=[
@@ -676,10 +731,20 @@ def RACIMatrixRow(
     
     return ft.Container(
         padding=15,
-        margin=ft.margin.only(bottom=8),
+        margin=8,
         border_radius=8,
         bgcolor=bgcolor if not is_late else None,
-        border=ft.border.all(2, Theme.DANGER) if is_late else ft.border.all(1, Theme.BORDER),
+        border=ft.Border(
+                top=ft.BorderSide(2, Theme.DANGER),
+                right=ft.BorderSide(2, Theme.DANGER),
+                bottom=ft.BorderSide(2, Theme.DANGER),
+                left=ft.BorderSide(2, Theme.DANGER),
+            ) if is_late else ft.Border(
+                top=ft.BorderSide(1, Theme.BORDER),
+                right=ft.BorderSide(1, Theme.BORDER),
+                bottom=ft.BorderSide(1, Theme.BORDER),
+                left=ft.BorderSide(1, Theme.BORDER),
+            ),
         content=ft.Column(
             spacing=10,
             controls=[
@@ -694,7 +759,7 @@ def RACIMatrixRow(
                             color=Theme.TEXT_PRIMARY,
                         ),
                         ft.Container(
-                            padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                            padding=ft.Padding(left=8, right=8, top=4, bottom=4),
                             border_radius=8,
                             bgcolor=Theme.DANGER,
                             visible=is_late,
@@ -752,7 +817,7 @@ def _raci_cell(letter: str, name: str, color: str) -> ft.Container:
                 height=24,
                 border_radius=12,
                 bgcolor=color,
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment(0, 0),
                 content=ft.Text(letter, size=12, color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD),
             ),
             ft.Text(name, size=12, color=Theme.TEXT_SECONDARY),
@@ -775,7 +840,7 @@ def IshikawaChart(
     default_categories = {
         "Matière": [],
         "Méthode": [],
-        "Main d'œuvre": [],
+        "Main d'oeuvre": [],
         "Milieu": [],
         "Matériel": [],
     }
@@ -785,7 +850,7 @@ def IshikawaChart(
     colors = {
         "Matière": Theme.DANGER,
         "Méthode": Theme.WARNING,
-        "Main d'œuvre": Theme.INFO,
+        "Main d'oeuvre": Theme.INFO,
         "Milieu": Theme.SUCCESS,
         "Matériel": Theme.SECONDARY,
         "Management": Theme.PRIMARY,
@@ -802,8 +867,8 @@ def IshikawaChart(
         # Causes sous forme d'étiquettes
         cause_chips = [
             ft.Container(
-                padding=ft.padding.symmetric(horizontal=8, vertical=4),
-                margin=ft.margin.only(bottom=4),
+                padding=ft.Padding(left=8, right=8, top=4, bottom=4),
+                margin=4,
                 border_radius=8,
                 bgcolor=ft.Colors.with_opacity(0.2, color),
                 content=ft.Text(cause, size=10, color=color),
@@ -819,7 +884,7 @@ def IshikawaChart(
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
                     ft.Container(
-                        padding=ft.padding.symmetric(horizontal=12, vertical=6),
+                        padding=ft.Padding(left=12, right=12, top=6, bottom=6),
                         border_radius=8,
                         bgcolor=color,
                         content=ft.Text(cat, size=12, color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD),
@@ -976,7 +1041,12 @@ def AlertBanner(
         padding=12,
         border_radius=8,
         bgcolor=ft.Colors.with_opacity(0.1, color),
-        border=ft.border.all(1, color),
+        border=ft.Border(
+                top=ft.BorderSide(1, color),
+                right=ft.BorderSide(1, color),
+                bottom=ft.BorderSide(1, color),
+                left=ft.BorderSide(1, color),
+            ),
         content=ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             controls=[

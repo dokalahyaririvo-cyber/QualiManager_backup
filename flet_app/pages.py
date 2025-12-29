@@ -31,7 +31,7 @@ IMPUTATION_CHOICES = [
     "Transport", "Indéterminée", "Ordonnancement", "Espaces ventes",
     "Prestataire", "Habillage", "WLS", "Caves"
 ]
-M5_CHOICES = ["Matériel", "Matière première", "Méthode", "Milieu", "Management", "Moyen", "Main d'œuvre"]
+M5_CHOICES = ["Matériel", "Matière première", "Méthode", "Milieu", "Management", "Moyen", "Main d'oeuvre"]
 
 
 class LoginPage(ft.View):
@@ -119,7 +119,7 @@ class HomePage(ft.View):
 
     def _menu_item(self, icon, text, route):
         return ft.Container(
-            padding=ft.padding.symmetric(10, 12),
+            padding=ft.Padding(left=10, right=10, top=12, bottom=12),
             border_radius=Styles.RADIUS_MD,
             ink=True,
             on_click=lambda e, r=route: self.navigate(r),
@@ -149,7 +149,7 @@ class HomePage(ft.View):
             )
         
         return ft.Container(expand=True, padding=30, content=ft.Column(scroll=ft.ScrollMode.AUTO, controls=[
-            ft.Text(f"Bonjour, {self.user['nom']} 👋", size=26, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+            ft.Text(f"Bonjour, {self.user['nom']} ", size=26, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
             ft.Text(datetime.now().strftime("%A %d %B %Y"), size=14, color=Theme.TEXT_MUTED),
             ft.Container(height=20),
             ft.Text("Vue d'ensemble", size=18, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
@@ -192,12 +192,12 @@ class NCListPage(ft.View):
                 ft.Container(
                     padding=20,
                     content=ft.Row(alignment=ft.MainAxisAlignment.SPACE_BETWEEN, controls=[
-                        ft.Row(controls=[ft.IconButton(ft.Icons.ARROW_BACK, icon_color=Theme.TEXT_MUTED, on_click=lambda e: self.navigate("/home")), ft.Column(spacing=0, controls=[ft.Text("📋 Non-Conformités", size=22, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY), ft.Text("Liste principale", size=13, color=Theme.TEXT_MUTED)])]),
+                        ft.Row(controls=[ft.IconButton(ft.Icons.ARROW_BACK, icon_color=Theme.TEXT_MUTED, on_click=lambda e: self.navigate("/home")), ft.Column(spacing=0, controls=[ft.Text("[ID] Non-Conformités", size=22, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY), ft.Text("Liste principale", size=13, color=Theme.TEXT_MUTED)])]),
                         create_button("Nouvelle NC", icon=ft.Icons.ADD, on_click=lambda e: self.navigate("/nc/new")),
                     ])
                 ),
                 ft.Container(
-                    padding=ft.padding.only(left=20, right=20, bottom=10),
+                    padding=ft.Padding(left=20, right=20, top=0, bottom=10),
                     content=create_card(content=ft.Row(alignment=ft.MainAxisAlignment.SPACE_BETWEEN, controls=[
                         ft.Row(controls=[self.search_field]),
                         ft.IconButton(ft.Icons.REFRESH, icon_color=Theme.PRIMARY, tooltip="Actualiser", on_click=self._refresh),
@@ -205,7 +205,7 @@ class NCListPage(ft.View):
                 ),
                 ft.Container(
                     expand=True,
-                    padding=ft.padding.only(left=20, right=20, bottom=20),
+                    padding=ft.Padding(left=20, right=20, top=0, bottom=20),
                     content=self.table_container
                 ),
             ]
@@ -236,7 +236,7 @@ class NCListPage(ft.View):
         
         # Configuration des colonnes: (nom, largeur fixe ou None pour expand, clé données)
         columns_config = [
-            ("N° NC", 60, "reference"),
+            ("No NC", 60, "reference"),
             ("Date", 85, "date_detection"),
             ("Type", 70, "type_nc"),
             ("Origine", 95, "origine"),
@@ -263,8 +263,8 @@ class NCListPage(ft.View):
                 header_cells.append(
                     ft.Container(
                         width=width,
-                        padding=ft.padding.symmetric(horizontal=6, vertical=12),
-                        border=ft.border.only(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
+                        padding=ft.Padding(left=6, right=6, top=12, bottom=12),
+                        border=ft.Border(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
                         content=ft.Text(
                             col_name,
                             color=Theme.TEXT_MUTED,
@@ -279,15 +279,15 @@ class NCListPage(ft.View):
                 header_cells.append(
                     ft.Container(
                         expand=True,
-                        padding=ft.padding.symmetric(horizontal=6, vertical=12),
-                        border=ft.border.only(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
+                        padding=ft.Padding(left=6, right=6, top=12, bottom=12),
+                        border=ft.Border(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
                         content=ft.Text(col_name, color=Theme.TEXT_MUTED, weight=ft.FontWeight.BOLD, size=11),
                     )
                 )
         
         header_row = ft.Container(
             bgcolor=Theme.BG_TERTIARY,
-            border_radius=ft.border_radius.only(top_left=8, top_right=8),
+            border_radius=ft.BorderRadius(8, 8, 0, 0),
             content=ft.Row(controls=header_cells, spacing=0),
         )
         
@@ -313,7 +313,7 @@ class NCListPage(ft.View):
                         tooltip="Modifier", 
                         on_click=lambda e, id=nc_id: self.navigate(f"/nc/{id}/edit")
                     )
-                elif col_name == "N° NC":
+                elif col_name == "No NC":
                     cell_content = ft.Text(
                         nc.get(data_key, '-') or '-', 
                         color=Theme.TEXT_PRIMARY, 
@@ -348,8 +348,8 @@ class NCListPage(ft.View):
                     row_cells.append(
                         ft.Container(
                             width=width,
-                            padding=ft.padding.symmetric(horizontal=6, vertical=10),
-                            border=ft.border.only(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
+                            padding=ft.Padding(left=6, right=6, top=10, bottom=10),
+                            border=ft.Border(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
                             content=cell_content,
                         )
                     )
@@ -358,15 +358,15 @@ class NCListPage(ft.View):
                     row_cells.append(
                         ft.Container(
                             expand=True,
-                            padding=ft.padding.symmetric(horizontal=6, vertical=10),
-                            border=ft.border.only(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
+                            padding=ft.Padding(left=6, right=6, top=10, bottom=10),
+                            border=ft.Border(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
                             content=cell_content,
                         )
                     )
             
             data_rows.append(
                 ft.Container(
-                    border=ft.border.only(bottom=ft.BorderSide(1, Theme.BG_TERTIARY)),
+                    border=ft.Border(bottom=ft.BorderSide(1, Theme.BG_TERTIARY)),
                     content=ft.Row(controls=row_cells, spacing=0),
                     on_click=lambda e, id=nc_id: self.navigate(f"/nc/{id}/edit"),
                     ink=True,
@@ -648,7 +648,7 @@ class NCFormPage(ft.View):
     def _open_file(self, file_path):
         """Ouvre un fichier avec l'application par défaut du système"""
         if not file_path:
-            create_snackbar(self.page, "⚠️ Fichier introuvable", "error")
+            create_snackbar(self.page, "[Attention] Fichier introuvable", "error")
             return
         try:
             import os
@@ -660,9 +660,9 @@ class NCFormPage(ft.View):
                 subprocess.call(['open', file_path])
             else:  # Linux
                 subprocess.call(['xdg-open', file_path])
-            create_snackbar(self.page, f"✅ Ouverture de {os.path.basename(file_path)}", "success")
+            create_snackbar(self.page, f"[OK] Ouverture de {os.path.basename(file_path)}", "success")
         except Exception as ex:
-            create_snackbar(self.page, f"❌ Erreur: {str(ex)}", "error")
+            create_snackbar(self.page, f"[ERROR] Erreur: {str(ex)}", "error")
 
     def _render_attachments(self):
         chips = [
@@ -690,7 +690,7 @@ class NCFormPage(ft.View):
             'responsable': create_text_field("Responsable", value=row_data.get('responsable', '')),
             'date_debut': date_debut_field,
             'date_debut_picker_btn': ft.IconButton(ft.Icons.CALENDAR_MONTH, icon_color=Theme.PRIMARY, icon_size=20, tooltip="Choisir une date", on_click=lambda e, f=date_debut_field: self._open_action_date_picker(f, e)),
-            'cost': create_text_field("Coût (€)", value=row_data.get('cost', '')),
+            'cost': create_text_field("Coût (EUR)", value=row_data.get('cost', '')),
             'verification': create_dropdown("Vérification de l'efficacité", ["Non évaluée", "Efficace", "Partiellement efficace", "Non efficace"], value=row_data.get('verification')),
             'statut': create_dropdown("Statut", ["En cours", "Clôturée"], value=row_data.get('statut', 'En cours')),
             'date_fin': date_fin_field,
@@ -715,28 +715,28 @@ class NCFormPage(ft.View):
         
         # Boutons de navigation entre onglets - TOUJOURS VISIBLES POUR TEST
         self.prev_button = ft.ElevatedButton(
-            text="◀ Précédent",
+            text="< Précédent",
             icon=ft.Icons.ARROW_BACK,
             on_click=self._go_prev_tab,
             bgcolor=Theme.PRIMARY,
             color=ft.Colors.WHITE,
         )
         self.next_button = ft.ElevatedButton(
-            text="Suivant ▶",
+            text="Suivant >",
             icon=ft.Icons.ARROW_FORWARD,
             on_click=self._go_next_tab,
             bgcolor=Theme.SUCCESS,
             color=ft.Colors.WHITE,
         )
         
-        print(f"✅ BOUTONS CREES: prev_button={self.prev_button}, next_button={self.next_button}")
+        print(f"[OK] BOUTONS CREES: prev_button={self.prev_button}, next_button={self.next_button}")
         
         # Retourner un conteneur qui remplit l'écran
         content = ft.Column(
             expand=True,
             spacing=10,
             controls=[
-                ft.Row(controls=[ft.IconButton(ft.Icons.ARROW_BACK, icon_color=Theme.TEXT_MUTED, on_click=lambda e: self.navigate("/nc")), ft.Text("📝 Nouvelle NC" if not self.nc_id else f"📝 Modifier {self.nc_data.get('reference', '')}", size=22, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY)]),
+                ft.Row(controls=[ft.IconButton(ft.Icons.ARROW_BACK, icon_color=Theme.TEXT_MUTED, on_click=lambda e: self.navigate("/nc")), ft.Text("[Note] Nouvelle NC" if not self.nc_id else f"[Note] Modifier {self.nc_data.get('reference', '')}", size=22, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY)]),
                 self.tabs,
                 self.content_container,
                 ft.Row(
@@ -890,7 +890,7 @@ class NCFormPage(ft.View):
             'responsable': create_text_field("Responsable / Qui", value=row_data.get('responsable', '')),
             'date': date_field,
             'date_picker_btn': ft.IconButton(ft.Icons.CALENDAR_MONTH, icon_color=Theme.PRIMARY, tooltip="Choisir une date", on_click=lambda e, f=date_field: self._open_action_date_picker(f, e)),
-            'cost': create_text_field("Coût (€)", value=row_data.get('cost', '')),
+            'cost': create_text_field("Coût (EUR)", value=row_data.get('cost', '')),
         }
 
     def _add_immediate_row(self):
@@ -1050,14 +1050,14 @@ class NCFormPage(ft.View):
             if self.nc_id:
                 success = self.db.update_nc(self.nc_id, data)
                 if success:
-                    create_snackbar(self.page, f"✅ NC {data['reference']} mise à jour", "success")
+                    create_snackbar(self.page, f"[OK] NC {data['reference']} mise a jour", "success")
                     self.navigate("/nc")
                 else:
                     create_snackbar(self.page, "Erreur lors de la mise à jour", "error")
             else:
                 nc_id = self.db.create_nc(data)
                 if nc_id:
-                    create_snackbar(self.page, f"✅ NC {data['reference']} créée (ID: {nc_id})", "success")
+                    create_snackbar(self.page, f"[OK] NC {data['reference']} creee (ID: {nc_id})", "success")
                     self.navigate("/nc")
                 else:
                     create_snackbar(self.page, "Erreur lors de la création", "error")
@@ -1074,7 +1074,7 @@ class NCFichePage(ft.View):
         self.user = user
         self.db = db
         self.navigate = navigate
-        self.search_field = create_text_field("N° NC ou N° Lot", prefix_icon=ft.Icons.SEARCH)
+        self.search_field = create_text_field("No NC ou No Lot", prefix_icon=ft.Icons.SEARCH)
         self.result_container = ft.Container(expand=True)
         super().__init__(route="/nc-fiche", bgcolor=Theme.BG_PRIMARY, padding=20, scroll=ft.ScrollMode.HIDDEN, controls=[self._build_ui()])
 
@@ -1098,7 +1098,7 @@ class NCFichePage(ft.View):
     def _search(self, e):
         query = self.search_field.value
         if not query:
-            create_snackbar(self.page, "Saisir un N° de NC ou Lot", "warning")
+            create_snackbar(self.page, "Saisir un No de NC ou Lot", "warning")
             return
         nc = self.db.find_nc(query)
         if not nc:
@@ -1123,7 +1123,7 @@ class NCFichePage(ft.View):
             controls=[
                 # Header
                 ft.Row(alignment=ft.MainAxisAlignment.SPACE_BETWEEN, controls=[
-                    ft.Text(f"📋 NC {nc.get('reference', '-')}", size=20, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+                    ft.Text(f"[ID] NC {nc.get('reference', '-')}", size=20, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
                     ft.Row(controls=[
                         create_button("Modifier", icon=ft.Icons.EDIT, style="warning", on_click=lambda e: self.navigate(f"/nc/{nc['id']}/edit")),
                         create_button("Nouvelle recherche", icon=ft.Icons.SEARCH, style="secondary", on_click=lambda e: self._reset_search()),
@@ -1278,7 +1278,12 @@ class NCFichePage(ft.View):
                     ]
                 ),
                 padding=8,
-                border=ft.border.all(1, Theme.BG_TERTIARY),
+                border=ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            ),
                 border_radius=8,
                 bgcolor=Theme.BG_SECONDARY,
             )
@@ -1290,7 +1295,7 @@ class NCFichePage(ft.View):
         """Ouvre une pièce jointe en interne (image/PDF) ou externe (autres)"""
         import os
         if not file_path or not os.path.exists(file_path):
-            create_snackbar(self.page, "⚠️ Fichier introuvable", "error")
+            create_snackbar(self.page, "[Attention] Fichier introuvable", "error")
             return
         
         if is_image:
@@ -1328,7 +1333,7 @@ class NCFichePage(ft.View):
             dialog.open = True
             self.page.update()
         except Exception as ex:
-            create_snackbar(self.page, f"❌ Erreur: {str(ex)}", "error")
+            create_snackbar(self.page, f"[ERROR] Erreur: {str(ex)}", "error")
 
     def _show_pdf_viewer(self, file_path, file_name):
         """Affiche un PDF (pour l'instant, ouvre en externe)"""
@@ -1347,14 +1352,14 @@ class NCFichePage(ft.View):
                 subprocess.call(['open', file_path])
             else:  # Linux
                 subprocess.call(['xdg-open', file_path])
-            create_snackbar(self.page, f"✅ Ouverture de {file_name}", "success")
+            create_snackbar(self.page, f"[OK] Ouverture de {file_name}", "success")
         except Exception as ex:
-            create_snackbar(self.page, f"❌ Erreur: {str(ex)}", "error")
+            create_snackbar(self.page, f"[ERROR] Erreur: {str(ex)}", "error")
 
 
 class ComingSoonPage(ft.View):
     def __init__(self, title: str, icon: str, color: str, navigate: Callable, route: str):
-        super().__init__(route=route, bgcolor=Theme.BG_PRIMARY, padding=30, vertical_alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER, controls=[ft.Container(width=500, padding=50, border_radius=Styles.RADIUS_XL, bgcolor=Theme.BG_SECONDARY, content=ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER, controls=[ft.Container(padding=20, border_radius=50, bgcolor=ft.Colors.with_opacity(0.15, color), content=ft.Icon(icon, color=color, size=50)), ft.Text(title, size=24, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY), ft.Text("🚧 En développement", size=14, color=Theme.TEXT_MUTED), create_button("Retour", icon=ft.Icons.HOME, on_click=lambda e: navigate("/home"))]))])
+        super().__init__(route=route, bgcolor=Theme.BG_PRIMARY, padding=30, vertical_alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER, controls=[ft.Container(width=500, padding=50, border_radius=Styles.RADIUS_XL, bgcolor=Theme.BG_SECONDARY, content=ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER, controls=[ft.Container(padding=20, border_radius=50, bgcolor=ft.Colors.with_opacity(0.15, color), content=ft.Icon(icon, color=color, size=50)), ft.Text(title, size=24, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY), ft.Text("[!] En developpement", size=14, color=Theme.TEXT_MUTED), create_button("Retour", icon=ft.Icons.HOME, on_click=lambda e: navigate("/home"))]))])
 
 
 # === Users management page with password visibility ===
@@ -1370,7 +1375,7 @@ class UsersPage(ft.View):
     def _build_ui(self):
         return ft.Column(expand=True, controls=[
             ft.Row(alignment=ft.MainAxisAlignment.SPACE_BETWEEN, controls=[
-                ft.Row(controls=[ft.IconButton(ft.Icons.ARROW_BACK, icon_color=Theme.TEXT_MUTED, on_click=lambda e: self.navigate("/home")), ft.Column(spacing=0, controls=[ft.Text("👥 Gestion des Utilisateurs", size=22, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY), ft.Text("Mots de passe visibles (admin)", size=12, color=Theme.TEXT_MUTED)])]),
+                ft.Row(controls=[ft.IconButton(ft.Icons.ARROW_BACK, icon_color=Theme.TEXT_MUTED, on_click=lambda e: self.navigate("/home")), ft.Column(spacing=0, controls=[ft.Text("[Utilisateurs] Gestion des Utilisateurs", size=22, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY), ft.Text("Mots de passe visibles (admin)", size=12, color=Theme.TEXT_MUTED)])]),
                 create_button("Nouvel utilisateur", icon=ft.Icons.PERSON_ADD, style="success", on_click=self._show_add_dialog),
             ]),
             ft.Container(height=15),

@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Module Laboratoire & Qualité - Interface Flet
 Onglet complet avec gestion multi-types d'analyses
@@ -27,7 +27,7 @@ class LabPage(ft.Container):
         self.navigate = navigate
         self.db = LabDBManager()
         
-        # État actuel
+        # tat actuel
         self.current_tab = "dashboard"
         self.analyses_list = []
         self.selected_analyse: Optional[Analyse] = None
@@ -48,7 +48,7 @@ class LabPage(ft.Container):
         super().__init__(content=_content, expand=True)
     
     def _build_ui(self):
-        """Construit l'interface utilisateur complète"""
+        """Construit l'interface utilisateur complte"""
         
         # Barre d'onglets
         tabs_bar = ft.Tabs(
@@ -75,12 +75,12 @@ class LabPage(ft.Container):
         # Layout principal avec titre adaptatif
         self.content = ft.Column(
             controls=[
-                # En-tête adaptatif au thème
+                # En-tte adaptatif au thme
                 ft.Container(
                     content=ft.Row([
                         ft.Icon(ft.Icons.SCIENCE, size=28, color=Theme.PRIMARY),
                         ft.Text(
-                            "Laboratoire & Qualité",
+                            "Laboratoire & Qualit",
                             size=20,
                             weight=ft.FontWeight.W_700,
                             color=Theme.TEXT_PRIMARY
@@ -88,7 +88,7 @@ class LabPage(ft.Container):
                     ], spacing=10),
                     padding=15,
                     bgcolor=Theme.BG_SECONDARY,
-                    border=ft.border.only(bottom=ft.BorderSide(2, Theme.BORDER)),
+                    border=ft.Border(bottom=ft.BorderSide(2, Theme.BORDER)),
                 ),
                 # Tabs
                 ft.Container(
@@ -103,7 +103,7 @@ class LabPage(ft.Container):
         )
     
     def _on_tab_change(self, e):
-        """Gère le changement d'onglet"""
+        """Gre le changement d'onglet"""
         tab_index = e.control.selected_index
         
         if tab_index == 0:
@@ -143,14 +143,14 @@ class LabPage(ft.Container):
         )
         
         kpi_cout = self._create_kpi_card(
-            title="Coût Total",
-            value=f"{stats['cout_total']:.2f} €",
+            title="Cot Total",
+            value=f"{stats['cout_total']:.2f} ",
             icon=ft.Icons.EURO,
             color=Theme.SUCCESS
         )
         
         kpi_conformite = self._create_kpi_card(
-            title="Taux Conformité",
+            title="Taux Conformit",
             value=f"{stats['taux_conformite']:.1f}%",
             icon=ft.Icons.CHECK_CIRCLE,
             color=Theme.INFO
@@ -181,7 +181,7 @@ class LabPage(ft.Container):
                     kpi_conformite,
                     kpi_alertes
                 ], spacing=20),
-                margin=ft.margin.only(bottom=25)
+                margin=25
             ),
             
             # Section Graphiques
@@ -193,7 +193,12 @@ class LabPage(ft.Container):
                         bgcolor=Theme.BG_CARD,
                         padding=20,
                         border_radius=12,
-                        border=ft.border.all(1, Theme.BORDER),
+                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.BORDER),
+                right=ft.BorderSide(1, Theme.BORDER),
+                bottom=ft.BorderSide(1, Theme.BORDER),
+                left=ft.BorderSide(1, Theme.BORDER),
+            ),
                         shadow=ft.BoxShadow(
                             spread_radius=0,
                             blur_radius=8,
@@ -207,7 +212,12 @@ class LabPage(ft.Container):
                         bgcolor=Theme.BG_CARD,
                         padding=20,
                         border_radius=12,
-                        border=ft.border.all(1, Theme.BORDER),
+                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.BORDER),
+                right=ft.BorderSide(1, Theme.BORDER),
+                bottom=ft.BorderSide(1, Theme.BORDER),
+                left=ft.BorderSide(1, Theme.BORDER),
+            ),
                         shadow=ft.BoxShadow(
                             spread_radius=0,
                             blur_radius=8,
@@ -216,7 +226,7 @@ class LabPage(ft.Container):
                         )
                     ),
                 ], spacing=20),
-                margin=ft.margin.only(bottom=25)
+                margin=25
             ),
             
             # Section Alertes
@@ -225,7 +235,12 @@ class LabPage(ft.Container):
                 bgcolor=Theme.SURFACE_VARIANT,
                 padding=20,
                 border_radius=12,
-                border=ft.border.all(1, Theme.WARNING if len(alertes) > 0 else Theme.BORDER),
+                border=ft.Border(
+                    top=ft.BorderSide(1, Theme.WARNING if len(alertes) > 0 else Theme.BORDER),
+                    right=ft.BorderSide(1, Theme.WARNING if len(alertes) > 0 else Theme.BORDER),
+                    bottom=ft.BorderSide(1, Theme.WARNING if len(alertes) > 0 else Theme.BORDER),
+                    left=ft.BorderSide(1, Theme.WARNING if len(alertes) > 0 else Theme.BORDER),
+                ),
                 shadow=ft.BoxShadow(
                     spread_radius=0,
                     blur_radius=4,
@@ -236,7 +251,7 @@ class LabPage(ft.Container):
         ], scroll=ft.ScrollMode.AUTO, expand=True)
     
     def _create_kpi_card(self, title: str, value: str, icon: str, color: str) -> ft.Container:
-        """Crée une carte KPI adaptée au thème"""
+        """Cre une carte KPI adapte au thme"""
         return ft.Container(
             content=ft.Column([
                 ft.Container(
@@ -245,7 +260,7 @@ class LabPage(ft.Container):
                     height=70,
                     bgcolor=Theme.SURFACE_VARIANT,
                     border_radius=35,
-                    alignment=ft.alignment.center
+                    alignment=ft.Alignment(0, 0)
                 ),
                 ft.Text(value, size=28, weight=ft.FontWeight.W_700, color=Theme.TEXT_PRIMARY),
                 ft.Text(title, size=13, color=Theme.TEXT_SECONDARY, text_align=ft.TextAlign.CENTER),
@@ -254,7 +269,12 @@ class LabPage(ft.Container):
             padding=20,
             border_radius=12,
             expand=True,
-            border=ft.border.all(1, Theme.BORDER),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.BORDER),
+                right=ft.BorderSide(1, Theme.BORDER),
+                bottom=ft.BorderSide(1, Theme.BORDER),
+                left=ft.BorderSide(1, Theme.BORDER),
+            ),
             shadow=ft.BoxShadow(
                 spread_radius=0,
                 blur_radius=8,
@@ -321,7 +341,7 @@ class LabPage(ft.Container):
         ])
     
     def _build_alertes_list(self, alertes: List[Analyse]) -> ft.Column:
-        """Liste des alertes récentes adaptée au thème"""
+        """Liste des alertes rcentes adapte au thme"""
         if not alertes:
             return ft.Column([
                 ft.Row([
@@ -344,7 +364,7 @@ class LabPage(ft.Container):
                             height=48,
                             bgcolor=Theme.SURFACE_VARIANT,
                             border_radius=24,
-                            alignment=ft.alignment.center
+                            alignment=ft.Alignment(0, 0)
                         ),
                         ft.Column([
                             ft.Text(
@@ -354,13 +374,13 @@ class LabPage(ft.Container):
                                 color=Theme.TEXT_PRIMARY
                             ),
                             ft.Text(
-                                f"{alerte.laboratoire.value} • {alerte.conclusion.value}",
+                                f"{alerte.laboratoire.value}  {alerte.conclusion.value}",
                                 size=12,
                                 color=Theme.TEXT_SECONDARY
                             )
                         ], spacing=4, expand=True),
                         ft.TextButton(
-                            "Voir détails",
+                            "Voir dtails",
                             style=ft.ButtonStyle(color=icon_color),
                             on_click=lambda e, a=alerte: self._view_analyse_details(a)
                         )
@@ -368,7 +388,12 @@ class LabPage(ft.Container):
                     bgcolor=Theme.BG_CARD,
                     padding=16,
                     border_radius=10,
-                    border=ft.border.all(1, Theme.BORDER),
+                    border=ft.Border(
+                top=ft.BorderSide(1, Theme.BORDER),
+                right=ft.BorderSide(1, Theme.BORDER),
+                bottom=ft.BorderSide(1, Theme.BORDER),
+                left=ft.BorderSide(1, Theme.BORDER),
+            ),
                     shadow=ft.BoxShadow(
                         spread_radius=0,
                         blur_radius=4,
@@ -379,7 +404,7 @@ class LabPage(ft.Container):
             )
         
         return ft.Column([
-            ft.Text("âš ï¸ Alertes Récentes", size=18, weight=ft.FontWeight.BOLD),
+            ft.Text("[Attention] Alertes Rcentes", size=18, weight=ft.FontWeight.BOLD),
             ft.Divider(),
             ft.Column(alerte_rows, spacing=10, scroll=ft.ScrollMode.AUTO)
         ])
@@ -395,31 +420,31 @@ class LabPage(ft.Container):
         filtres_row = ft.Row([
             ft.Dropdown(
                 label="Type Analyse",
-                options=[ft.dropdown.Option(t.value) for t in TypeAnalyse],
+                options=[t.value for t in TypeAnalyse],
                 width=250,
                 on_change=self._apply_filters
             ),
             ft.Dropdown(
                 label="Laboratoire",
-                options=[ft.dropdown.Option(l.value) for l in Laboratoire],
+                options=[l.value for l in Laboratoire],
                 width=200,
                 on_change=self._apply_filters
             ),
             ft.Dropdown(
                 label="Statut",
-                options=[ft.dropdown.Option(s.value) for s in StatutAnalyse],
+                options=[s.value for s in StatutAnalyse],
                 width=150,
                 on_change=self._apply_filters
             ),
             ft.Dropdown(
                 label="Conclusion",
-                options=[ft.dropdown.Option(c.value) for c in ConclusionAnalyse],
+                options=[c.value for c in ConclusionAnalyse],
                 width=150,
                 on_change=self._apply_filters
             ),
             ft.IconButton(
                 icon=ft.Icons.CLEAR,
-                tooltip="Réinitialiser filtres",
+                tooltip="Rinitialiser filtres",
                 on_click=self._reset_filters
             )
         ], spacing=15)
@@ -427,7 +452,7 @@ class LabPage(ft.Container):
         # Barre de recherche et actions
         actions_row = ft.Row([
             ft.TextField(
-                label="Rechercher (Lot, Cuve, Échantillon...)",
+                label="Rechercher (Lot, Cuve, chantillon...)",
                 prefix_icon=ft.Icons.SEARCH,
                 expand=True,
                 on_submit=self._search_analyses
@@ -458,7 +483,12 @@ class LabPage(ft.Container):
             ft.Container(
                 content=table,
                 expand=True,
-                border=ft.border.all(1, Theme.BORDER),
+                border=ft.Border(
+                top=ft.BorderSide(1, Theme.BORDER),
+                right=ft.BorderSide(1, Theme.BORDER),
+                bottom=ft.BorderSide(1, Theme.BORDER),
+                left=ft.BorderSide(1, Theme.BORDER),
+            ),
                 border_radius=10
             )
         ], scroll=ft.ScrollMode.AUTO, expand=True)
@@ -505,7 +535,7 @@ class LabPage(ft.Container):
                             padding=5,
                             border_radius=5
                         )),
-                        ft.DataCell(ft.Text(f"{analyse.cout:.2f} €")),
+                        ft.DataCell(ft.Text(f"{analyse.cout:.2f} ")),
                         ft.DataCell(
                             ft.Row([
                                 ft.IconButton(
@@ -540,17 +570,22 @@ class LabPage(ft.Container):
                 ft.DataColumn(ft.Text("Date", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Type Analyse", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Laboratoire", weight=ft.FontWeight.BOLD)),
-                ft.DataColumn(ft.Text("Référence", weight=ft.FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("Rfrence", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Statut", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Conclusion", weight=ft.FontWeight.BOLD)),
-                ft.DataColumn(ft.Text("Coût", weight=ft.FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("Cot", weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Actions", weight=ft.FontWeight.BOLD)),
             ],
             rows=rows,
-            border=ft.border.all(1, Theme.BORDER),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.BORDER),
+                right=ft.BorderSide(1, Theme.BORDER),
+                bottom=ft.BorderSide(1, Theme.BORDER),
+                left=ft.BorderSide(1, Theme.BORDER),
+            ),
             border_radius=10,
-            vertical_lines=ft.border.BorderSide(1, Theme.BORDER),
-            horizontal_lines=ft.border.BorderSide(1, Theme.BORDER),
+            vertical_lines=ft.BorderSide(1, Theme.BORDER),
+            horizontal_lines=ft.BorderSide(1, Theme.BORDER),
             heading_row_color=Theme.SURFACE_VARIANT,
             heading_row_height=50,
             data_row_min_height=60,
@@ -569,15 +604,15 @@ class LabPage(ft.Container):
         return mapping.get(conclusion, Theme.TEXT_SECONDARY)
     
     def _apply_filters(self, e):
-        """Applique les filtres sélectionnés"""
-        # Récupérer les valeurs des dropdowns
-        # TODO: Implémenter récupération dynamique
+        """Applique les filtres slectionns"""
+        # Rcuprer les valeurs des dropdowns
+        # TODO: Implmenter rcupration dynamique
         self._load_analyses()
         self.main_content.content = self._build_liste()
         self.update()
     
     def _reset_filters(self, e):
-        """Réinitialise tous les filtres"""
+        """Rinitialise tous les filtres"""
         self.filtre_type = None
         self.filtre_laboratoire = None
         self.filtre_statut = None
@@ -596,14 +631,14 @@ class LabPage(ft.Container):
     
     def _export_excel(self, e):
         """Exporte les analyses en Excel"""
-        # TODO: Dialogue de sélection de fichier
+        # TODO: Dialogue de slection de fichier
         filepath = f"analyses_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
         success = self.db.export_to_excel(self.analyses_list, filepath)
         
         if success:
-            self._show_snackbar(f"âœ… Export réussi: {filepath}", Theme.SUCCESS)
+            self._show_snackbar(f"[OK] Export russi: {filepath}", Theme.SUCCESS)
         else:
-            self._show_snackbar("âŒ Erreur lors de l'export", Theme.DANGER)
+            self._show_snackbar("[Erreur] Erreur lors de l'export", Theme.DANGER)
     
     # ============================================================
     # ONGLET 3: SAISIE NOUVELLE ANALYSE
@@ -612,43 +647,43 @@ class LabPage(ft.Container):
     def _build_saisie(self) -> ft.Control:
         """Construit le formulaire de saisie polymorphe"""
         
-        # Sélection du type d'analyse (détermine les champs Ã  afficher)
+        # Slection du type d'analyse (dtermine les champs à afficher)
         type_dropdown = ft.Dropdown(
             label="Type d'Analyse *",
-            options=[ft.dropdown.Option(t.value) for t in TypeAnalyse],
+            options=[t.value for t in TypeAnalyse],
             width=400,
             on_change=self._on_type_analyse_change
         )
         
-        # Formulaire de base (commun Ã  tous les types)
+        # Formulaire de base (commun à tous les types)
         self.form_date_prelevement = ft.TextField(
-            label="Date Prélèvement *",
+            label="Date Prlvement *",
             hint_text="JJ/MM/AAAA",
             width=200
         )
         
         self.form_date_resultat = ft.TextField(
-            label="Date Résultat",
+            label="Date Rsultat",
             hint_text="JJ/MM/AAAA",
             width=200
         )
         
         self.form_laboratoire = ft.Dropdown(
             label="Laboratoire *",
-            options=[ft.dropdown.Option(l.value) for l in Laboratoire],
+            options=[l.value for l in Laboratoire],
             width=250
         )
         
-        self.form_numero_lot = ft.TextField(label="NÂ° Lot", width=200)
-        self.form_numero_cuve = ft.TextField(label="NÂ° Cuve", width=200)
-        self.form_numero_echantillon = ft.TextField(label="NÂ° Échantillon", width=200)
-        self.form_zone_prelevement = ft.TextField(label="Zone Prélèvement", width=300)
+        self.form_numero_lot = ft.TextField(label="No Lot", width=200)
+        self.form_numero_cuve = ft.TextField(label="No Cuve", width=200)
+        self.form_numero_echantillon = ft.TextField(label="No chantillon", width=200)
+        self.form_zone_prelevement = ft.TextField(label="Zone Prlvement", width=300)
         
-        self.form_cout = ft.TextField(label="Coût (€)", value="0.0", width=150)
+        self.form_cout = ft.TextField(label="Cot ()", value="0.0", width=150)
         
         self.form_statut = ft.Dropdown(
             label="Statut",
-            options=[ft.dropdown.Option(s.value) for s in StatutAnalyse],
+            options=[s.value for s in StatutAnalyse],
             value=StatutAnalyse.PLANIFIE.value,
             width=200
         )
@@ -661,7 +696,7 @@ class LabPage(ft.Container):
             width=600
         )
         
-        # Conteneur pour les champs spécifiques (polymorphisme)
+        # Conteneur pour les champs spcifiques (polymorphisme)
         self.form_specific_fields = ft.Column([], spacing=15)
         
         # Boutons d'action
@@ -674,12 +709,12 @@ class LabPage(ft.Container):
                 bgcolor=Theme.SUCCESS
             ),
             ft.OutlinedButton(
-                "Réinitialiser",
+                "Rinitialiser",
                 icon=ft.Icons.REFRESH,
                 on_click=lambda e: self._reset_form()
             ),
             ft.OutlinedButton(
-                "âŒ Annuler",
+                "[Erreur] Annuler",
                 on_click=lambda e: self._on_tab_change(type('obj', (object,), {'control': type('obj', (object,), {'selected_index': 1})()}))
             )
         ], spacing=15)
@@ -693,7 +728,7 @@ class LabPage(ft.Container):
             ft.Divider(),
             
             # Champs communs
-            ft.Text("Informations Générales", size=18, weight=ft.FontWeight.BOLD, color=Theme.PRIMARY),
+            ft.Text("Informations Gnrales", size=18, weight=ft.FontWeight.BOLD, color=Theme.PRIMARY),
             ft.Row([self.form_date_prelevement, self.form_date_resultat, self.form_laboratoire], spacing=20),
             ft.Row([self.form_numero_lot, self.form_numero_cuve, self.form_numero_echantillon], spacing=20),
             self.form_zone_prelevement,
@@ -702,8 +737,8 @@ class LabPage(ft.Container):
             
             ft.Divider(),
             
-            # Champs spécifiques (dynamiques)
-            ft.Text("Résultats d'Analyse", size=18, weight=ft.FontWeight.BOLD, color=Theme.PRIMARY),
+            # Champs spcifiques (dynamiques)
+            ft.Text("Rsultats d'Analyse", size=18, weight=ft.FontWeight.BOLD, color=Theme.PRIMARY),
             self.form_specific_fields,
             
             ft.Divider(),
@@ -712,7 +747,7 @@ class LabPage(ft.Container):
         ], scroll=ft.ScrollMode.AUTO, spacing=15, expand=True)
     
     def _on_type_analyse_change(self, e):
-        """Change les champs spécifiques selon le type d'analyse"""
+        """Change les champs spcifiques selon le type d'analyse"""
         type_value = e.control.value
         
         # Nettoyer les champs existants
@@ -736,10 +771,10 @@ class LabPage(ft.Container):
         self.update()
     
     def _build_oenologie_fields(self):
-        """Champs spécifiques Å’nologie"""
+        """Champs spcifiques Oenologie"""
         self.form_tav = ft.TextField(label="TAV (% vol)", width=150, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_sucres = ft.TextField(label="Sucres (g/L)", width=150, keyboard_type=ft.KeyboardType.NUMBER)
-        self.form_acidite_totale = ft.TextField(label="Acidité Totale (g/L H2SO4)", width=200, keyboard_type=ft.KeyboardType.NUMBER)
+        self.form_acidite_totale = ft.TextField(label="Acidit Totale (g/L H2SO4)", width=200, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_ph = ft.TextField(label="pH", width=120, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_acide_volatile = ft.TextField(label="Acide Volatile (g/L)", width=180, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_so2_libre = ft.TextField(label="SO2 Libre (mg/L)", width=150, keyboard_type=ft.KeyboardType.NUMBER)
@@ -756,12 +791,12 @@ class LabPage(ft.Container):
         ]
     
     def _build_securite_alimentaire_fields(self):
-        """Champs spécifiques Sécurité Alimentaire"""
+        """Champs spcifiques Scurit Alimentaire"""
         self.form_albumine = ft.TextField(label="Albumine", hint_text="<LDQ ou valeur", width=200)
-        self.form_caseine = ft.TextField(label="Caséine", hint_text="<LDQ ou valeur", width=200)
+        self.form_caseine = ft.TextField(label="Casine", hint_text="<LDQ ou valeur", width=200)
         self.form_histamine = ft.TextField(label="Histamine (mg/L)", width=180, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_putrescine = ft.TextField(label="Putrescine (mg/L)", width=180, keyboard_type=ft.KeyboardType.NUMBER)
-        self.form_bisphenol_a = ft.TextField(label="Bisphénol A", hint_text="<LDQ ou valeur", width=200)
+        self.form_bisphenol_a = ft.TextField(label="Bisphnol A", hint_text="<LDQ ou valeur", width=200)
         
         self.form_specific_fields.controls = [
             ft.Row([self.form_albumine, self.form_caseine, self.form_bisphenol_a], spacing=15),
@@ -769,8 +804,8 @@ class LabPage(ft.Container):
         ]
     
     def _build_contaminants_fields(self):
-        """Champs spécifiques Contaminants"""
-        self.form_ochratoxine_a = ft.TextField(label="Ochratoxine A (Âµg/kg)", width=180, keyboard_type=ft.KeyboardType.NUMBER)
+        """Champs spcifiques Contaminants"""
+        self.form_ochratoxine_a = ft.TextField(label="Ochratoxine A (ug/kg)", width=180, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_tca = ft.TextField(label="TCA (ng/L)", width=150, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_tcp = ft.TextField(label="TCP (ng/L)", width=150, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_lindane = ft.TextField(label="Lindane (mg/kg)", width=150, keyboard_type=ft.KeyboardType.NUMBER)
@@ -782,24 +817,24 @@ class LabPage(ft.Container):
         self.form_mercure = ft.TextField(label="Mercure (mg/L)", width=150, keyboard_type=ft.KeyboardType.NUMBER)
         
         self.form_specific_fields.controls = [
-            ft.Text("Haloanisoles & Halophénols", size=14, weight=ft.FontWeight.BOLD),
+            ft.Text("Haloanisoles & Halophnols", size=14, weight=ft.FontWeight.BOLD),
             ft.Row([self.form_tca, self.form_tcp], spacing=15),
             ft.Text("Phtalates", size=14, weight=ft.FontWeight.BOLD),
             ft.Row([self.form_dibutyl_phtalate, self.form_dehp], spacing=15),
-            ft.Text("Métaux Lourds", size=14, weight=ft.FontWeight.BOLD),
+            ft.Text("Mtaux Lourds", size=14, weight=ft.FontWeight.BOLD),
             ft.Row([self.form_plomb, self.form_cadmium, self.form_arsenic, self.form_mercure], spacing=15),
             ft.Text("Autres", size=14, weight=ft.FontWeight.BOLD),
             ft.Row([self.form_ochratoxine_a, self.form_lindane], spacing=15)
         ]
     
     def _build_metrologie_fields(self):
-        """Champs spécifiques Métrologie"""
+        """Champs spcifiques Mtrologie"""
         self.form_volume_cible = ft.TextField(label="Volume Cible (mL)", value="750", width=150, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_volume_net_moyen = ft.TextField(label="Volume Net Moyen (mL)", width=180, keyboard_type=ft.KeyboardType.NUMBER)
-        self.form_ecart_type = ft.TextField(label="Écart-Type", width=150, keyboard_type=ft.KeyboardType.NUMBER)
-        self.form_nombre_echantillons = ft.TextField(label="Nombre Échantillons", width=180, keyboard_type=ft.KeyboardType.NUMBER)
-        self.form_nombre_defectueux = ft.TextField(label="Nombre Défectueux", value="0", width=150, keyboard_type=ft.KeyboardType.NUMBER)
-        self.form_densite = ft.TextField(label="Densité", width=120, keyboard_type=ft.KeyboardType.NUMBER)
+        self.form_ecart_type = ft.TextField(label="cart-Type", width=150, keyboard_type=ft.KeyboardType.NUMBER)
+        self.form_nombre_echantillons = ft.TextField(label="Nombre chantillons", width=180, keyboard_type=ft.KeyboardType.NUMBER)
+        self.form_nombre_defectueux = ft.TextField(label="Nombre Dfectueux", value="0", width=150, keyboard_type=ft.KeyboardType.NUMBER)
+        self.form_densite = ft.TextField(label="Densit", width=120, keyboard_type=ft.KeyboardType.NUMBER)
         
         self.form_specific_fields.controls = [
             ft.Row([self.form_volume_cible, self.form_volume_net_moyen, self.form_ecart_type], spacing=15),
@@ -807,8 +842,8 @@ class LabPage(ft.Container):
         ]
     
     def _build_microbiologie_fields(self):
-        """Champs spécifiques Microbiologie"""
-        self.form_flore_aerobie = ft.TextField(label="Flore Aérobie Mésophile (UFC/mL)", width=250, keyboard_type=ft.KeyboardType.NUMBER)
+        """Champs spcifiques Microbiologie"""
+        self.form_flore_aerobie = ft.TextField(label="Flore Arobie Msophile (UFC/mL)", width=250, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_levures = ft.TextField(label="Levures (UFC/mL)", width=180, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_moisissures = ft.TextField(label="Moisissures (UFC/100mL)", width=200, keyboard_type=ft.KeyboardType.NUMBER)
         
@@ -817,21 +852,21 @@ class LabPage(ft.Container):
         ]
     
     def _build_hygiene_atp_fields(self):
-        """Champs spécifiques Hygiène ATP"""
+        """Champs spcifiques Hygine ATP"""
         self.form_valeur_atp = ft.TextField(label="Valeur ATP (RLU)", width=150, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_surface_type = ft.Dropdown(
             label="Type de Surface",
             options=[
-                ft.dropdown.Option("Inox"),
-                ft.dropdown.Option("Plastique"),
-                ft.dropdown.Option("Caoutchouc"),
-                ft.dropdown.Option("Autre")
+                "Inox",
+                "Plastique",
+                "Caoutchouc",
+                "Autre"
             ],
             value="Inox",
             width=180
         )
-        self.form_conductivite = ft.TextField(label="Conductivité (mS/cm)", width=180, keyboard_type=ft.KeyboardType.NUMBER)
-        self.form_concentration_detergent = ft.TextField(label="Concentration Détergent (%)", width=200, keyboard_type=ft.KeyboardType.NUMBER)
+        self.form_conductivite = ft.TextField(label="Conductivit (mS/cm)", width=180, keyboard_type=ft.KeyboardType.NUMBER)
+        self.form_concentration_detergent = ft.TextField(label="Concentration Dtergent (%)", width=200, keyboard_type=ft.KeyboardType.NUMBER)
         self.form_nom_produit = ft.TextField(label="Nom Produit", hint_text="ex: Surefoam", width=250)
         
         self.form_specific_fields.controls = [
@@ -840,17 +875,17 @@ class LabPage(ft.Container):
         ]
     
     def _build_phytosanitaire_fields(self):
-        """Champs spécifiques Phytosanitaire"""
+        """Champs spcifiques Phytosanitaire"""
         self.form_global_resultat = ft.TextField(
-            label="Résultat Global",
-            value="Non Détecté",
+            label="Rsultat Global",
+            value="Non Dtect",
             width=300
         )
         
         self.form_molecules_container = ft.Column([], spacing=10)
         
         add_molecule_btn = ft.ElevatedButton(
-            "+ Ajouter Molécule",
+            "+ Ajouter Molcule",
             icon=ft.Icons.ADD,
             on_click=self._add_molecule_field
         )
@@ -858,15 +893,15 @@ class LabPage(ft.Container):
         self.form_specific_fields.controls = [
             self.form_global_resultat,
             ft.Divider(),
-            ft.Text("Molécules Détectées", size=14, weight=ft.FontWeight.BOLD),
+            ft.Text("Molcules Dtectes", size=14, weight=ft.FontWeight.BOLD),
             self.form_molecules_container,
             add_molecule_btn
         ]
     
     def _add_molecule_field(self, e):
-        """Ajoute un champ de saisie de molécule"""
+        """Ajoute un champ de saisie de molcule"""
         molecule_row = ft.Row([
-            ft.TextField(label="Nom Molécule", width=250),
+            ft.TextField(label="Nom Molcule", width=250),
             ft.TextField(label="Teneur (mg/kg)", width=150, keyboard_type=ft.KeyboardType.NUMBER),
             ft.IconButton(
                 icon=ft.Icons.REMOVE_CIRCLE,
@@ -879,24 +914,24 @@ class LabPage(ft.Container):
         self.update()
     
     def _remove_molecule_field(self, row):
-        """Supprime un champ de molécule"""
+        """Supprime un champ de molcule"""
         self.form_molecules_container.controls.remove(row)
         self.update()
     
     def _save_analyse(self, e):
-        """Enregistre l'analyse en base de données"""
+        """Enregistre l'analyse en base de donnes"""
         # TODO: Validation des champs
-        # TODO: Récupération des valeurs
-        # TODO: Création objet Analyse
+        # TODO: Rcupration des valeurs
+        # TODO: Cration objet Analyse
         # TODO: Appel db.create_analyse()
         
-        self._show_snackbar("âœ… Analyse enregistrée avec succès", Theme.SUCCESS)
+        self._show_snackbar("[OK] Analyse enregistre avec succs", Theme.SUCCESS)
         self._reset_form()
         self._on_tab_change(type('obj', (object,), {'control': type('obj', (object,), {'selected_index': 1})()}))
     
     def _reset_form(self):
-        """Réinitialise tous les champs du formulaire"""
-        # TODO: Réinitialiser tous les champs
+        """Rinitialise tous les champs du formulaire"""
+        # TODO: Rinitialiser tous les champs
         pass
     
     # ============================================================
@@ -904,23 +939,23 @@ class LabPage(ft.Container):
     # ============================================================
     
     def _build_statistiques(self) -> ft.Control:
-        """Construit l'onglet statistiques avancées"""
+        """Construit l'onglet statistiques avances"""
         
         stats = self.db.get_statistiques()
         annee_actuelle = datetime.now().year
         couts_mensuels = self.db.get_cout_par_periode(annee_actuelle)
         
-        # Graphique évolution des coûts
+        # Graphique volution des cots
         cout_chart = self._build_cout_mensuel_chart(couts_mensuels)
         
-        # Statistiques détaillées par laboratoire
+        # Statistiques dtailles par laboratoire
         lab_stats = self._build_lab_detailed_stats(stats.get('par_laboratoire', {}))
         
         return ft.Column([
-            ft.Text("Statistiques Avancées", size=24, weight=ft.FontWeight.BOLD),
+            ft.Text("Statistiques Avances", size=24, weight=ft.FontWeight.BOLD),
             ft.Divider(),
             
-            # Graphique coûts
+            # Graphique cots
             ft.Container(
                 content=cout_chart,
                 bgcolor=Theme.BG_CARD,
@@ -937,9 +972,9 @@ class LabPage(ft.Container):
         ], scroll=ft.ScrollMode.AUTO, expand=True)
     
     def _build_cout_mensuel_chart(self, data: List[Dict]) -> ft.Column:
-        """Graphique des coûts mensuels"""
-        # Version simplifiée avec barres
-        mois_names = ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"]
+        """Graphique des cots mensuels"""
+        # Version simplifie avec barres
+        mois_names = ["Jan", "Fv", "Mar", "Avr", "Mai", "Jun", "Jul", "Ao", "Sep", "Oct", "Nov", "Dc"]
         
         bars = []
         max_cout = max([d['cout_total'] for d in data], default=1)
@@ -956,21 +991,21 @@ class LabPage(ft.Container):
                         height=percentage * 2,
                         bgcolor=Theme.PRIMARY_LIGHT,
                         border_radius=5,
-                        alignment=ft.alignment.bottom_center
+                        alignment=ft.Alignment(0, 1)
                     ),
-                    ft.Text(f"{cout:.0f}€", size=10, weight=ft.FontWeight.BOLD),
+                    ft.Text(f"{cout:.0f}", size=10, weight=ft.FontWeight.BOLD),
                     ft.Text(mois_names[mois_idx], size=10)
                 ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=5)
             )
         
         return ft.Column([
-            ft.Text(f"Évolution des Coûts - {datetime.now().year}", size=18, weight=ft.FontWeight.BOLD),
+            ft.Text(f"volution des Cots - {datetime.now().year}", size=18, weight=ft.FontWeight.BOLD),
             ft.Divider(),
             ft.Row(bars, spacing=15, scroll=ft.ScrollMode.AUTO)
         ])
     
     def _build_lab_detailed_stats(self, data: Dict[str, int]) -> ft.Column:
-        """Statistiques détaillées par laboratoire"""
+        """Statistiques dtailles par laboratoire"""
         cards = []
         
         for lab_name, count in data.items():
@@ -988,7 +1023,7 @@ class LabPage(ft.Container):
             )
         
         return ft.Column([
-            ft.Text("Répartition par Laboratoire", size=18, weight=ft.FontWeight.BOLD),
+            ft.Text("Rpartition par Laboratoire", size=18, weight=ft.FontWeight.BOLD),
             ft.Divider(),
             ft.Row(cards, spacing=15, wrap=True)
         ])
@@ -1003,36 +1038,36 @@ class LabPage(ft.Container):
         rapport_cards = [
             self._create_rapport_card(
                 title="Rapport Annuel Complet",
-                description="Toutes les analyses de l'année avec statistiques",
+                description="Toutes les analyses de l'anne avec statistiques",
                 icon=ft.Icons.DESCRIPTION,
                 on_click=lambda e: self._generer_rapport_annuel()
             ),
             self._create_rapport_card(
-                title="Rapport Non-Conformités",
+                title="Rapport Non-Conformits",
                 description="Liste des analyses non conformes",
                 icon=ft.Icons.WARNING,
                 on_click=lambda e: self._generer_rapport_nc()
             ),
             self._create_rapport_card(
                 title="Rapport par Laboratoire",
-                description="Performance et coûts par laboratoire",
+                description="Performance et cots par laboratoire",
                 icon=ft.Icons.BUSINESS,
                 on_click=lambda e: self._generer_rapport_labo()
             ),
             self._create_rapport_card(
-                title="Rapport Coûts",
-                description="Analyse des coûts sur période",
+                title="Rapport Cots",
+                description="Analyse des cots sur priode",
                 icon=ft.Icons.EURO,
                 on_click=lambda e: self._generer_rapport_couts()
             )
         ]
         
         return ft.Column([
-            ft.Text("Génération de Rapports", size=24, weight=ft.FontWeight.BOLD),
+            ft.Text("Gnration de Rapports", size=24, weight=ft.FontWeight.BOLD),
             ft.Divider(),
             
             ft.Text(
-                "Sélectionnez le type de rapport Ã  générer",
+                "Slectionnez le type de rapport à gnrer",
                 size=14,
                 color=Theme.TEXT_SECONDARY
             ),
@@ -1045,7 +1080,7 @@ class LabPage(ft.Container):
         ], scroll=ft.ScrollMode.AUTO, expand=True)
     
     def _create_rapport_card(self, title: str, description: str, icon: str, on_click) -> ft.Container:
-        """Crée une carte de rapport"""
+        """Cre une carte de rapport"""
         return ft.Container(
             content=ft.Column([
                 ft.Icon(icon, size=50, color=Theme.PRIMARY),
@@ -1053,7 +1088,7 @@ class LabPage(ft.Container):
                 ft.Text(description, size=12, color=Theme.TEXT_SECONDARY, text_align=ft.TextAlign.CENTER),
                 ft.Container(height=10),
                 ft.ElevatedButton(
-                    "Générer PDF",
+                    "Gnrer PDF",
                     icon=ft.Icons.PICTURE_AS_PDF,
                     on_click=on_click,
                     color=Theme.BG_CARD,
@@ -1068,52 +1103,52 @@ class LabPage(ft.Container):
         )
     
     def _generer_rapport_annuel(self):
-        """Génère le rapport annuel complet"""
-        self._show_snackbar("â³ Génération du rapport annuel en cours...", Theme.PRIMARY)
-        # TODO: Implémenter génération PDF
+        """Gnre le rapport annuel complet"""
+        self._show_snackbar("[EnCours] Gnration du rapport annuel en cours...", Theme.PRIMARY)
+        # TODO: Implmenter gnration PDF
     
     def _generer_rapport_nc(self):
-        """Génère le rapport des non-conformités"""
-        self._show_snackbar("â³ Génération du rapport NC en cours...", Theme.WARNING)
-        # TODO: Implémenter génération PDF
+        """Gnre le rapport des non-conformits"""
+        self._show_snackbar("[EnCours] Gnration du rapport NC en cours...", Theme.WARNING)
+        # TODO: Implmenter gnration PDF
     
     def _generer_rapport_labo(self):
-        """Génère le rapport par laboratoire"""
-        self._show_snackbar("â³ Génération du rapport laboratoire en cours...", Theme.SECONDARY)
-        # TODO: Implémenter génération PDF
+        """Gnre le rapport par laboratoire"""
+        self._show_snackbar("[EnCours] Gnration du rapport laboratoire en cours...", Theme.SECONDARY)
+        # TODO: Implmenter gnration PDF
     
     def _generer_rapport_couts(self):
-        """Génère le rapport des coûts"""
-        self._show_snackbar("â³ Génération du rapport coûts en cours...", Theme.SUCCESS)
-        # TODO: Implémenter génération PDF
+        """Gnre le rapport des cots"""
+        self._show_snackbar("[EnCours] Gnration du rapport cots en cours...", Theme.SUCCESS)
+        # TODO: Implmenter gnration PDF
     
     # ============================================================
     # ACTIONS & HELPERS
     # ============================================================
     
     def _view_analyse_details(self, analyse: Analyse):
-        """Affiche les détails d'une analyse en modal"""
-        # TODO: Créer dialogue avec tous les détails
-        self._show_snackbar(f"Détails de l'analyse #{analyse.id}", Theme.PRIMARY)
+        """Affiche les dtails d'une analyse en modal"""
+        # TODO: Crer dialogue avec tous les dtails
+        self._show_snackbar(f"Dtails de l'analyse #{analyse.id}", Theme.PRIMARY)
     
     def _edit_analyse(self, analyse: Analyse):
-        """Édite une analyse existante"""
+        """dite une analyse existante"""
         self.selected_analyse = analyse
-        # TODO: Pré-remplir le formulaire
+        # TODO: Pr-remplir le formulaire
         self._on_tab_change(type('obj', (object,), {'control': type('obj', (object,), {'selected_index': 2})()}))
     
     def _delete_analyse(self, analyse: Analyse):
-        """Supprime une analyse après confirmation"""
+        """Supprime une analyse aprs confirmation"""
         # TODO: Dialogue de confirmation
         success = self.db.delete_analyse(analyse.id)
         if success:
-            self._show_snackbar(f"âœ… Analyse #{analyse.id} supprimée", Theme.SUCCESS)
+            self._show_snackbar(f"[OK] Analyse #{analyse.id} supprime", Theme.SUCCESS)
             self._refresh_data(None)
         else:
-            self._show_snackbar("âŒ Erreur lors de la suppression", Theme.DANGER)
+            self._show_snackbar("[Erreur] Erreur lors de la suppression", Theme.DANGER)
     
     def _refresh_data(self, e):
-        """Rafraîchit les données affichées"""
+        """Rafrachit les donnes affiches"""
         if self.current_tab == "dashboard":
             self.main_content.content = self._build_dashboard()
         elif self.current_tab == "liste":
@@ -1134,7 +1169,7 @@ class LabPage(ft.Container):
         self.update()
     
     def build(self) -> ft.Control:
-        """Retourne le contrôle principal"""
+        """Retourne le contrle principal"""
         return self.content
 
 

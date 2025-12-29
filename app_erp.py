@@ -68,10 +68,10 @@ user_db_path = os.path.join(user_data_path, db_filename)
 if not os.path.exists(user_db_path):
     install_db_path = os.path.join(application_path, db_filename)
     if os.path.exists(install_db_path):
-        print(f"📦 Copie de la base de données initiale vers {user_db_path}")
+        print(f"[Paquet] Copie de la base de données initiale vers {user_db_path}")
         shutil.copy2(install_db_path, user_db_path)
     else:
-        print(f"ℹ️ Nouvelle installation - Base de données sera créée dans {user_db_path}")
+        print(f"[Info] Nouvelle installation - Base de données sera créée dans {user_db_path}")
 
 # Définir le répertoire de travail sur le répertoire de l'application
 os.chdir(application_path)
@@ -88,15 +88,15 @@ def main(page: ft.Page):
     """Point d'entrée principal de l'application ERP QHSE."""
     
     print("=" * 80)
-    print("🚀 DEMARRAGE QUALIMANAGER ERP QHSE")
+    print("[*] DEMARRAGE QUALIMANAGER ERP QHSE")
     print("=" * 80)
-    print(f"📂 Mode: {'PORTABLE (données locales)' if is_portable_mode() else 'INSTALLEUR (AppData)'}")
-    print(f"📂 Répertoire application: {application_path}")
-    print(f"📂 Répertoire données: {user_data_path}")
+    print(f"[*] Mode: {'PORTABLE (données locales)' if is_portable_mode() else 'INSTALLEUR (AppData)'}")
+    print(f"[*] Répertoire application: {application_path}")
+    print(f"[*] Répertoire données: {user_data_path}")
     
     # INITIALISER LE THEME AU DEMARRAGE
     Theme.init()
-    print(f"✅ Theme initialisé - Mode: {Theme._mode}")
+    print(f"[OK] Theme initialise - Mode: {Theme._mode}")
     print(f"   BG_PRIMARY: {Theme.BG_PRIMARY}")
     print(f"   TEXT_PRIMARY: {Theme.TEXT_PRIMARY}")
     
@@ -117,12 +117,12 @@ def main(page: ft.Page):
     for icon_path in possible_icon_paths:
         if icon_path and os.path.exists(icon_path):
             page.window.icon = icon_path
-            print(f"✅ Icône chargée: {icon_path}")
+            print(f"[OK] Icone chargee: {icon_path}")
             icon_found = True
             break
     
     if not icon_found:
-        print("⚠️ Icône non trouvée")
+        print("[!] Icone non trouvee")
     
     page.theme_mode = ft.ThemeMode.DARK
     page.bgcolor = Theme.BG_PRIMARY
@@ -134,7 +134,7 @@ def main(page: ft.Page):
     page.window.min_height = 700
     
     # Initialiser la base de données dans le dossier utilisateur
-    print(f"📊 Base de données: {user_db_path}")
+    print(f"[*] Base de donnees: {user_db_path}")
     db = DatabaseManager(user_db_path)
     
     # État de l'application
@@ -177,7 +177,7 @@ def main(page: ft.Page):
                         page.on_keyboard_event = pages_cache[route]._handle_keyboard_event
                         print("[NC] Raccourcis clavier activés depuis app_erp.py")
                 except Exception as e:
-                    print(f"[NC] ❌ ERREUR: {type(e).__name__}: {e}")
+                    print(f"[NC] [ERROR] ERREUR: {type(e).__name__}: {e}")
                     import traceback
                     traceback.print_exc()
                     # Afficher l'erreur à l'utilisateur
@@ -224,10 +224,34 @@ def main(page: ft.Page):
                 pages_cache[route] = ReportsPage(user=current_user, db=db, navigate=navigate)
             page.views.append(create_layout_view(pages_cache[route], route))
         elif route == "/admin" or route == "/users":
+            print(f"[NAV] Navigation vers: {route}")
             if "/admin" not in pages_cache:
-                from flet_app.users_page import UsersPage
-                pages_cache["/admin"] = UsersPage(user=current_user, db=db, navigate=navigate)
+                try:
+                    print("[ADMIN] Tentative d'import de users_page...")
+                    from flet_app.users_page import UsersPage
+                    print("[ADMIN] Import réussi, création de l'instance...")
+                    pages_cache["/admin"] = UsersPage(user=current_user, db=db, navigate=navigate)
+                    print("[ADMIN] Instance créée avec succès")
+                    print(f"[ADMIN] Type: {type(pages_cache['/admin'])}")
+                except Exception as e:
+                    print(f"[ADMIN] [ERROR] ERREUR: {type(e).__name__}: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    # Afficher l'erreur à l'utilisateur
+                    page.views.append(ft.View(
+                        "/admin",
+                        [
+                            ft.Text(f"Erreur lors du chargement de l'administration:", size=20, weight=ft.FontWeight.BOLD, color="red"),
+                            ft.Text(f"{type(e).__name__}: {str(e)}", size=14),
+                            ft.ElevatedButton("Retour", on_click=lambda _: navigate("/hub"))
+                        ],
+                        bgcolor=Theme.BG_PRIMARY
+                    ))
+                    page.update()
+                    return
+            print("[ADMIN] Ajout de la vue au layout...")
             page.views.append(create_layout_view(pages_cache["/admin"], route))
+            print("[ADMIN] Vue ajoutée, appel page.update()...")
         else:
             # Route par défaut -> Hub
             page.views.append(HubPage(
@@ -237,7 +261,50 @@ def main(page: ft.Page):
                 on_logout=logout,
             ))
         
-        page.update()
+        # Debug: Vérifier la structure avant update
+        print(f"[DEBUG] Nombre de views: {len(page.views)}")
+        if page.views:
+            print(f"[DEBUG] Dernière view route: {page.views[-1].route if hasattr(page.views[-1], 'route') else 'N/A'}")
+            
+            # Fonction pour trouver les strings dans les controls
+            def find_strings_in_controls(obj, path="", depth=0):
+                if depth > 20:  # Limite de profondeur
+                    return []
+                
+                strings_found = []
+                
+                if isinstance(obj, str):
+                    strings_found.append((path, obj))
+                    return strings_found
+                
+                if obj is None:
+                    return strings_found
+                
+                # Vérifier les controls (liste)
+                if hasattr(obj, 'controls') and isinstance(obj.controls, list):
+                    for i, ctrl in enumerate(obj.controls):
+                        strings_found.extend(find_strings_in_controls(ctrl, f"{path}.controls[{i}]", depth+1))
+                
+                # Vérifier le content
+                if hasattr(obj, 'content') and obj.content is not None:
+                    strings_found.extend(find_strings_in_controls(obj.content, f"{path}.content", depth+1))
+                
+                return strings_found
+            
+            # Chercher les strings dans la dernière view
+            strings_found = find_strings_in_controls(page.views[-1], "page.views[-1]")
+            if strings_found:
+                print(f"[ERROR] {len(strings_found)} STRING(S) TROUVÉE(S) DANS LES CONTROLS:")
+                for path, string_val in strings_found[:5]:  # Limiter à 5 pour ne pas surcharger
+                    print(f"  - {path}: '{string_val[:50]}...'")
+        
+        try:
+            page.update()
+            print("[DEBUG] page.update() réussi")
+        except Exception as e:
+            print(f"[ERROR] page.update() a échoué: {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
     
     def create_layout_view(content: ft.View, route: str) -> ft.View:
         """Crée une vue avec le layout principal (sidebar)."""
@@ -361,7 +428,7 @@ def main(page: ft.Page):
                                     spacing=5,
                                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                                     controls=[
-                                        ft.Text("🔑 Identifiants de test", size=11, color=Theme.TEXT_MUTED),
+                                        ft.Text("[*] Identifiants de test", size=11, color=Theme.TEXT_MUTED),
                                         ft.Text("admin@qualimanager.local", size=12, color=Theme.INFO),
                                         ft.Text("Admin@2024!", size=12, color=Theme.INFO),
                                     ]
@@ -381,7 +448,7 @@ def main(page: ft.Page):
     
     # Démarrer avec la page de login
     navigate("/login")
-    print("✅ Application démarrée - Page login chargée")
+    print("[OK] Application demarree - Page login chargee")
 
 
 if __name__ == "__main__":

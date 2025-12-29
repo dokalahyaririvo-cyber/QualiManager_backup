@@ -75,7 +75,7 @@ class DatabaseManager:
         backup_path = backup_dir / f"backup_before_migration_{timestamp}.db"
         
         shutil.copy2(self.db_path, backup_path)
-        print(f"✓ Sauvegarde créée: {backup_path.name}")
+        print(f"[OK] Sauvegarde créée: {backup_path.name}")
         return backup_path
     
     def _check_and_migrate(self):
@@ -85,7 +85,7 @@ class DatabaseManager:
         if db_version == self.APP_VERSION:
             return  # Déjà à jour
         
-        print(f"\n🔄 Migration de la base de données v{db_version} → v{self.APP_VERSION}")
+        print(f"\n[Actualiser] Migration de la base de données v{db_version} > v{self.APP_VERSION}")
         
         # Sauvegarde avant migration
         self._backup_database()
@@ -100,22 +100,22 @@ class DatabaseManager:
             
             # Mettre à jour la version
             self._set_db_version(self.APP_VERSION, f"Migration depuis v{db_version}")
-            print(f"✅ Migration terminée avec succès !\n")
+            print(f"[OK] Migration terminée avec succès !\n")
             
         except Exception as e:
-            print(f"❌ Erreur lors de la migration: {e}")
-            print("⚠️ La sauvegarde a été créée dans le dossier backups/")
+            print(f"[Erreur] Erreur lors de la migration: {e}")
+            print("[Attention] La sauvegarde a été créée dans le dossier backups/")
             raise
     
     def _migrate_to_2_0_0(self):
         """Migration vers la version 2.0.0."""
-        print("  → Application de la migration 2.0.0...")
+        print("  > Application de la migration 2.0.0...")
         # Ajouter les nouvelles fonctionnalités de la v2.0
         # (Cette migration est pour l'exemple, ajustez selon vos besoins)
     
     def _migrate_to_2_1_0(self):
         """Migration vers la version 2.1.0."""
-        print("  → Application de la migration 2.1.0...")
+        print("  > Application de la migration 2.1.0...")
         with self.get_connection() as conn:
             # Exemple: Ajouter des colonnes si nécessaire
             # self._add_column_if_not_exists(conn, 'nc_header', 'nouvelle_colonne', 'TEXT')
@@ -384,7 +384,7 @@ class DatabaseManager:
             return dict(row) if row else None
     
     def find_nc(self, query: str) -> Optional[Dict[str, Any]]:
-        """Recherche une NC par référence ou n° de lot."""
+        """Recherche une NC par référence ou no de lot."""
         with self.get_connection() as conn:
             cursor = conn.cursor()
             try:
@@ -466,7 +466,7 @@ class DatabaseManager:
                 """, (nc_id, user_name, action, field_changed, old_value, new_value))
                 return True
         except Exception as e:
-            print(f"❌ Erreur lors de l'enregistrement de l'historique: {e}")
+            print(f"[Erreur] Erreur lors de l'enregistrement de l'historique: {e}")
             return False
     
     def get_nc_history(self, nc_id: int) -> List[Dict[str, Any]]:
@@ -506,7 +506,7 @@ class DatabaseManager:
         except sqlite3.OperationalError as e:
             if 'no such table' in str(e):
                 # La table n'existe pas encore, retourner liste vide
-                print("⚠️ Table nc_history manquante")
+                print("[Attention] Table nc_history manquante")
                 return []
             else:
                 raise
@@ -543,7 +543,7 @@ class DatabaseManager:
                 conn.commit()
                 return True
         except Exception as e:
-            print(f"❌ Erreur sauvegarde préférence: {e}")
+            print(f"[Erreur] Erreur sauvegarde préférence: {e}")
             return False
     
     def get_user_preference(self, user_id: int, module: str, preference_key: str, default=None):
@@ -575,12 +575,12 @@ class DatabaseManager:
                 return default
         except sqlite3.OperationalError as e:
             if 'no such table' in str(e):
-                print("⚠️ Table user_preferences manquante")
+                print("[Attention] Table user_preferences manquante")
                 return default
             else:
                 raise
         except Exception as e:
-            print(f"❌ Erreur récupération préférence: {e}")
+            print(f"[Erreur] Erreur récupération préférence: {e}")
             return default
     
     # Actions NC

@@ -101,9 +101,9 @@ class VeillePage(ft.Container):
             indicator_tab_size=True,
             divider_color=Theme.OUTLINE,
             tabs=[
-                ft.Tab(text="📜 Registre des Veilles", icon=ft.Icons.ARTICLE_ROUNDED),
-                ft.Tab(text="⚡ Plans d'Actions", icon=ft.Icons.FACT_CHECK_ROUNDED),
-                ft.Tab(text="📊 Tableau de Bord", icon=ft.Icons.DASHBOARD_ROUNDED),
+                ft.Tab(text="[Registre] Registre des Veilles", icon=ft.Icons.ARTICLE_ROUNDED),
+                ft.Tab(text="[Actions] Plans d'Actions", icon=ft.Icons.FACT_CHECK_ROUNDED),
+                ft.Tab(text="[Stats] Tableau de Bord", icon=ft.Icons.DASHBOARD_ROUNDED),
             ],
         )
         
@@ -147,7 +147,7 @@ class VeillePage(ft.Container):
             padding=15,
             bgcolor=Theme.BG_SECONDARY,
             border_radius=10,
-            margin=ft.margin.only(bottom=15),
+            margin=15,
             content=ft.Row(
                 spacing=15,
                 controls=[
@@ -167,8 +167,8 @@ class VeillePage(ft.Container):
                         icon=ft.Icons.DOWNLOAD,
                         tooltip="Exporter",
                         items=[
-                            ft.PopupMenuItem(text="📄 Exporter en PDF", on_click=lambda e: self._export_veilles("pdf")),
-                            ft.PopupMenuItem(text="📊 Exporter en Excel", on_click=lambda e: self._export_veilles("excel")),
+                            ft.PopupMenuItem(text="[PDF] Exporter en PDF", on_click=lambda e: self._export_veilles("pdf")),
+                            ft.PopupMenuItem(text="[Stats] Exporter en Excel", on_click=lambda e: self._export_veilles("excel")),
                         ],
                     ),
                 ],
@@ -180,7 +180,7 @@ class VeillePage(ft.Container):
             table_content = ft.Container(
                 expand=True,
                 padding=40,
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment(0, 0),
                 content=ft.Column(
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     controls=[
@@ -283,7 +283,7 @@ class VeillePage(ft.Container):
                             ft.DataCell(fichier_control),
                             ft.DataCell(
                                 ft.Text(
-                                    v.get('plan_action_numero', '—') if v.get('plan_action_numero') else "—",
+                                    v.get('plan_action_numero', '-') if v.get('plan_action_numero') else "-",
                                     size=11,
                                     weight=ft.FontWeight.BOLD if v.get('plan_action_numero') else ft.FontWeight.NORMAL,
                                     color=Theme.SECONDARY if v.get('plan_action_numero') else Theme.TEXT_MUTED,
@@ -328,11 +328,16 @@ class VeillePage(ft.Container):
                                 ft.DataColumn(ft.Text("Commentaire", weight=ft.FontWeight.BOLD)),
                                 ft.DataColumn(ft.Text("Statut", weight=ft.FontWeight.BOLD)),
                                 ft.DataColumn(ft.Text("Fichier", weight=ft.FontWeight.BOLD)),
-                                ft.DataColumn(ft.Text("N° Plan", weight=ft.FontWeight.BOLD)),
+                                ft.DataColumn(ft.Text("No Plan", weight=ft.FontWeight.BOLD)),
                                 ft.DataColumn(ft.Text("Actions", weight=ft.FontWeight.BOLD)),
                             ],
                             rows=rows,
-                            border=ft.border.all(1, Theme.OUTLINE),
+                            border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                             border_radius=10,
                             horizontal_lines=ft.BorderSide(1, Theme.OUTLINE),
                             heading_row_color=Theme.BG_SECONDARY,
@@ -360,7 +365,7 @@ class VeillePage(ft.Container):
             padding=15,
             bgcolor=Theme.BG_SECONDARY,
             border_radius=10,
-            margin=ft.margin.only(bottom=15),
+            margin=15,
             content=ft.Row(
                 spacing=15,
                 controls=[
@@ -375,8 +380,8 @@ class VeillePage(ft.Container):
                         icon=ft.Icons.DOWNLOAD,
                         tooltip="Exporter",
                         items=[
-                            ft.PopupMenuItem(text="📄 Exporter en PDF", on_click=lambda e: self._export_plans("pdf")),
-                            ft.PopupMenuItem(text="📊 Exporter en Excel", on_click=lambda e: self._export_plans("excel")),
+                            ft.PopupMenuItem(text="[PDF] Exporter en PDF", on_click=lambda e: self._export_plans("pdf")),
+                            ft.PopupMenuItem(text="[Stats] Exporter en Excel", on_click=lambda e: self._export_plans("excel")),
                         ],
                     ),
                 ],
@@ -388,7 +393,7 @@ class VeillePage(ft.Container):
             table_content = ft.Container(
                 expand=True,
                 padding=40,
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment(0, 0),
                 content=ft.Column(
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     controls=[
@@ -402,8 +407,8 @@ class VeillePage(ft.Container):
             for p in plans:
                 avancement = p.get('statut_calcule', 0.0)
                 
-                # Récupérer le N° de plan depuis la veille
-                plan_numero = "—"
+                # Récupérer le No de plan depuis la veille
+                plan_numero = "-"
                 if p.get('veille_id'):
                     veille_data = self.db.get_veille_by_id(p['veille_id'])
                     if veille_data and veille_data.get('plan_action_numero'):
@@ -421,7 +426,7 @@ class VeillePage(ft.Container):
                 rows.append(
                     ft.DataRow(
                         cells=[
-                            ft.DataCell(ft.Text(plan_numero, size=11, weight=ft.FontWeight.BOLD, color=Theme.SECONDARY if plan_numero != "—" else Theme.TEXT_MUTED, width=50)),
+                            ft.DataCell(ft.Text(plan_numero, size=11, weight=ft.FontWeight.BOLD, color=Theme.SECONDARY if plan_numero != "-" else Theme.TEXT_MUTED, width=50)),
                             ft.DataCell(ft.Text(p['date_creation'] or '-', size=11)),
                             ft.DataCell(ft.Text(p['origine'] or '-', size=11, no_wrap=False, width=120)),
                             ft.DataCell(
@@ -485,7 +490,7 @@ class VeillePage(ft.Container):
                     controls=[
                         ft.DataTable(
                             columns=[
-                                ft.DataColumn(ft.Text("N°", weight=ft.FontWeight.BOLD)),
+                                ft.DataColumn(ft.Text("No", weight=ft.FontWeight.BOLD)),
                                 ft.DataColumn(ft.Text("Créé le", weight=ft.FontWeight.BOLD)),
                                 ft.DataColumn(ft.Text("Origine", weight=ft.FontWeight.BOLD)),
                                 ft.DataColumn(ft.Text("Résumé", weight=ft.FontWeight.BOLD)),
@@ -500,7 +505,12 @@ class VeillePage(ft.Container):
                                 ft.DataColumn(ft.Text("Actions", weight=ft.FontWeight.BOLD)),
                             ],
                             rows=rows,
-                            border=ft.border.all(1, Theme.OUTLINE),
+                            border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                             border_radius=10,
                             horizontal_lines=ft.BorderSide(1, Theme.OUTLINE),
                             heading_row_color=Theme.BG_SECONDARY,
@@ -560,10 +570,10 @@ class VeillePage(ft.Container):
             spacing=15,
             wrap=True,
             controls=[
-                self._create_stat_card("📋 Total Veilles", str(total), Theme.PRIMARY, f"dont {concernes} concernés"),
-                self._create_stat_card("📝 Plans d'Actions", str(len(all_plans)), Theme.SECONDARY, f"{stats_plans['en_cours']} en cours"),
-                self._create_stat_card("✅ Taux Complétion", f"{taux_completion_taches:.0f}%", ft.Colors.GREEN_500, f"{taches_completees}/{total_taches} tâches"),
-                self._create_stat_card("📊 Avancement Moyen", f"{avancement_moyen:.0f}%", ft.Colors.BLUE_500, f"sur {len(all_plans)} plans"),
+                self._create_stat_card("[ID] Total Veilles", str(total), Theme.PRIMARY, f"dont {concernes} concernés"),
+                self._create_stat_card("[Note] Plans d'Actions", str(len(all_plans)), Theme.SECONDARY, f"{stats_plans['en_cours']} en cours"),
+                self._create_stat_card("[OK] Taux Complétion", f"{taux_completion_taches:.0f}%", ft.Colors.GREEN_500, f"{taches_completees}/{total_taches} tâches"),
+                self._create_stat_card("[Stats] Avancement Moyen", f"{avancement_moyen:.0f}%", ft.Colors.BLUE_500, f"sur {len(all_plans)} plans"),
             ],
         )
         
@@ -574,11 +584,16 @@ class VeillePage(ft.Container):
             padding=20,
             bgcolor=Theme.BG_CARD,
             border_radius=10,
-            border=ft.border.all(1, Theme.OUTLINE),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
             content=ft.Column(
                 spacing=15,
                 controls=[
-                    ft.Text("📊 Répartition des Statuts", size=16, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+                    ft.Text("[Stats] Répartition des Statuts", size=16, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
                     ft.Column(
                         spacing=10,
                         controls=[
@@ -597,11 +612,16 @@ class VeillePage(ft.Container):
             padding=20,
             bgcolor=Theme.BG_CARD,
             border_radius=10,
-            border=ft.border.all(1, Theme.OUTLINE),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
             content=ft.Column(
                 spacing=15,
                 controls=[
-                    ft.Text("📚 Répartition par Source", size=16, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+                    ft.Text("[Source] Répartition par Source", size=16, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
                     ft.Column(
                         spacing=10,
                         controls=[
@@ -624,11 +644,16 @@ class VeillePage(ft.Container):
             padding=20,
             bgcolor=Theme.BG_CARD,
             border_radius=10,
-            border=ft.border.all(1, Theme.OUTLINE),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
             content=ft.Column(
                 spacing=15,
                 controls=[
-                    ft.Text("🎯 Répartition par Origine", size=16, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+                    ft.Text("[Origine] Répartition par Origine", size=16, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
                     ft.Column(
                         spacing=10,
                         controls=[
@@ -647,11 +672,16 @@ class VeillePage(ft.Container):
             padding=20,
             bgcolor=Theme.BG_CARD,
             border_radius=10,
-            border=ft.border.all(1, Theme.OUTLINE),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
             content=ft.Column(
                 spacing=15,
                 controls=[
-                    ft.Text("📝 Répartition par Type", size=16, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+                    ft.Text("[Note] Répartition par Type", size=16, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
                     ft.Column(
                         spacing=10,
                         controls=[
@@ -668,7 +698,12 @@ class VeillePage(ft.Container):
             padding=20,
             bgcolor=Theme.BG_CARD,
             border_radius=10,
-            border=ft.border.all(1, Theme.OUTLINE),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
             content=ft.Column(
                 spacing=15,
                 controls=[
@@ -681,8 +716,8 @@ class VeillePage(ft.Container):
                     ft.Row(
                         spacing=30,
                         controls=[
-                            ft.Text(f"✅ Soldées: {stats_plans['soldees']}", size=14, weight=ft.FontWeight.W_500, color=Theme.TEXT_PRIMARY),
-                            ft.Text(f"⏳ En cours: {stats_plans['en_cours']}", size=14, weight=ft.FontWeight.W_500, color=Theme.TEXT_PRIMARY),
+                            ft.Text(f"[OK] Soldées: {stats_plans['soldees']}", size=14, weight=ft.FontWeight.W_500, color=Theme.TEXT_PRIMARY),
+                            ft.Text(f"[EnCours] En cours: {stats_plans['en_cours']}", size=14, weight=ft.FontWeight.W_500, color=Theme.TEXT_PRIMARY),
                         ],
                     ),
                     ft.ProgressBar(
@@ -711,12 +746,12 @@ class VeillePage(ft.Container):
                     padding=30,
                     bgcolor=ft.Colors.GREEN_50,
                     border_radius=10,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment(0, 0),
                     content=ft.Row(
                         alignment=ft.MainAxisAlignment.CENTER,
                         controls=[
                             ft.Icon(ft.Icons.CHECK_CIRCLE_OUTLINE, color=ft.Colors.GREEN_700, size=40),
-                            ft.Text("✅ Aucune action en attente", size=16, color=ft.Colors.GREEN_700, weight=ft.FontWeight.BOLD),
+                            ft.Text("[OK] Aucune action en attente", size=16, color=ft.Colors.GREEN_700, weight=ft.FontWeight.BOLD),
                         ],
                     ),
                 )
@@ -727,7 +762,12 @@ class VeillePage(ft.Container):
             padding=20,
             bgcolor=Theme.BG_CARD,
             border_radius=10,
-            border=ft.border.all(1, Theme.OUTLINE),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
             content=ft.Column(
                 spacing=15,
                 controls=[
@@ -791,7 +831,7 @@ class VeillePage(ft.Container):
             spacing=20,
             scroll=ft.ScrollMode.AUTO,
             controls=[
-                ft.Text("📊 Tableau de Bord", size=24, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+                ft.Text("[Stats] Tableau de Bord", size=24, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
                 stats_cards,
                 # Graphiques veilles (2 colonnes)
                 ft.Row(spacing=15, wrap=True, controls=[chart_statuts, chart_sources]),
@@ -800,7 +840,7 @@ class VeillePage(ft.Container):
                 # Graphiques plans d'actions (2 colonnes)
                 ft.Row(spacing=15, wrap=True, controls=[chart_origines, chart_types]),
                 ft.Divider(height=2, color=Theme.OUTLINE),
-                ft.Text("📝 Actions Prioritaires", size=20, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+                ft.Text("[Note] Actions Prioritaires", size=20, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
                 ft.Column(spacing=10, controls=todo_cards),
             ],
         )
@@ -820,7 +860,12 @@ class VeillePage(ft.Container):
             padding=20,
             bgcolor=Theme.BG_CARD,
             border_radius=10,
-            border=ft.border.all(2, color),
+            border=ft.Border(
+                top=ft.BorderSide(2, color),
+                right=ft.BorderSide(2, color),
+                bottom=ft.BorderSide(2, color),
+                left=ft.BorderSide(2, color),
+            ),
             content=ft.Column(
                 spacing=8,
                 alignment=ft.MainAxisAlignment.CENTER,
@@ -848,7 +893,7 @@ class VeillePage(ft.Container):
                                 expand=int(percentage) if percentage > 0 else 0,
                                 height=30,
                                 bgcolor=color,
-                                alignment=ft.alignment.center_left,
+                                alignment=ft.Alignment(-1, 0),
                                 padding=10,
                                 content=ft.Text(f"{value}", size=12, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE) if percentage > 5 else ft.Container(),
                             ),
@@ -866,7 +911,7 @@ class VeillePage(ft.Container):
             icon = ft.Icons.ARTICLE_OUTLINED
             color = ft.Colors.ORANGE_500
             bgcolor = ft.Colors.ORANGE_50
-            title = f"N°{item['id']} - {item['source']}"
+            title = f"No{item['id']} - {item['source']}"
             desc = item['description']
             action = lambda e: self._navigate_to("veille_form", veille_id=item['id'])
         else:
@@ -881,7 +926,12 @@ class VeillePage(ft.Container):
             padding=15,
             bgcolor=bgcolor,
             border_radius=10,
-            border=ft.border.all(1, color),
+            border=ft.Border(
+                top=ft.BorderSide(1, color),
+                right=ft.BorderSide(1, color),
+                bottom=ft.BorderSide(1, color),
+                left=ft.BorderSide(1, color),
+            ),
             content=ft.Row(
                 spacing=15,
                 controls=[
@@ -922,13 +972,13 @@ class VeillePage(ft.Container):
     def _delete_veille(self, veille_id):
         """Supprime une veille."""
         self.db.delete_veille(veille_id)
-        create_snackbar(self.page, "✅ Veille supprimée", "success")
+        create_snackbar(self.page, "[OK] Veille supprimée", "success")
         self._navigate_to("main")
     
     def _delete_plan(self, plan_id):
         """Supprime un plan."""
         self.db.delete_action_plan(plan_id)
-        create_snackbar(self.page, "✅ Plan d'action supprimé", "success")
+        create_snackbar(self.page, "[OK] Plan d'action supprimé", "success")
         self._navigate_to("main")
     
     def _open_taches_dialog(self, plan_id):
@@ -939,7 +989,7 @@ class VeillePage(ft.Container):
             
         plan = self.db.get_action_plan_by_id(plan_id)
         if not plan:
-            create_snackbar(self.page, "❌ Plan d'action introuvable", "error")
+            create_snackbar(self.page, "[Erreur] Plan d'action introuvable", "error")
             return
         
         # Récupérer les tâches (déjà parsées par get_action_plan_by_id)
@@ -1016,7 +1066,7 @@ class VeillePage(ft.Container):
                 self.page.close(dialog)
                 
                 # Message de succès
-                create_snackbar(self.page, "✅ Tâches mises à jour", "success")
+                create_snackbar(self.page, "[OK] Tâches mises à jour", "success")
                 
                 # Rafraîchir la vue
                 self.content = self._build_main_view()
@@ -1026,7 +1076,7 @@ class VeillePage(ft.Container):
                 print(f"Erreur lors de la sauvegarde: {ex}")
                 import traceback
                 traceback.print_exc()
-                create_snackbar(self.page, f"❌ Erreur: {str(ex)}", "error")
+                create_snackbar(self.page, f"[Erreur] Erreur: {str(ex)}", "error")
         
         # Fermeture du dialog
         def close_dialog_handler(e):
@@ -1103,19 +1153,19 @@ class VeillePage(ft.Container):
                     os.system(f'open "{file_path}"')
                 else:  # Linux
                     os.system(f'xdg-open "{file_path}"')
-                create_snackbar(self.page, f"📂 Ouverture du fichier...", "success")
+                create_snackbar(self.page, f"[Fichier] Ouverture du fichier...", "success")
             except Exception as e:
-                create_snackbar(self.page, f"❌ Erreur: {str(e)}", "error")
+                create_snackbar(self.page, f"[Erreur] Erreur: {str(e)}", "error")
         else:
-            create_snackbar(self.page, "❌ Fichier introuvable", "error")
+            create_snackbar(self.page, "[Erreur] Fichier introuvable", "error")
     
     def _import_excel(self):
         """Import Excel - À implémenter."""
-        create_snackbar(self.page, "📊 Import Excel à implémenter", "info")
+        create_snackbar(self.page, "[Stats] Import Excel à implémenter", "info")
     
     def _export_veilles(self, format_type):
         """Export - À implémenter."""
-        create_snackbar(self.page, f"📤 Export {format_type} à implémenter", "info")
+        create_snackbar(self.page, f"[Export] Export {format_type} à implémenter", "info")
     
     # ==================== PAGE FORMULAIRE VEILLE ====================
     
@@ -1219,10 +1269,10 @@ class VeillePage(ft.Container):
         statut_dropdown = ft.Dropdown(
             label="Statut de la Veille *",
             options=[
-                ft.dropdown.Option("Non concerné"),
-                ft.dropdown.Option("À l'étude"),
-                ft.dropdown.Option("Concerné"),
-                ft.dropdown.Option("Conforme"),
+                "Non concerné",
+                "À l'étude",
+                "Concerné",
+                "Conforme",
             ],
             value=veille['statut_veille'] if is_edit else "Non concerné",
             border_color=Theme.OUTLINE,
@@ -1296,9 +1346,9 @@ class VeillePage(ft.Container):
             on_click=lambda e: self.file_picker.pick_files(allow_multiple=True) if self.file_picker else None,
         )
         
-        # N° de Plan d'Action (saisi manuellement si Concerné)
+        # No de Plan d'Action (saisi manuellement si Concerné)
         plan_numero_field = ft.TextField(
-            label="N° du Plan d'Action",
+            label="No du Plan d'Action",
             value=veille.get('plan_action_numero', '') if is_edit else "",
             hint_text="Ex: PA-2024-001",
             border_color=Theme.OUTLINE,
@@ -1313,7 +1363,7 @@ class VeillePage(ft.Container):
                 controls=[
                     plan_numero_field,
                     ft.Text(
-                        "📝 Saisissez le numéro du plan d'action à créer",
+                        "[Note] Saisissez le numéro du plan d'action à créer",
                         size=11,
                         color=Theme.TEXT_MUTED,
                         italic=True,
@@ -1341,11 +1391,16 @@ class VeillePage(ft.Container):
                         padding=20,
                         bgcolor=Theme.BG_CARD,
                         border_radius=10,
-                        border=ft.border.all(1, Theme.OUTLINE),
+                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                         content=ft.Column(
                             spacing=15,
                             controls=[
-                                ft.Text("📋 Identification", size=16, weight=ft.FontWeight.BOLD, color=Theme.PRIMARY),
+                                ft.Text("[ID] Identification", size=16, weight=ft.FontWeight.BOLD, color=Theme.PRIMARY),
                                 source_field,
                                 ft.Row(spacing=15, controls=[date_pub_field, date_lecture_field]),
                             ],
@@ -1356,11 +1411,16 @@ class VeillePage(ft.Container):
                         padding=20,
                         bgcolor=Theme.BG_CARD,
                         border_radius=10,
-                        border=ft.border.all(1, Theme.OUTLINE),
+                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                         content=ft.Column(
                             spacing=15,
                             controls=[
-                                ft.Text("📄 Contenu", size=16, weight=ft.FontWeight.BOLD, color=Theme.SECONDARY),
+                                ft.Text("[PDF] Contenu", size=16, weight=ft.FontWeight.BOLD, color=Theme.SECONDARY),
                                 description_field,
                                 lien_field,
                                 commentaire_field,
@@ -1372,17 +1432,27 @@ class VeillePage(ft.Container):
                         padding=20,
                         bgcolor=Theme.BG_CARD,
                         border_radius=10,
-                        border=ft.border.all(1, Theme.OUTLINE),
+                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                         content=ft.Column(
                             spacing=15,
                             controls=[
-                                ft.Text("⚙️ Statut & Fichiers", size=16, weight=ft.FontWeight.BOLD, color=Theme.WARNING),
+                                ft.Text("[Config] Statut & Fichiers", size=16, weight=ft.FontWeight.BOLD, color=Theme.WARNING),
                                 statut_dropdown,
                                 ft.Container(
                                     padding=15,
                                     bgcolor=Theme.BG_SECONDARY,
                                     border_radius=8,
-                                    border=ft.border.all(1, Theme.OUTLINE),
+                                    border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                                     content=ft.Column(
                                         spacing=10,
                                         controls=[
@@ -1409,10 +1479,10 @@ class VeillePage(ft.Container):
         # Boutons actions
         def save_veille(e):
             if not source_field.value or not description_field.value:
-                create_snackbar(self.page, "⚠️ Source et Description obligatoires", "error")
+                create_snackbar(self.page, "[Attention] Source et Description obligatoires", "error")
                 return
             
-            # Récupérer le N° de plan si Concerné
+            # Récupérer le No de plan si Concerné
             plan_numero = None
             if statut_dropdown.value == "Concerné" and plan_numero_field.value:
                 plan_numero = plan_numero_field.value.strip()
@@ -1436,13 +1506,13 @@ class VeillePage(ft.Container):
             
             if is_edit:
                 self.db.update_veille(self.edit_veille_id, data)
-                create_snackbar(self.page, "✅ Veille mise à jour", "success")
+                create_snackbar(self.page, "[OK] Veille mise à jour", "success")
             else:
                 veille_id = self.db.create_veille(data)
                 if plan_numero:
-                    create_snackbar(self.page, f"✅ Veille créée avec plan {plan_numero}", "success")
+                    create_snackbar(self.page, f"[OK] Veille créée avec plan {plan_numero}", "success")
                 else:
-                    create_snackbar(self.page, f"✅ Veille créée (N°{veille_id})", "success")
+                    create_snackbar(self.page, f"[OK] Veille créée (No{veille_id})", "success")
             
             self._navigate_to("main")
         
@@ -1501,7 +1571,7 @@ class VeillePage(ft.Container):
         is_edit = self.edit_plan_id is not None
         plan = self.db.get_action_plan_by_id(self.edit_plan_id) if is_edit else None
         
-        # Récupérer le N° de plan depuis la veille si disponible
+        # Récupérer le No de plan depuis la veille si disponible
         plan_numero_titre = ""
         if is_edit and plan and plan.get('veille_id'):
             veille_data = self.db.get_veille_by_id(plan['veille_id'])
@@ -1536,17 +1606,14 @@ class VeillePage(ft.Container):
             ),
         )
         
-        # Dropdown des veilles avec N° de plan
+        # Dropdown des veilles avec No de plan
         all_veilles = self.db.get_all_veilles()
         veilles_avec_plan = [v for v in all_veilles if v.get('plan_action_numero')]
         
-        veille_options = [ft.dropdown.Option(key="0", text="Aucune veille associée")]
+        veille_options = ["Aucune veille associée"]
         for v in veilles_avec_plan:
             veille_options.append(
-                ft.dropdown.Option(
-                    key=str(v['id']),
-                    text=f"{v['plan_action_numero']} - {v['source'][:40]}"
-                )
+                f"{v['plan_action_numero']} - {v['source'][:40]}"
             )
         
         # Trouver la veille associée si mode édition
@@ -1559,19 +1626,24 @@ class VeillePage(ft.Container):
                 plan_numero_from_veille = veille_data.get('plan_action_numero', '')
         
         veille_dropdown = ft.Dropdown(
-            label="Veille Réglementaire d'Origine (avec N° Plan)",
+            label="Veille Réglementaire d'Origine (avec No Plan)",
             options=veille_options,
             value=veille_id_selected if veille_id_selected else "0",
             border_color=Theme.OUTLINE,
             focused_border_color=Theme.SECONDARY,
         )
         
-        # Affichage du N° de plan depuis la veille
+        # Affichage du No de plan depuis la veille
         plan_numero_display = ft.Container(
             padding=10,
             bgcolor=Theme.BG_SECONDARY,
             border_radius=5,
-            border=ft.border.all(2, Theme.PRIMARY if plan_numero_from_veille else Theme.OUTLINE),
+            border=ft.Border(
+                top=ft.BorderSide(2, Theme.PRIMARY if plan_numero_from_veille else Theme.OUTLINE),
+                right=ft.BorderSide(2, Theme.PRIMARY if plan_numero_from_veille else Theme.OUTLINE),
+                bottom=ft.BorderSide(2, Theme.PRIMARY if plan_numero_from_veille else Theme.OUTLINE),
+                left=ft.BorderSide(2, Theme.PRIMARY if plan_numero_from_veille else Theme.OUTLINE),
+            ),
             content=ft.Row(
                 spacing=10,
                 controls=[
@@ -1581,7 +1653,7 @@ class VeillePage(ft.Container):
                         color=Theme.PRIMARY if plan_numero_from_veille else Theme.TEXT_MUTED,
                     ),
                     ft.Text(
-                        f"N° Plan: {plan_numero_from_veille}" if plan_numero_from_veille else "Sélectionnez une veille pour obtenir le N°",
+                        f"No Plan: {plan_numero_from_veille}" if plan_numero_from_veille else "Sélectionnez une veille pour obtenir le No",
                         size=14,
                         weight=ft.FontWeight.BOLD if plan_numero_from_veille else ft.FontWeight.NORMAL,
                         color=Theme.PRIMARY if plan_numero_from_veille else Theme.TEXT_MUTED,
@@ -1590,7 +1662,7 @@ class VeillePage(ft.Container):
             ),
         )
         
-        # Callback pour mettre à jour le N° de plan quand on change de veille
+        # Callback pour mettre à jour le No de plan quand on change de veille
         def on_veille_change(e):
             if veille_dropdown.value and veille_dropdown.value != "0":
                 veille_data = self.db.get_veille_by_id(int(veille_dropdown.value))
@@ -1600,14 +1672,19 @@ class VeillePage(ft.Container):
                         controls=[
                             ft.Icon(ft.Icons.TAG, size=20, color=Theme.PRIMARY),
                             ft.Text(
-                                f"N° Plan: {veille_data['plan_action_numero']}",
+                                f"No Plan: {veille_data['plan_action_numero']}",
                                 size=14,
                                 weight=ft.FontWeight.BOLD,
                                 color=Theme.PRIMARY,
                             ),
                         ],
                     )
-                    plan_numero_display.border = ft.border.all(2, Theme.PRIMARY)
+                    plan_numero_display.border = ft.Border(
+                top=ft.BorderSide(2, Theme.PRIMARY),
+                right=ft.BorderSide(2, Theme.PRIMARY),
+                bottom=ft.BorderSide(2, Theme.PRIMARY),
+                left=ft.BorderSide(2, Theme.PRIMARY),
+            )
                     plan_numero_display.bgcolor = ft.Colors.with_opacity(0.1, Theme.PRIMARY)
                 else:
                     plan_numero_display.content = ft.Row(
@@ -1615,13 +1692,18 @@ class VeillePage(ft.Container):
                         controls=[
                             ft.Icon(ft.Icons.WARNING, size=20, color=Theme.DANGER),
                             ft.Text(
-                                "Cette veille n'a pas de N° de plan",
+                                "Cette veille n'a pas de No de plan",
                                 size=14,
                                 color=Theme.DANGER,
                             ),
                         ],
                     )
-                    plan_numero_display.border = ft.border.all(2, Theme.DANGER)
+                    plan_numero_display.border = ft.Border(
+                top=ft.BorderSide(2, Theme.DANGER),
+                right=ft.BorderSide(2, Theme.DANGER),
+                bottom=ft.BorderSide(2, Theme.DANGER),
+                left=ft.BorderSide(2, Theme.DANGER),
+            )
                     plan_numero_display.bgcolor = ft.Colors.with_opacity(0.1, Theme.DANGER)
             else:
                 plan_numero_display.content = ft.Row(
@@ -1629,13 +1711,18 @@ class VeillePage(ft.Container):
                     controls=[
                         ft.Icon(ft.Icons.TAG, size=20, color=Theme.TEXT_MUTED),
                         ft.Text(
-                            "Sélectionnez une veille pour obtenir le N°",
+                            "Sélectionnez une veille pour obtenir le No",
                             size=14,
                             color=Theme.TEXT_MUTED,
                         ),
                     ],
                 )
-                plan_numero_display.border = ft.border.all(2, Theme.OUTLINE)
+                plan_numero_display.border = ft.Border(
+                top=ft.BorderSide(2, Theme.OUTLINE),
+                right=ft.BorderSide(2, Theme.OUTLINE),
+                bottom=ft.BorderSide(2, Theme.OUTLINE),
+                left=ft.BorderSide(2, Theme.OUTLINE),
+            )
                 plan_numero_display.bgcolor = Theme.BG_SECONDARY
             plan_numero_display.update()
         
@@ -1646,7 +1733,12 @@ class VeillePage(ft.Container):
             padding=15,
             bgcolor=Theme.BG_SECONDARY,
             border_radius=8,
-            border=ft.border.all(1, Theme.OUTLINE),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
             content=ft.Row(
                 spacing=10,
                 controls=[
@@ -1693,8 +1785,8 @@ class VeillePage(ft.Container):
         priorite_dropdown = ft.Dropdown(
             label="Priorité *",
             options=[
-                ft.dropdown.Option("Mineure"),
-                ft.dropdown.Option("Majeure"),
+                "Mineure",
+                "Majeure",
             ],
             value=plan['priorite'] if is_edit else "Mineure",
             border_color=Theme.OUTLINE,
@@ -1705,9 +1797,9 @@ class VeillePage(ft.Container):
         type_dropdown = ft.Dropdown(
             label="Type d'Action *",
             options=[
-                ft.dropdown.Option("Amélioration"),
-                ft.dropdown.Option("Corrective"),
-                ft.dropdown.Option("Mise à jour"),
+                "Amélioration",
+                "Corrective",
+                "Mise à jour",
             ],
             value=plan['type_action'] if is_edit else "Amélioration",
             border_color=Theme.OUTLINE,
@@ -1863,11 +1955,16 @@ class VeillePage(ft.Container):
                         padding=20,
                         bgcolor=Theme.BG_CARD,
                         border_radius=10,
-                        border=ft.border.all(1, Theme.OUTLINE),
+                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                         content=ft.Column(
                             spacing=15,
                             controls=[
-                                ft.Text("📋 Informations de Base", size=16, weight=ft.FontWeight.BOLD, color=Theme.SECONDARY),
+                                ft.Text("[ID] Informations de Base", size=16, weight=ft.FontWeight.BOLD, color=Theme.SECONDARY),
                                 date_creation_display,
                                 veille_dropdown,
                                 plan_numero_display,
@@ -1885,11 +1982,16 @@ class VeillePage(ft.Container):
                         padding=20,
                         bgcolor=Theme.BG_CARD,
                         border_radius=10,
-                        border=ft.border.all(1, Theme.OUTLINE),
+                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                         content=ft.Column(
                             spacing=15,
                             controls=[
-                                ft.Text("📅 Planification", size=16, weight=ft.FontWeight.BOLD, color=Theme.WARNING),
+                                ft.Text("[Date] Planification", size=16, weight=ft.FontWeight.BOLD, color=Theme.WARNING),
                                 ft.Row(spacing=15, controls=[date_fin_field, date_solde_field]),
                                 moyen_field,
                                 remarques_field,
@@ -1901,14 +2003,19 @@ class VeillePage(ft.Container):
                         padding=20,
                         bgcolor=Theme.BG_CARD,
                         border_radius=10,
-                        border=ft.border.all(1, Theme.OUTLINE),
+                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                         content=ft.Column(
                             spacing=15,
                             controls=[
                                 ft.Row(
                                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                     controls=[
-                                        ft.Text("✅ Liste des Tâches", size=16, weight=ft.FontWeight.BOLD, color=Theme.SUCCESS),
+                                        ft.Text("[OK] Liste des Tâches", size=16, weight=ft.FontWeight.BOLD, color=Theme.SUCCESS),
                                         ft.ElevatedButton("Ajouter Tâche", icon=ft.Icons.ADD, on_click=add_task),
                                     ],
                                 ),
@@ -1932,7 +2039,7 @@ class VeillePage(ft.Container):
         # Boutons actions
         def save_plan(e):
             if not origine_field.value or not objectif_field.value or not date_fin_field.value:
-                create_snackbar(self.page, "⚠️ Origine, Objectif et Date fin obligatoires", "error")
+                create_snackbar(self.page, "[Attention] Origine, Objectif et Date fin obligatoires", "error")
                 return
             
             # Récupérer les tâches
@@ -1970,14 +2077,14 @@ class VeillePage(ft.Container):
                 # Mettre à jour la veille si associée
                 if veille_id_selected:
                     self.db.link_plan_to_veille(veille_id_selected, self.edit_plan_id)
-                create_snackbar(self.page, "✅ Plan d'action mis à jour", "success")
+                create_snackbar(self.page, "[OK] Plan d'action mis à jour", "success")
             else:
                 data['date_creation'] = datetime.now().strftime('%Y-%m-%d')
                 plan_id = self.db.create_action_plan(data)
                 # Mettre à jour la veille si associée
                 if veille_id_selected:
                     self.db.link_plan_to_veille(veille_id_selected, plan_id)
-                create_snackbar(self.page, f"✅ Plan d'action créé (PA-{plan_id})", "success")
+                create_snackbar(self.page, f"[OK] Plan d'action créé (PA-{plan_id})", "success")
             
             self._navigate_to("main")
         
@@ -2015,7 +2122,7 @@ class VeillePage(ft.Container):
     def _import_excel(self):
         """Importe des veilles depuis un fichier Excel."""
         if not self.file_picker:
-            create_snackbar(self.page, "❌ FilePicker non initialisé", "error")
+            create_snackbar(self.page, "[Erreur] FilePicker non initialisé", "error")
             return
         
         self.file_picker.pick_files(
@@ -2037,7 +2144,7 @@ class VeillePage(ft.Container):
             # Colonnes attendues
             required_cols = ['source', 'description']
             if not all(col in df.columns for col in required_cols):
-                create_snackbar(self.page, f"❌ Colonnes requises: {', '.join(required_cols)}", "error")
+                create_snackbar(self.page, f"[Erreur] Colonnes requises: {', '.join(required_cols)}", "error")
                 return
             
             imported = 0
@@ -2060,18 +2167,18 @@ class VeillePage(ft.Container):
                     self.db.create_veille(data)
                     imported += 1
             
-            create_snackbar(self.page, f"✅ {imported} veille(s) importée(s)", "success")
+            create_snackbar(self.page, f"[OK] {imported} veille(s) importée(s)", "success")
             self._navigate_to("main")
             
         except Exception as ex:
-            create_snackbar(self.page, f"❌ Erreur import: {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur import: {str(ex)}", "error")
     
     def _export_veilles(self, format_type):
         """Exporte les veilles en PDF ou Excel."""
         veilles = self.db.get_all_veilles()
         
         if not veilles:
-            create_snackbar(self.page, "⚠️ Aucune veille à exporter", "error")
+            create_snackbar(self.page, "[Attention] Aucune veille à exporter", "error")
             return
         
         try:
@@ -2083,7 +2190,7 @@ class VeillePage(ft.Container):
                 self._export_veilles_pdf(veilles, timestamp)
                 
         except Exception as ex:
-            create_snackbar(self.page, f"❌ Erreur export: {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur export: {str(ex)}", "error")
     
     def _export_veilles_excel(self, veilles, timestamp):
         """Exporte les veilles en Excel."""
@@ -2096,7 +2203,7 @@ class VeillePage(ft.Container):
         
         # En-têtes
         headers = ['ID', 'Source', 'Date Pub.', 'Date Lecture', 'Description', 
-                   'Lien URL', 'Commentaire', 'Statut', 'N° Plan']
+                   'Lien URL', 'Commentaire', 'Statut', 'No Plan']
         ws.append(headers)
         
         # Style des en-têtes
@@ -2138,7 +2245,7 @@ class VeillePage(ft.Container):
         filepath = Path.cwd() / filename
         wb.save(filepath)
         
-        create_snackbar(self.page, f"✅ Exporté: {filename}", "success")
+        create_snackbar(self.page, f"[OK] Exporté: {filename}", "success")
     
     def _export_veilles_pdf(self, veilles, timestamp):
         """Exporte les veilles en PDF."""
@@ -2168,7 +2275,7 @@ class VeillePage(ft.Container):
         elements.append(Spacer(1, 0.5*cm))
         
         # Tableau
-        data = [['ID', 'Source', 'Date', 'Description', 'Statut', 'N° Plan']]
+        data = [['ID', 'Source', 'Date', 'Description', 'Statut', 'No Plan']]
         
         for v in veilles:
             desc = (v['description'][:80] + '...') if len(v['description']) > 80 else v['description']
@@ -2198,14 +2305,14 @@ class VeillePage(ft.Container):
         elements.append(table)
         doc.build(elements)
         
-        create_snackbar(self.page, f"✅ Exporté: {filename}", "success")
+        create_snackbar(self.page, f"[OK] Exporté: {filename}", "success")
     
     def _export_plans(self, format_type):
         """Exporte les plans d'actions en PDF ou Excel."""
         plans = self.db.get_all_action_plans()
         
         if not plans:
-            create_snackbar(self.page, "⚠️ Aucun plan à exporter", "error")
+            create_snackbar(self.page, "[Attention] Aucun plan à exporter", "error")
             return
         
         try:
@@ -2217,7 +2324,7 @@ class VeillePage(ft.Container):
                 self._export_plans_pdf(plans, timestamp)
                 
         except Exception as ex:
-            create_snackbar(self.page, f"❌ Erreur export: {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur export: {str(ex)}", "error")
     
     def _export_plans_excel(self, plans, timestamp):
         """Exporte les plans d'actions en Excel."""
@@ -2266,7 +2373,7 @@ class VeillePage(ft.Container):
         filepath = Path.cwd() / filename
         wb.save(filepath)
         
-        create_snackbar(self.page, f"✅ Exporté: {filename}", "success")
+        create_snackbar(self.page, f"[OK] Exporté: {filename}", "success")
     
     def _export_plans_pdf(self, plans, timestamp):
         """Exporte les plans d'actions en PDF."""
@@ -2328,4 +2435,4 @@ class VeillePage(ft.Container):
         elements.append(table)
         doc.build(elements)
         
-        create_snackbar(self.page, f"✅ Exporté: {filename}", "success")
+        create_snackbar(self.page, f"[OK] Exporté: {filename}", "success")

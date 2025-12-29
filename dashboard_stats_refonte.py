@@ -380,7 +380,7 @@ def _build_top_urgences(self, all_ncs, today):
                     ft.DataCell(ft.Text(date_str, size=13)),
                     ft.DataCell(
                         ft.Container(
-                            padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                            padding=ft.Padding(left=10, right=10, top=5, bottom=5),
                             bgcolor=ft.Colors.with_opacity(0.2, jours_color),
                             border_radius=8,
                             content=ft.Text(
@@ -457,7 +457,7 @@ def _create_severity_badge_inline(self, gravite):
         'Critique': ft.Colors.RED_600,
     }
     return ft.Container(
-        padding=ft.padding.symmetric(horizontal=12, vertical=6),
+        padding=ft.Padding(left=12, right=12, top=6, bottom=6),
         bgcolor=ft.Colors.with_opacity(0.2, colors.get(gravite, ft.Colors.GREY_600)),
         border_radius=12,
         content=ft.Text(

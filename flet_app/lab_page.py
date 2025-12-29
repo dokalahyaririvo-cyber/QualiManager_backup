@@ -54,7 +54,7 @@ class LabPage(ft.Container):
                                 spacing=0,
                                 controls=[
                                     ft.Text(
-                                        "🔬 Laboratoire / LIMS",
+                                        "[Analyse] Laboratoire / LIMS",
                                         size=22,
                                         weight=ft.FontWeight.BOLD,
                                         color=Theme.TEXT_PRIMARY,
@@ -83,9 +83,9 @@ class LabPage(ft.Container):
             animation_duration=200,
             on_change=self._on_tab_change,
             tabs=[
-                ft.Tab(text="📝 Saisie", icon=ft.Icons.EDIT_NOTE),
-                ft.Tab(text="📈 SPC", icon=ft.Icons.SHOW_CHART),
-                ft.Tab(text="📚 Historique", icon=ft.Icons.HISTORY),
+                ft.Tab(text="[Note] Saisie", icon=ft.Icons.EDIT_NOTE),
+                ft.Tab(text="[Graphique] SPC", icon=ft.Icons.SHOW_CHART),
+                ft.Tab(text="[Source] Historique", icon=ft.Icons.HISTORY),
             ],
         )
         
@@ -101,7 +101,7 @@ class LabPage(ft.Container):
             controls=[
                 header,
                 ft.Container(
-                    padding=ft.padding.symmetric(horizontal=20),
+                    padding=ft.Padding(left=20, right=20, top=0, bottom=0),
                     content=self.tabs,
                 ),
                 self.tab_content,
@@ -274,9 +274,9 @@ class LabPage(ft.Container):
                 ),
                 # En-tête du tableau
                 ft.Container(
-                    padding=ft.padding.symmetric(horizontal=15, vertical=10),
+                    padding=ft.Padding(left=15, right=15, top=10, bottom=10),
                     bgcolor=Theme.BG_TERTIARY,
-                    border_radius=ft.border_radius.only(top_left=8, top_right=8),
+                    border_radius=ft.BorderRadius(8, 8, 0, 0),
                     content=ft.Row(
                         controls=[
                             ft.Container(width=180, content=ft.Text("Paramètre", size=12, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY)),
@@ -319,7 +319,7 @@ class LabPage(ft.Container):
         # Indicateur de conformité
         conf_indicator = ft.Container(
             width=90,
-            padding=ft.padding.symmetric(horizontal=8, vertical=4),
+            padding=ft.Padding(left=8, right=8, top=4, bottom=4),
             border_radius=8,
             bgcolor=Theme.SUCCESS if conformity == 'Conforme' else (Theme.DANGER if conformity == 'Non Conforme' else Theme.BG_TERTIARY),
             content=ft.Text(
@@ -330,9 +330,9 @@ class LabPage(ft.Container):
         )
         
         return ft.Container(
-            padding=ft.padding.symmetric(horizontal=15, vertical=8),
+            padding=ft.Padding(left=15, right=15, top=8, bottom=8),
             bgcolor=Theme.BG_SECONDARY,
-            border=ft.border.only(bottom=ft.BorderSide(1, Theme.BG_TERTIARY)),
+            border=ft.Border(bottom=ft.BorderSide(1, Theme.BG_TERTIARY)),
             content=ft.Row(
                 controls=[
                     ft.Container(
@@ -382,7 +382,12 @@ class LabPage(ft.Container):
             padding=15,
             border_radius=12,
             bgcolor=Theme.BG_SECONDARY,
-            border=ft.border.all(1, Theme.BG_TERTIARY),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            ),
             on_click=lambda e, a=analysis: self._open_analysis(a),
             ink=True,
             content=ft.Column(
@@ -457,7 +462,7 @@ class LabPage(ft.Container):
         
         if mini:
             return ft.Container(
-                padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                padding=ft.Padding(left=8, right=8, top=4, bottom=4),
                 border_radius=8,
                 bgcolor=colors.get(status, Theme.BG_TERTIARY),
                 content=ft.Icon(
@@ -468,7 +473,7 @@ class LabPage(ft.Container):
             )
         
         return ft.Container(
-            padding=ft.padding.symmetric(horizontal=12, vertical=6),
+            padding=ft.Padding(left=12, right=12, top=6, bottom=6),
             border_radius=10,
             bgcolor=colors.get(status, Theme.BG_TERTIARY),
             content=ft.Row(
@@ -682,7 +687,7 @@ class LabPage(ft.Container):
         if produit_options:
             first_produit = produits[0]
             params = self.db.get_parametres_for_produit(first_produit['id'])
-            self.spc_param.options = [ft.dropdown.Option(p['nom']) for p in params]
+            self.spc_param.options = [p['nom'] for p in params]
             if params:
                 self.spc_param.value = params[0]['nom']
         
@@ -738,7 +743,7 @@ class LabPage(ft.Container):
         produit = next((p for p in produits if p['nom'] == e.control.value), None)
         if produit:
             params = self.db.get_parametres_for_produit(produit['id'])
-            self.spc_param.options = [ft.dropdown.Option(p['nom']) for p in params]
+            self.spc_param.options = [p['nom'] for p in params]
             self.spc_param.value = params[0]['nom'] if params else None
             self.spc_param.update()
     
@@ -864,7 +869,12 @@ class LabPage(ft.Container):
                 width=chart_width,
                 height=2 if not dashed else 1,
                 bgcolor=color,
-                border=ft.border.all(1, color) if dashed else None,
+                border=ft.Border(
+                top=ft.BorderSide(1, color),
+                right=ft.BorderSide(1, color),
+                bottom=ft.BorderSide(1, color),
+                left=ft.BorderSide(1, color),
+            ) if dashed else None,
                 tooltip=f"{label}: {value:.2f}",
             )
         
@@ -920,7 +930,7 @@ class LabPage(ft.Container):
     def _create_stat_chip(self, label: str, value: str, color: str) -> ft.Container:
         """Crée un chip de statistique."""
         return ft.Container(
-            padding=ft.padding.symmetric(horizontal=12, vertical=8),
+            padding=ft.Padding(left=12, right=12, top=8, bottom=8),
             border_radius=8,
             bgcolor=Theme.BG_TERTIARY,
             content=ft.Column(
@@ -989,7 +999,7 @@ class LabPage(ft.Container):
                     width=150,
                 ),
                 create_text_field(
-                    "N° Lot...",
+                    "No Lot...",
                     prefix_icon=ft.Icons.SEARCH,
                     width=200,
                 ),
@@ -1012,7 +1022,7 @@ class LabPage(ft.Container):
                         ft.DataCell(ft.Text(analysis.get('date_prelevement', '-'), size=12, color=Theme.TEXT_MUTED)),
                         ft.DataCell(
                             ft.Container(
-                                padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                                padding=ft.Padding(left=8, right=8, top=4, bottom=4),
                                 border_radius=8,
                                 bgcolor=conf_color,
                                 content=ft.Text(conf, size=11, color=ft.Colors.WHITE),
@@ -1044,7 +1054,12 @@ class LabPage(ft.Container):
                 ft.DataColumn(ft.Text("Actions", size=12, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY, no_wrap=True)),
             ],
             rows=rows,
-            border=ft.border.all(1, Theme.BG_TERTIARY),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            ),
             border_radius=8,
             column_spacing=15,
             heading_row_color=Theme.BG_TERTIARY,

@@ -129,7 +129,7 @@ class MainLayout(ft.Container):
             leading=ft.Column(
                 controls=[
                     ft.Container(
-                        padding=ft.padding.symmetric(vertical=10),
+                        padding=ft.Padding(left=0, right=0, top=10, bottom=10),
                         content=ft.Row(
                             alignment=ft.MainAxisAlignment.CENTER,
                             controls=[
@@ -242,24 +242,24 @@ class MainLayout(ft.Container):
     
     def _toggle_theme(self, e):
         """Bascule le thème."""
-        print("🌙 _toggle_theme dans MainLayout appelé")
+        print("[THEME] _toggle_theme dans MainLayout appele")
         Theme.toggle()
         # Mettre à jour le theme_mode de la page Flet via page
         if self.page:
-            print(f"   📄 Page trouvée - Nouveau bgcolor: {Theme.BG_PRIMARY}")
+            print(f"   [PAGE] Page trouvee - Nouveau bgcolor: {Theme.BG_PRIMARY}")
             self.page.theme_mode = ft.ThemeMode.LIGHT if not Theme.is_dark() else ft.ThemeMode.DARK
             self.page.bgcolor = Theme.BG_PRIMARY
             
             # Forcer la reconstruction complète en nettoyant d'abord
-            print(f"   🧹 Nettoyage complet de la page...")
+            print(f"   [CLEAN] Nettoyage complet de la page...")
             self.page.controls.clear()
             self.page.update()
             
             # Puis naviguer pour reconstruire
-            print(f"   🔄 Navigation vers: {self.current_route}")
+            print(f"   [NAV] Navigation vers: {self.current_route}")
             self.navigate(self.current_route)
         else:
-            print("   ⚠️ Pas de page trouvée!")
+            print("   [!] Pas de page trouvee!")
 
 
 class HubPage(ft.View):
@@ -340,7 +340,7 @@ class HubPage(ft.View):
         
         # Header
         header = ft.Container(
-            padding=ft.padding.symmetric(horizontal=30, vertical=8),
+            padding=ft.Padding(left=30, right=30, top=8, bottom=8),
             content=ft.Row(
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 controls=[
@@ -377,7 +377,7 @@ class HubPage(ft.View):
                             ),
                             # User menu
                             ft.Container(
-                                padding=ft.padding.symmetric(horizontal=15, vertical=8),
+                                padding=ft.Padding(left=15, right=15, top=8, bottom=8),
                                 border_radius=20,
                                 bgcolor=Theme.BG_SECONDARY,
                                 content=ft.Row(
@@ -422,12 +422,12 @@ class HubPage(ft.View):
             greeting = "Bonsoir"
         
         greeting_section = ft.Container(
-            padding=ft.padding.only(left=30, right=30, top=5, bottom=10),
+            padding=ft.Padding(left=30, right=30, top=5, bottom=10),
             content=ft.Column(
                 spacing=2,
                 controls=[
                     ft.Text(
-                        f"{greeting}, {self.user.get('nom', 'Utilisateur').split()[0]} 👋",
+                        f"{greeting}, {self.user.get('nom', 'Utilisateur').split()[0]}",
                         size=22,
                         weight=ft.FontWeight.BOLD,
                         color=Theme.TEXT_PRIMARY,
@@ -444,7 +444,7 @@ class HubPage(ft.View):
         # Tuiles des modules - Grid responsive 3x2 avec expansion verticale
         tiles = ft.Container(
             expand=True,
-            padding=ft.padding.only(left=30, right=30, bottom=20),
+            padding=ft.Padding(left=30, right=30, top=0, bottom=20),
             content=ft.ResponsiveRow(
                 spacing=12,
                 run_spacing=12,
@@ -544,7 +544,7 @@ class HubPage(ft.View):
         badge = None
         if badge_count is not None and badge_count > 0:
             badge = ft.Container(
-                padding=ft.padding.symmetric(horizontal=12, vertical=6),
+                padding=ft.Padding(left=12, right=12, top=6, bottom=6),
                 border_radius=14,
                 bgcolor=badge_color,
                 content=ft.Text(
@@ -560,7 +560,12 @@ class HubPage(ft.View):
             padding=18,
             border_radius=18,
             bgcolor=Theme.BG_SECONDARY,
-            border=ft.border.all(1, Theme.BG_TERTIARY),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            ),
             shadow=ft.BoxShadow(
                 spread_radius=1,
                 blur_radius=15,
@@ -621,10 +626,20 @@ class HubPage(ft.View):
             if not ctrl or not ctrl.page:
                 return
             if e.data == "true":
-                ctrl.border = ft.border.all(2, color)
+                ctrl.border = ft.Border(
+                top=ft.BorderSide(2, color),
+                right=ft.BorderSide(2, color),
+                bottom=ft.BorderSide(2, color),
+                left=ft.BorderSide(2, color),
+            )
                 ctrl.bgcolor = Theme.BG_TERTIARY
             else:
-                ctrl.border = ft.border.all(1, Theme.BG_TERTIARY)
+                ctrl.border = ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            )
                 ctrl.bgcolor = Theme.BG_SECONDARY
             ctrl.update()
         except Exception:
@@ -665,21 +680,21 @@ class HubPage(ft.View):
     
     def _toggle_theme(self, e):
         """Bascule le thème."""
-        print("☀️ _toggle_theme dans HubPage appelé")
+        print("[THEME] _toggle_theme dans HubPage appele")
         Theme.toggle()
         # Mettre à jour le theme_mode de la page Flet
         if self.page:
-            print(f"   📄 Page trouvée - Nouveau bgcolor: {Theme.BG_PRIMARY}")
+            print(f"   [PAGE] Page trouvee - Nouveau bgcolor: {Theme.BG_PRIMARY}")
             self.page.theme_mode = ft.ThemeMode.LIGHT if not Theme.is_dark() else ft.ThemeMode.DARK
             self.page.bgcolor = Theme.BG_PRIMARY
             
             # Forcer la reconstruction complète
-            print("   🧹 Nettoyage complet de la page...")
+            print("   [CLEAN] Nettoyage complet de la page...")
             self.page.controls.clear()
             self.page.update()
             
             # Puis reconstruire le Hub
-            print("   🔄 Navigation vers /hub")
+            print("   [NAV] Navigation vers /hub")
             self.navigate("/hub")
         else:
-            print("   ⚠️ Pas de page trouvée!")
+            print("   [!] Pas de page trouvee!")

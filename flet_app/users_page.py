@@ -69,7 +69,7 @@ class UsersPage(ft.Container):
                                     spacing=0,
                                     controls=[
                                         ft.Text(
-                                            "👥 Gestion des Utilisateurs",
+                                            "[Utilisateurs] Gestion des Utilisateurs",
                                             size=24,
                                             weight=ft.FontWeight.BOLD,
                                             color=Theme.TEXT_PRIMARY
@@ -309,14 +309,14 @@ class UsersPage(ft.Container):
                 dialog.open = False
                 self.page.update()
                 self._refresh(e)
-                create_snackbar(self.page, "✅ Utilisateur créé avec succès", "success")
+                create_snackbar(self.page, "[OK] Utilisateur cree avec succes", "success")
             except Exception as ex:
                 error_text.value = str(ex)
                 error_text.update()
         
         dialog = ft.AlertDialog(
             modal=True,
-            title=ft.Text("➕ Nouvel Utilisateur"),
+            title=ft.Text("[+] Nouvel Utilisateur"),
             content=ft.Container(
                 width=400,
                 content=ft.Column(
@@ -385,14 +385,14 @@ class UsersPage(ft.Container):
                 dialog.open = False
                 self.page.update()
                 self._refresh(e)
-                create_snackbar(self.page, "✅ Utilisateur modifié", "success")
+                create_snackbar(self.page, "[OK] Utilisateur modifie", "success")
             except Exception as ex:
                 error_text.value = str(ex)
                 error_text.update()
         
         dialog = ft.AlertDialog(
             modal=True,
-            title=ft.Text("✏️ Modifier Utilisateur"),
+            title=ft.Text("[Modifier] Modifier Utilisateur"),
             content=ft.Container(
                 width=400,
                 content=ft.Column(
@@ -427,13 +427,13 @@ class UsersPage(ft.Container):
             try:
                 self.db.delete_user(user_id)
                 self._refresh(None)
-                create_snackbar(self.page, "✅ Utilisateur supprimé", "success")
+                create_snackbar(self.page, "[OK] Utilisateur supprime", "success")
             except Exception as ex:
                 create_snackbar(self.page, f"Erreur: {ex}", "error")
         
         create_confirm_dialog(
             self.page,
-            "⚠️ Confirmer la suppression",
+            "[Attention] Confirmer la suppression",
             f"Êtes-vous sûr de vouloir supprimer l'utilisateur '{user_name}' ?",
             do_delete,
             "Supprimer",

@@ -12,7 +12,7 @@ from enum import Enum
 
 class TypeAnalyse(Enum):
     """Types d'analyses supportés"""
-    OENOLOGIE = "Œnologie Standard"
+    OENOLOGIE = "Oenologie Standard"
     SECURITE_ALIMENTAIRE = "Sécurité Alimentaire & Allergènes"
     CONTAMINANTS = "Contaminants Spécifiques"
     METROLOGIE = "Métrologie & Conditionnement"
@@ -70,7 +70,7 @@ class Analyse:
 
 @dataclass
 class OenologieStandard:
-    """Résultats d'analyse œnologique (Chimie)"""
+    """Résultats d'analyse oenologique (Chimie)"""
     tav: Optional[float] = None  # % vol
     sucres: Optional[float] = None  # g/L
     acidite_totale: Optional[float] = None  # g/L H2SO4
@@ -103,7 +103,7 @@ class SecuriteAlimentaire:
 @dataclass
 class Contaminants:
     """Résultats contaminants spécifiques (traces)"""
-    ochratoxine_a: Optional[float] = None  # µg/kg
+    ochratoxine_a: Optional[float] = None  # ug/kg
     tca: Optional[float] = None  # ng/L (haloanisole)
     teca: Optional[float] = None
     tba: Optional[float] = None
@@ -154,7 +154,7 @@ class Metrologie:
         if not self.volume_net_moyen or not self.ecart_type:
             return False
         
-        # Tolérance : ±2% du volume cible
+        # Tolérance : +/-2% du volume cible
         tolerance = self.volume_cible * 0.02
         return abs(self.volume_net_moyen - self.volume_cible) <= tolerance
 
@@ -239,7 +239,7 @@ class SeuilsReglementaires:
     MERCURE_ROUGE = 0.05  # mg/L
     
     # Ochratoxine A
-    OCHRATOXINE_ROUGE = 2.0  # µg/kg
+    OCHRATOXINE_ROUGE = 2.0  # ug/kg
     
     # ATP (Inox)
     ATP_BON = 150  # RLU

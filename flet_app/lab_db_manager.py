@@ -381,7 +381,7 @@ class LabDBManager:
             # En-têtes
             headers = [
                 "ID", "Date Prélèvement", "Date Résultat", "Type Analyse",
-                "Laboratoire", "N° Lot", "N° Cuve", "N° Échantillon",
+                "Laboratoire", "No Lot", "No Cuve", "No Échantillon",
                 "Statut", "Conclusion", "Coût", "Commentaires"
             ]
             

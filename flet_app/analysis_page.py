@@ -74,7 +74,7 @@ class AnalysisPage(ft.View):
                                         spacing=0,
                                         controls=[
                                             ft.Text(
-                                                "🔬 Analyse des Causes",
+                                                "[Analyse] Analyse des Causes",
                                                 size=22,
                                                 weight=ft.FontWeight.BOLD,
                                                 color=Theme.TEXT_PRIMARY
@@ -94,7 +94,7 @@ class AnalysisPage(ft.View):
                 
                 # Tabs
                 ft.Container(
-                    padding=ft.padding.symmetric(20, 0),
+                    padding=ft.Padding(left=20, right=20, top=0, bottom=0),
                     content=self.tabs,
                 ),
                 
@@ -129,11 +129,16 @@ class AnalysisPage(ft.View):
             
             why_controls.append(
                 ft.Container(
-                    margin=ft.margin.only(bottom=15),
+                    margin=15,
                     padding=20,
                     border_radius=Styles.RADIUS_LG,
                     bgcolor=Theme.BG_SECONDARY,
-                    border=ft.border.all(2, colors[i]),
+                    border=ft.Border(
+                top=ft.BorderSide(2, colors[i]),
+                right=ft.BorderSide(2, colors[i]),
+                bottom=ft.BorderSide(2, colors[i]),
+                left=ft.BorderSide(2, colors[i]),
+            ),
                     content=ft.Row(
                         controls=[
                             ft.Container(
@@ -141,7 +146,7 @@ class AnalysisPage(ft.View):
                                 height=50,
                                 border_radius=25,
                                 bgcolor=colors[i],
-                                alignment=ft.alignment.center,
+                                alignment=ft.Alignment(0, 0),
                                 content=ft.Text(
                                     f"P{i+1}",
                                     size=18,
@@ -177,7 +182,7 @@ class AnalysisPage(ft.View):
                 create_card(
                     content=ft.Column(
                         controls=[
-                            ft.Text("🎯 Problème initial", size=16, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+                            ft.Text("[Origine] Problème initial", size=16, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
                             self.problem_field,
                         ],
                     ),
@@ -196,7 +201,7 @@ class AnalysisPage(ft.View):
                     content=ft.Column(
                         controls=[
                             ft.Text(
-                                "🎯 CAUSE RACINE IDENTIFIÉE",
+                                "[Origine] CAUSE RACINE IDENTIFIÉE",
                                 size=16,
                                 weight=ft.FontWeight.BOLD,
                                 color=ft.Colors.WHITE
@@ -213,7 +218,7 @@ class AnalysisPage(ft.View):
                     alignment=ft.MainAxisAlignment.CENTER,
                     controls=[
                         create_button(
-                            "💾 Sauvegarder l'analyse",
+                            "[Sauvegarder] Sauvegarder l'analyse",
                             style="success",
                             on_click=lambda e: self._save_analysis("5why"),
                         ),
@@ -225,12 +230,12 @@ class AnalysisPage(ft.View):
     # ========== ISHIKAWA ==========
     def _build_ishikawa(self) -> ft.Control:
         categories = [
-            ("👷 Main d'œuvre", "main_oeuvre", Theme.DANGER),
-            ("⚙️ Matériel", "materiel", Theme.WARNING),
-            ("📦 Matière", "matiere", Theme.SUCCESS),
-            ("📋 Méthode", "methode", Theme.PRIMARY),
-            ("🌍 Milieu", "milieu", Theme.SECONDARY),
-            ("📏 Mesure", "mesure", "#EC4899"),
+            ("[MO] Main d'oeuvre", "main_oeuvre", Theme.DANGER),
+            ("[Config] Matériel", "materiel", Theme.WARNING),
+            ("[Paquet] Matière", "matiere", Theme.SUCCESS),
+            ("[ID] Méthode", "methode", Theme.PRIMARY),
+            ("[Milieu] Milieu", "milieu", Theme.SECONDARY),
+            ("[Mesure] Mesure", "mesure", "#EC4899"),
         ]
         
         self.ishikawa_entries = {}
@@ -281,7 +286,7 @@ class AnalysisPage(ft.View):
                     bgcolor=Theme.DANGER,
                     content=ft.Column(
                         controls=[
-                            ft.Text("🎯 EFFET / PROBLÈME", size=14, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
+                            ft.Text("[Origine] EFFET / PROBLÈME", size=14, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
                             self.effect_field,
                         ],
                     ),
@@ -303,7 +308,7 @@ class AnalysisPage(ft.View):
                     bgcolor=Theme.INFO,
                     content=ft.Column(
                         controls=[
-                            ft.Text("📊 SYNTHÈSE", size=14, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
+                            ft.Text("[Stats] SYNTHÈSE", size=14, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
                             self.ishikawa_synth,
                         ],
                     ),
@@ -315,7 +320,7 @@ class AnalysisPage(ft.View):
                     alignment=ft.MainAxisAlignment.CENTER,
                     controls=[
                         create_button(
-                            "💾 Sauvegarder le diagramme",
+                            "[Sauvegarder] Sauvegarder le diagramme",
                             style="success",
                             on_click=lambda e: self._save_analysis("ishikawa"),
                         ),
@@ -341,7 +346,7 @@ class AnalysisPage(ft.View):
                     height=40,
                     bgcolor=Theme.BG_TERTIARY,
                     border_radius=Styles.RADIUS_SM,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment(0, 0),
                     content=ft.Text("--", color=Theme.TEXT_PRIMARY, weight=ft.FontWeight.BOLD),
                 ),
                 'action': create_text_field("Action corrective", width=150),
@@ -352,7 +357,7 @@ class AnalysisPage(ft.View):
                 padding=10,
                 border_radius=Styles.RADIUS_SM,
                 bgcolor=Theme.BG_SECONDARY,
-                margin=ft.margin.only(bottom=5),
+                margin=5,
                 content=ft.Row(
                     controls=[
                         entries['mode'],
@@ -378,8 +383,8 @@ class AnalysisPage(ft.View):
                 create_card(
                     content=ft.Column(
                         controls=[
-                            ft.Text("📊 AMDEC - Analyse des Modes de Défaillance", size=18, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
-                            ft.Text("IPR = Gravité × Occurrence × Détection  |  Échelles 1-10  |  IPR critique > 100", size=12, color=Theme.TEXT_MUTED),
+                            ft.Text("[Stats] AMDEC - Analyse des Modes de Défaillance", size=18, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+                            ft.Text("IPR = Gravité x Occurrence x Détection  |  Échelles 1-10  |  IPR critique > 100", size=12, color=Theme.TEXT_MUTED),
                         ],
                     ),
                     padding=15,
@@ -418,8 +423,8 @@ class AnalysisPage(ft.View):
                         self.ipr_summary,
                         ft.Row(
                             controls=[
-                                create_button("🔄 Calculer IPR", style="secondary", on_click=self._calculate_ipr),
-                                create_button("💾 Sauvegarder", style="success", on_click=lambda e: self._save_analysis("amdec")),
+                                create_button("[Actualiser] Calculer IPR", style="secondary", on_click=self._calculate_ipr),
+                                create_button("[Sauvegarder] Sauvegarder", style="success", on_click=lambda e: self._save_analysis("amdec")),
                             ],
                         ),
                     ],
@@ -459,14 +464,14 @@ class AnalysisPage(ft.View):
     # ========== 8D ==========
     def _build_8d(self) -> ft.Control:
         disciplines = [
-            ("D1", "🏢 Équipe", "Constitution de l'équipe", Theme.DANGER),
-            ("D2", "📝 Problème", "Description QQOQCCP", Theme.WARNING),
-            ("D3", "🛡️ Containment", "Actions immédiates", "#F97316"),
-            ("D4", "🔍 Cause racine", "Identification", Theme.SUCCESS),
-            ("D5", "✅ Actions correctives", "Choix et vérification", Theme.PRIMARY),
-            ("D6", "🚀 Mise en œuvre", "Implémentation", "#6366F1"),
-            ("D7", "🔒 Prévention", "Éviter récurrence", Theme.SECONDARY),
-            ("D8", "🎉 Clôture", "Capitalisation", "#EC4899"),
+            ("D1", "[Equipe] Équipe", "Constitution de l'équipe", Theme.DANGER),
+            ("D2", "[Note] Problème", "Description QQOQCCP", Theme.WARNING),
+            ("D3", "[Protection] Containment", "Actions immédiates", "#F97316"),
+            ("D4", "[Recherche] Cause racine", "Identification", Theme.SUCCESS),
+            ("D5", "[OK] Actions correctives", "Choix et vérification", Theme.PRIMARY),
+            ("D6", "[Action] Mise en oeuvre", "Implémentation", "#6366F1"),
+            ("D7", "[Prevention] Prévention", "Éviter récurrence", Theme.SECONDARY),
+            ("D8", "[Cloture] Clôture", "Capitalisation", "#EC4899"),
         ]
         
         self.d8_entries = {}
@@ -481,13 +486,13 @@ class AnalysisPage(ft.View):
                     padding=15,
                     border_radius=Styles.RADIUS_MD,
                     bgcolor=Theme.BG_SECONDARY,
-                    margin=ft.margin.only(bottom=10),
+                    margin=10,
                     content=ft.Column(
                         controls=[
                             ft.Row(
                                 controls=[
                                     ft.Container(
-                                        padding=ft.padding.symmetric(5, 10),
+                                        padding=ft.Padding(left=5, right=5, top=10, bottom=10),
                                         border_radius=Styles.RADIUS_SM,
                                         bgcolor=color,
                                         content=ft.Text(d_id, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
@@ -505,7 +510,7 @@ class AnalysisPage(ft.View):
             scroll=ft.ScrollMode.AUTO,
             controls=[
                 create_card(
-                    content=ft.Text("📋 Méthode 8D - Résolution de Problèmes", size=18, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+                    content=ft.Text("[ID] Méthode 8D - Résolution de Problèmes", size=18, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
                     padding=15,
                 ),
                 ft.Container(height=15),
@@ -514,7 +519,7 @@ class AnalysisPage(ft.View):
                 ft.Row(
                     alignment=ft.MainAxisAlignment.CENTER,
                     controls=[
-                        create_button("💾 Sauvegarder le rapport 8D", style="success", on_click=lambda e: self._save_analysis("8d")),
+                        create_button("[Sauvegarder] Sauvegarder le rapport 8D", style="success", on_click=lambda e: self._save_analysis("8d")),
                     ],
                 ),
             ],
@@ -533,7 +538,7 @@ class AnalysisPage(ft.View):
                     height=40,
                     bgcolor=Theme.BG_TERTIARY,
                     border_radius=Styles.RADIUS_SM,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment(0, 0),
                     content=ft.Text("--%", color=Theme.TEXT_PRIMARY),
                 ),
                 'bar': ft.Container(
@@ -550,7 +555,7 @@ class AnalysisPage(ft.View):
                 padding=10,
                 border_radius=Styles.RADIUS_SM,
                 bgcolor=Theme.BG_SECONDARY,
-                margin=ft.margin.only(bottom=5),
+                margin=5,
                 content=ft.Row(
                     controls=[
                         entries['cause'],
@@ -569,8 +574,8 @@ class AnalysisPage(ft.View):
                 create_card(
                     content=ft.Column(
                         controls=[
-                            ft.Text("📊 Analyse Pareto (80/20)", size=18, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
-                            ft.Text("💡 80% des effets proviennent de 20% des causes", size=12, color=Theme.TEXT_MUTED),
+                            ft.Text("[Stats] Analyse Pareto (80/20)", size=18, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+                            ft.Text("[Info] 80% des effets proviennent de 20% des causes", size=12, color=Theme.TEXT_MUTED),
                         ],
                     ),
                     padding=15,
@@ -600,8 +605,8 @@ class AnalysisPage(ft.View):
                 ft.Row(
                     alignment=ft.MainAxisAlignment.CENTER,
                     controls=[
-                        create_button("🔄 Calculer Pareto", style="secondary", on_click=self._calculate_pareto),
-                        create_button("💾 Sauvegarder", style="success", on_click=lambda e: self._save_analysis("pareto")),
+                        create_button("[Actualiser] Calculer Pareto", style="secondary", on_click=self._calculate_pareto),
+                        create_button("[Sauvegarder] Sauvegarder", style="success", on_click=lambda e: self._save_analysis("pareto")),
                     ],
                 ),
             ],
@@ -685,6 +690,6 @@ class AnalysisPage(ft.View):
         try:
             if self.nc_id:
                 self.db.save_analysis(self.nc_id, method, json.dumps(data), self.user['id'])
-            create_snackbar(self.page, "✅ Analyse sauvegardée!", "success")
+            create_snackbar(self.page, "[OK] Analyse sauvegardée!", "success")
         except Exception as ex:
             create_snackbar(self.page, f"Erreur: {ex}", "error")

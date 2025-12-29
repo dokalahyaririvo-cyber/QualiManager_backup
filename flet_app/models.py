@@ -498,7 +498,7 @@ INSERT OR IGNORE INTO lab_parametres (code, nom, unite, valeur_min, valeur_max, 
 ('AT', 'Acidité Totale', 'g/L H2SO4', 4.0, 7.0, 5.5, 'Physico-chimique'),
 ('SO2L', 'SO2 Libre', 'mg/L', 10, 50, 30, 'Physico-chimique'),
 ('SO2T', 'SO2 Total', 'mg/L', 50, 200, 120, 'Physico-chimique'),
-('BRIX', 'Brix', '°Bx', 0, 5, 1, 'Physico-chimique'),
+('BRIX', 'Brix', 'oBx', 0, 5, 1, 'Physico-chimique'),
 ('TURB', 'Turbidité', 'NTU', 0, 2, 0.5, 'Physico-chimique');
 
 -- Produits exemple

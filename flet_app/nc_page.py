@@ -5,6 +5,7 @@ Saisie NC avec gravité, coûts CNQ, Ishikawa 5M, Timeline Lot
 """
 
 import flet as ft
+from flet_core.dropdown import Option as DropdownOption
 import os
 from typing import Dict, Any, Callable, List, Optional
 from datetime import datetime, timedelta
@@ -154,7 +155,7 @@ class NCPage(ft.Container):
                                     spacing=0,
                                     controls=[
                                         ft.Text(
-                                            "⚠️ Gestion des Non-Conformités",
+                                            "[Attention] Gestion des Non-Conformités",
                                             size=22,
                                             weight=ft.FontWeight.BOLD,
                                             color=Theme.TEXT_PRIMARY,
@@ -230,9 +231,11 @@ class NCPage(ft.Container):
                 controls=[
                     self.header,
                     ft.Container(
-                        padding=ft.padding.symmetric(horizontal=20, vertical=10),
+                        padding=ft.Padding(left=20, right=20, top=10, bottom=10),
                         bgcolor=Theme.BG_SECONDARY,
-                        border=ft.border.only(bottom=ft.BorderSide(2, Theme.OUTLINE)),
+                        border=ft.Border(
+                            bottom=ft.BorderSide(2, Theme.OUTLINE)
+                        ),
                         content=self.tabs,
                     ),
                     self.tab_content,
@@ -241,13 +244,13 @@ class NCPage(ft.Container):
             return result
             
         except Exception as e:
-            print(f"[NCPage._build_ui] ❌ ERREUR: {type(e).__name__}: {e}")
+            print(f"[NCPage._build_ui] [Erreur] ERREUR: {type(e).__name__}: {e}")
             import traceback
             traceback.print_exc()
             # Retourner une interface d'erreur
             return ft.Column(
                 controls=[
-                    ft.Text("❌ Erreur lors de la construction de l'interface", size=20, weight=ft.FontWeight.BOLD, color="red"),
+                    ft.Text("[Erreur] Erreur lors de la construction de l'interface", size=20, weight=ft.FontWeight.BOLD, color="red"),
                     ft.Text(f"{type(e).__name__}: {str(e)}", size=14),
                 ]
             )
@@ -270,7 +273,7 @@ class NCPage(ft.Container):
             traceback.print_exc()
             # Utiliser une notification simple sans dépendance à self.page
             if hasattr(self, 'page') and self.page:
-                create_snackbar(self.page, f"❌ Erreur lors de l'ouverture: {str(ex)}", "error")
+                create_snackbar(self.page, f"[Erreur] Erreur lors de l'ouverture: {str(ex)}", "error")
     
     def _close_form(self):
         """Ferme le formulaire et retourne à la liste."""
@@ -303,7 +306,7 @@ class NCPage(ft.Container):
         except Exception as ex:
             print(f"Erreur affichage NC: {ex}")
             if hasattr(self, 'page') and self.page:
-                create_snackbar(self.page, f"❌ Erreur: {str(ex)}", "error")
+                create_snackbar(self.page, f"[Erreur] Erreur: {str(ex)}", "error")
     
     def _duplicate_nc(self, nc: Dict):
         """Duplique une NC existante."""
@@ -329,11 +332,11 @@ class NCPage(ft.Container):
             # Ouvrir le formulaire avec les données copiées
             self._open_form(nc_copy)
             
-            create_snackbar(self.page, f"✅ NC dupliquée - Modifiez et sauvegardez", "success")
+            create_snackbar(self.page, f"[OK] NC dupliquée - Modifiez et sauvegardez", "success")
             
         except Exception as ex:
             print(f"Erreur duplication NC: {ex}")
-            create_snackbar(self.page, f"❌ Erreur lors de la duplication: {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur lors de la duplication: {str(ex)}", "error")
 
     def _export_to_csv(self, e=None):
         """Exporte la liste des NC filtrées vers un fichier CSV."""
@@ -344,7 +347,7 @@ class NCPage(ft.Container):
             ncs = self._get_nc_list()
             
             if not ncs:
-                create_snackbar(self.page, "⚠️ Aucune NC à exporter", "warning")
+                create_snackbar(self.page, "[Attention] Aucune NC à exporter", "warning")
                 return
             
             # Utiliser FilePicker pour choisir l'emplacement
@@ -389,10 +392,10 @@ class NCPage(ft.Container):
                                 writer.writerow(row)
                         
                         # Confirmation
-                        create_snackbar(self.page, f"✅ Fichier exporté : {os.path.basename(filepath)} ({len(ncs)} NC)", "success")
+                        create_snackbar(self.page, f"[OK] Fichier exporté : {os.path.basename(filepath)} ({len(ncs)} NC)", "success")
                     except Exception as ex:
                         print(f"Erreur écriture CSV: {ex}")
-                        create_snackbar(self.page, f"❌ Erreur lors de l'écriture: {str(ex)}", "error")
+                        create_snackbar(self.page, f"[Erreur] Erreur lors de l'écriture: {str(ex)}", "error")
             
             # Créer et ouvrir le FilePicker
             file_picker = ft.FilePicker(on_result=on_file_result)
@@ -408,7 +411,7 @@ class NCPage(ft.Container):
             
         except Exception as ex:
             print(f"Erreur export CSV: {ex}")
-            create_snackbar(self.page, f"❌ Erreur export CSV: {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur export CSV: {str(ex)}", "error")
 
     def _export_to_excel(self, e=None):
         """Exporte la liste des NC filtrées vers un fichier Excel."""
@@ -418,14 +421,14 @@ class NCPage(ft.Container):
             ncs = self._get_nc_list()
             
             if not ncs:
-                create_snackbar(self.page, "⚠️ Aucune NC à exporter", "warning")
+                create_snackbar(self.page, "[Attention] Aucune NC à exporter", "warning")
                 return
             
             try:
                 import openpyxl
                 from openpyxl.styles import Font, PatternFill, Alignment
             except ImportError:
-                create_snackbar(self.page, "⚠️ Bibliothèque openpyxl non disponible. Export CSV disponible.", "warning")
+                create_snackbar(self.page, "[Attention] Bibliothèque openpyxl non disponible. Export CSV disponible.", "warning")
                 return
             
             def on_file_result(e: ft.FilePickerResultEvent):
@@ -504,10 +507,10 @@ class NCPage(ft.Container):
                         wb.save(filepath)
                         
                         # Confirmation
-                        create_snackbar(self.page, f"✅ Fichier exporté : {os.path.basename(filepath)} ({len(ncs)} NC)", "success")
+                        create_snackbar(self.page, f"[OK] Fichier exporté : {os.path.basename(filepath)} ({len(ncs)} NC)", "success")
                     except Exception as ex:
                         print(f"Erreur écriture Excel: {ex}")
-                        create_snackbar(self.page, f"❌ Erreur lors de l'écriture: {str(ex)}", "error")
+                        create_snackbar(self.page, f"[Erreur] Erreur lors de l'écriture: {str(ex)}", "error")
             
             # Créer et ouvrir le FilePicker
             file_picker = ft.FilePicker(on_result=on_file_result)
@@ -523,7 +526,7 @@ class NCPage(ft.Container):
             
         except Exception as ex:
             print(f"Erreur export Excel: {ex}")
-            create_snackbar(self.page, f"❌ Erreur export Excel: {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur export Excel: {str(ex)}", "error")
 
     def _export_to_pdf(self, e=None):
         """Exporte la liste des NC filtrées vers un fichier PDF avec format ISO 9001:2015."""
@@ -533,7 +536,7 @@ class NCPage(ft.Container):
             ncs = self._get_nc_list()
             
             if not ncs:
-                create_snackbar(self.page, "⚠️ Aucune NC à exporter", "warning")
+                create_snackbar(self.page, "[Attention] Aucune NC à exporter", "warning")
                 return
             
             try:
@@ -545,7 +548,7 @@ class NCPage(ft.Container):
                 from reportlab.lib.utils import ImageReader
                 from PIL import Image as PILImage, ImageOps
             except ImportError:
-                create_snackbar(self.page, "⚠️ Bibliothèque reportlab non disponible. Export CSV disponible.", "warning")
+                create_snackbar(self.page, "[Attention] Bibliothèque reportlab non disponible. Export CSV disponible.", "warning")
                 return
             
             # Date et heure d'export
@@ -700,12 +703,12 @@ class NCPage(ft.Container):
                         doc.build([table], onFirstPage=add_header_footer, onLaterPages=add_header_footer)
                         
                         # Confirmation
-                        create_snackbar(self.page, f"✅ Fichier exporté : {os.path.basename(filepath)} ({len(ncs)} NC)", "success")
+                        create_snackbar(self.page, f"[OK] Fichier exporté : {os.path.basename(filepath)} ({len(ncs)} NC)", "success")
                     except Exception as ex:
                         print(f"Erreur écriture PDF: {ex}")
                         import traceback
                         traceback.print_exc()
-                        create_snackbar(self.page, f"❌ Erreur lors de l'écriture: {str(ex)}", "error")
+                        create_snackbar(self.page, f"[Erreur] Erreur lors de l'écriture: {str(ex)}", "error")
             
             # Créer et ouvrir le FilePicker
             file_picker = ft.FilePicker(on_result=on_file_result)
@@ -721,7 +724,7 @@ class NCPage(ft.Container):
             
         except Exception as ex:
             print(f"Erreur export PDF: {ex}")
-            create_snackbar(self.page, f"❌ Erreur export PDF: {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur export PDF: {str(ex)}", "error")
     
     def _import_from_excel(self, e=None):
         """Importe des NC depuis un fichier Excel."""
@@ -729,7 +732,7 @@ class NCPage(ft.Container):
             try:
                 import openpyxl
             except ImportError:
-                create_snackbar(self.page, "⚠️ Bibliothèque openpyxl non disponible pour l'import.", "warning")
+                create_snackbar(self.page, "[Attention] Bibliothèque openpyxl non disponible pour l'import.", "warning")
                 return
             
             def on_file_result(e: ft.FilePickerResultEvent):
@@ -737,7 +740,7 @@ class NCPage(ft.Container):
                     # Afficher un indicateur de chargement
                     progress_dialog = ft.AlertDialog(
                         modal=True,
-                        title=ft.Text("⏳ Import en cours...", weight=ft.FontWeight.BOLD),
+                        title=ft.Text("[EnCours] Import en cours...", weight=ft.FontWeight.BOLD),
                         content=ft.Container(
                             padding=20,
                             content=ft.Column([
@@ -765,7 +768,7 @@ class NCPage(ft.Container):
                         col_mapping = {}
                         for idx, header in enumerate(headers):
                             h = header.lower().strip()
-                            if h in ['référence', 'reference', 'ref', 'n°']:
+                            if h in ['référence', 'reference', 'ref', 'no']:
                                 col_mapping['reference'] = idx
                             elif h in ['date', 'date detection']:
                                 col_mapping['date_detection'] = idx
@@ -787,7 +790,7 @@ class NCPage(ft.Container):
                                 col_mapping['produit_concerne'] = idx
                             elif h in ['quantité', 'quantite', 'qté']:
                                 col_mapping['quantite_affectee'] = idx
-                            elif h in ['lot', 'n° lot']:
+                            elif h in ['lot', 'no lot']:
                                 col_mapping['lot_serie'] = idx
                             elif h in ['statut', 'état']:
                                 col_mapping['statut'] = idx
@@ -798,7 +801,7 @@ class NCPage(ft.Container):
                         
                         # Validation des colonnes obligatoires
                         if 'reference' not in col_mapping:
-                            create_snackbar(self.page, "❌ Colonne 'Référence' manquante", "error")
+                            create_snackbar(self.page, "[Erreur] Colonne 'Référence' manquante", "error")
                             return
                         
                         imported_count = 0
@@ -896,11 +899,11 @@ class NCPage(ft.Container):
                             
                             success_dialog = ft.AlertDialog(
                                 modal=True,
-                                title=ft.Text("✅ Import réussi", color=ft.Colors.GREEN, weight=ft.FontWeight.BOLD),
+                                title=ft.Text("[OK] Import réussi", color=ft.Colors.GREEN, weight=ft.FontWeight.BOLD),
                                 content=ft.Container(
                                     padding=20,
                                     content=ft.Column([
-                                        ft.Text(f"📊 {imported_count} NC importées avec succès", size=16),
+                                        ft.Text(f"[Stats] {imported_count} NC importées avec succès", size=16),
                                         ft.Container(height=10),
                                         ft.Text("Toutes les NC ont été ajoutées à votre base de données.", size=14),
                                     ], tight=True)
@@ -922,7 +925,7 @@ class NCPage(ft.Container):
                             
                             dialog = ft.AlertDialog(
                                 modal=True,
-                                title=ft.Text(f"⚠️ Import terminé : {imported_count} réussies, {error_count} erreurs", weight=ft.FontWeight.BOLD),
+                                title=ft.Text(f"[Attention] Import terminé : {imported_count} réussies, {error_count} erreurs", weight=ft.FontWeight.BOLD),
                                 content=ft.Container(
                                     width=500,
                                     height=300,
@@ -942,7 +945,7 @@ class NCPage(ft.Container):
                         self.page.update()
                         
                         print(f"Erreur lecture Excel: {ex}")
-                        create_snackbar(self.page, f"❌ Erreur lors de la lecture: {str(ex)}", "error")
+                        create_snackbar(self.page, f"[Erreur] Erreur lors de la lecture: {str(ex)}", "error")
             
             # Créer et ouvrir le FilePicker
             file_picker = ft.FilePicker(on_result=on_file_result)
@@ -957,7 +960,7 @@ class NCPage(ft.Container):
             
         except Exception as ex:
             print(f"Erreur import Excel: {ex}")
-            create_snackbar(self.page, f"❌ Erreur import Excel: {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur import Excel: {str(ex)}", "error")
     
     def _export_chart_image(self, chart_container, chart_name):
         """Exporte un graphique en image PNG en utilisant matplotlib."""
@@ -991,23 +994,23 @@ class NCPage(ft.Container):
                             repartition_type = chart_name.replace('repartition_', '')
                             self._generate_repartition_chart_image(filepath, repartition_type)
                         else:
-                            create_snackbar(self.page, "❌ Type de graphique non supporté", "error")
+                            create_snackbar(self.page, "[Erreur] Type de graphique non supporté", "error")
                             return
                         
                         # Vérifier que le fichier a été créé
                         if os.path.exists(filepath):
                             file_size = os.path.getsize(filepath)
                             print(f"Fichier créé: {filepath} ({file_size} bytes)")
-                            create_snackbar(self.page, f"✅ Graphique exporté : {os.path.basename(filepath)} ({file_size//1024} Ko)", "success")
+                            create_snackbar(self.page, f"[OK] Graphique exporté : {os.path.basename(filepath)} ({file_size//1024} Ko)", "success")
                         else:
                             print(f"ERREUR: Fichier non créé: {filepath}")
-                            create_snackbar(self.page, "❌ Le fichier n'a pas été créé", "error")
+                            create_snackbar(self.page, "[Erreur] Le fichier n'a pas été créé", "error")
                             
                     except Exception as ex:
                         print(f"Erreur génération image: {ex}")
                         import traceback
                         traceback.print_exc()
-                        create_snackbar(self.page, f"❌ Erreur génération: {str(ex)}", "error")
+                        create_snackbar(self.page, f"[Erreur] Erreur génération: {str(ex)}", "error")
                 else:
                     print("FilePicker annulé - aucun chemin sélectionné")
             
@@ -1025,7 +1028,7 @@ class NCPage(ft.Container):
             
         except Exception as ex:
             print(f"Erreur export image: {ex}")
-            create_snackbar(self.page, f"❌ Erreur export image: {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur export image: {str(ex)}", "error")
     
     def _generate_evolution_chart_image(self, filepath):
         """Génère l'image du graphique d'évolution mensuelle avec matplotlib."""
@@ -1098,7 +1101,7 @@ class NCPage(ft.Container):
             
         except ImportError as ie:
             print(f"[Evolution] ImportError: {ie}")
-            create_snackbar(self.page, "❌ Bibliothèque matplotlib non disponible", "error")
+            create_snackbar(self.page, "[Erreur] Bibliothèque matplotlib non disponible", "error")
             raise
         except Exception as ex:
             print(f"[Evolution] Exception: {ex}")
@@ -1219,7 +1222,7 @@ class NCPage(ft.Container):
             
         except ImportError as ie:
             print(f"[Comparateur] ImportError: {ie}")
-            create_snackbar(self.page, "❌ Bibliothèque matplotlib non disponible", "error")
+            create_snackbar(self.page, "[Erreur] Bibliothèque matplotlib non disponible", "error")
             raise
         except Exception as ex:
             print(f"[Comparateur] Exception: {ex}")
@@ -1347,11 +1350,11 @@ class NCPage(ft.Container):
                         y_last = last_year_value + trend_offset
                         
                         if y_last > y_first:
-                            trend_arrow = '↗'
+                            trend_arrow = '^'
                         elif y_last < y_first:
-                            trend_arrow = '↘'
+                            trend_arrow = 'v'
                         else:
-                            trend_arrow = '→'
+                            trend_arrow = '>'
                         
                         ax2.plot([x_first, x_last], [y_first, y_last], 
                                linestyle='--', linewidth=2.5, 
@@ -1386,7 +1389,7 @@ class NCPage(ft.Container):
             
         except ImportError as ie:
             print(f"[Comparateur Type] ImportError: {ie}")
-            create_snackbar(self.page, "❌ Bibliothèque matplotlib non disponible", "error")
+            create_snackbar(self.page, "[Erreur] Bibliothèque matplotlib non disponible", "error")
             raise
         except Exception as ex:
             print(f"[Comparateur Type] Exception: {ex}")
@@ -1480,7 +1483,7 @@ class NCPage(ft.Container):
             
         except ImportError as ie:
             print(f"[Répartition] ImportError: {ie}")
-            create_snackbar(self.page, "❌ Bibliothèque matplotlib non disponible", "error")
+            create_snackbar(self.page, "[Erreur] Bibliothèque matplotlib non disponible", "error")
             raise
         except Exception as ex:
             print(f"[Répartition] Exception: {ex}")
@@ -1591,7 +1594,7 @@ class NCPage(ft.Container):
                     ax1.axvspan(-0.5, idx_80 + 0.5, alpha=0.2, color='#00FF00')
                     ax1.axvspan(idx_80 + 0.5, len(labels) - 0.5, alpha=0.15, color='#FF6B6B')
                     ax1.text(idx_80 / 2, max(values) * 0.95, 
-                            f'← {idx_80 + 1} valeurs sur {total_values} = 80% des NC',
+                            f'< {idx_80 + 1} valeurs sur {total_values} = 80% des NC',
                             fontsize=11, fontweight='bold',
                             ha='center', bbox=dict(boxstyle='round,pad=0.5', 
                             facecolor='white', edgecolor='#00FF00', linewidth=2))
@@ -1638,7 +1641,7 @@ class NCPage(ft.Container):
                 elif tab_index == 3:  # Analyse
                     self._tabs_cache[3] = self._build_analysis_tab()
                 
-                print(f"[PRELOAD] ✓ {tab_name} préchargé")
+                print(f"[PRELOAD] [OK] {tab_name} préchargé")
             except Exception as ex:
                 print(f"[PRELOAD] Erreur {tab_name}: {ex}")
         
@@ -1654,7 +1657,7 @@ class NCPage(ft.Container):
         # 3. Analyse (tableaux complexes)
         preload_tab(3, "Analyse")
         
-        print("[PRELOAD] ✓ Tous les onglets préchargés")
+        print("[PRELOAD] [OK] Tous les onglets préchargés")
     
     def _on_tab_change(self, e):
         """Change de tab avec lazy loading optimisé."""
@@ -1715,9 +1718,9 @@ class NCPage(ft.Container):
             was_small = self._last_window_width and self._last_window_width < self._responsive_threshold
             is_small = current_width < self._responsive_threshold
             
-            print(f"[RESPONSIVE] Redimensionnement: {self._last_window_width}px → {current_width}px (Seuil: {self._responsive_threshold}px)")
+            print(f"[RESPONSIVE] Redimensionnement: {self._last_window_width}px > {current_width}px (Seuil: {self._responsive_threshold}px)")
             
-            # Reconstruire uniquement si on change de mode (petit ↔ grand écran)
+            # Reconstruire uniquement si on change de mode (petit <> grand écran)
             if self._last_window_width and was_small != is_small:
                 print(f"[RESPONSIVE] Changement de mode détecté - Reconstruction des tableaux")
                 # Invalider le cache de la liste NC et du Suivi Actions
@@ -1815,7 +1818,7 @@ class NCPage(ft.Container):
                     self._tabs_cache.clear()
                     self.tab_content.content = self._get_current_tab_content()
                     if self.page:
-                        create_snackbar(self.page, "🔄 Liste rafraîchie", "info")
+                        create_snackbar(self.page, "[Actualiser] Liste rafraîchie", "info")
                         self.page.update()
                 return
             
@@ -1872,7 +1875,7 @@ class NCPage(ft.Container):
             ("Ctrl+F", "Focus sur la recherche"),
             ("F5", "Rafraîchir la liste"),
             ("Échap", "Fermer le formulaire"),
-            ("← →", "Naviguer entre les NC (dans le formulaire)"),
+            ("< >", "Naviguer entre les NC (dans le formulaire)"),
             ("Ctrl+H", "Afficher cette aide"),
         ]
         
@@ -1906,10 +1909,15 @@ class NCPage(ft.Container):
                             ft.Row(
                                 controls=[
                                     ft.Container(
-                                        padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                                        padding=ft.Padding(left=8, right=8, top=4, bottom=4),
                                         border_radius=4,
                                         bgcolor=Theme.BG_TERTIARY,
-                                        border=ft.border.all(1, Theme.OUTLINE),
+                                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                                         content=ft.Text(
                                             shortcut,
                                             size=13,
@@ -2041,7 +2049,7 @@ class NCPage(ft.Container):
         if not self.show_form and self.current_tab == 1:
             self.tab_content.content = self._build_list_tab()
             if self.page:
-                create_snackbar(self.page, "🔄 Filtres réinitialisés", "success")
+                create_snackbar(self.page, "[Actualiser] Filtres réinitialisés", "success")
                 self.page.update()
     
     def _build_list_tab(self):
@@ -2066,7 +2074,7 @@ class NCPage(ft.Container):
         # Filtres dans une carte stylisée
         filters = ft.Container(
             padding=20,
-            margin=ft.margin.only(bottom=15),
+            margin=15,
             bgcolor=Theme.BG_SECONDARY,
             border_radius=12,
             shadow=ft.BoxShadow(
@@ -2352,10 +2360,10 @@ class NCPage(ft.Container):
         
         # Ajouter la colonne checkbox seulement si activée
         if self.show_selection_column:
-            columns_config.append(("☑", 30, None, False))
+            columns_config.append(("[x]", 30, None, False))
         
         columns_config.extend([
-            ("N° NC", 60, "reference", False),
+            ("No NC", 60, "reference", False),
             ("Date", 80, "date_detection", False),
             ("Type", 80, "type_nc", False),
             ("Origine", 110, "origine", False),
@@ -2391,8 +2399,8 @@ class NCPage(ft.Container):
                     ft.Container(
                         expand=1,
                         width=width,  # Largeur minimale
-                        padding=ft.padding.symmetric(horizontal=8, vertical=14),
-                        border=ft.border.only(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
+                        padding=ft.Padding(left=8, right=8, top=14, bottom=14),
+                        border=ft.Border(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
                         content=ft.Text(
                             col_name,
                             color=Theme.TEXT_PRIMARY,
@@ -2406,8 +2414,8 @@ class NCPage(ft.Container):
                 header_cells.append(
                     ft.Container(
                         width=width,
-                        padding=ft.padding.symmetric(horizontal=8, vertical=14),
-                        border=ft.border.only(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
+                        padding=ft.Padding(left=8, right=8, top=14, bottom=14),
+                        border=ft.Border(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
                         content=ft.Text(
                             col_name,
                             color=Theme.TEXT_PRIMARY,
@@ -2421,15 +2429,15 @@ class NCPage(ft.Container):
                 header_cells.append(
                     ft.Container(
                         expand=True,
-                        padding=ft.padding.symmetric(horizontal=8, vertical=14),
-                        border=ft.border.only(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
+                        padding=ft.Padding(left=8, right=8, top=14, bottom=14),
+                        border=ft.Border(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
                         content=ft.Text(col_name, color=Theme.TEXT_PRIMARY, weight=ft.FontWeight.BOLD, size=13),
                     )
                 )
 
         header_row = ft.Container(
             bgcolor=Theme.BG_TERTIARY,
-            border_radius=ft.border_radius.only(top_left=8, top_right=8),
+            border_radius=ft.BorderRadius(8, 8, 0, 0),
             content=ft.Row(controls=header_cells, spacing=0),
         )
 
@@ -2451,7 +2459,7 @@ class NCPage(ft.Container):
                 is_expandable = config[3] if len(config) > 3 else False
                 is_last = i == len(columns_config) - 1
                 
-                if col_name == "☑":
+                if col_name == "[x]":
                     # Colonne checkbox
                     cell_content = checkbox
                 elif col_name == "Gravité":
@@ -2479,7 +2487,7 @@ class NCPage(ft.Container):
                             ),
                         ],
                     )
-                elif col_name == "N° NC":
+                elif col_name == "No NC":
                     cell_content = ft.Text(
                         nc.get(data_key, '-') or '-',
                         color=Theme.TEXT_PRIMARY,
@@ -2528,8 +2536,8 @@ class NCPage(ft.Container):
                         ft.Container(
                             expand=1,
                             width=width,  # Largeur minimale
-                            padding=ft.padding.symmetric(horizontal=6, vertical=10),
-                            border=ft.border.only(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
+                            padding=ft.Padding(left=6, right=6, top=10, bottom=10),
+                            border=ft.Border(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
                             content=cell_content,
                         )
                     )
@@ -2537,8 +2545,8 @@ class NCPage(ft.Container):
                     row_cells.append(
                         ft.Container(
                             width=width,
-                            padding=ft.padding.symmetric(horizontal=6, vertical=10),
-                            border=ft.border.only(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
+                            padding=ft.Padding(left=6, right=6, top=10, bottom=10),
+                            border=ft.Border(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
                             content=cell_content,
                         )
                     )
@@ -2546,15 +2554,15 @@ class NCPage(ft.Container):
                     row_cells.append(
                         ft.Container(
                             expand=True,
-                            padding=ft.padding.symmetric(horizontal=6, vertical=10),
-                            border=ft.border.only(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
+                            padding=ft.Padding(left=6, right=6, top=10, bottom=10),
+                            border=ft.Border(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
                             content=cell_content,
                         )
                     )
             
             data_rows.append(
                 ft.Container(
-                    border=ft.border.only(bottom=ft.BorderSide(1, Theme.BG_TERTIARY)),
+                    border=ft.Border(bottom=ft.BorderSide(1, Theme.BG_TERTIARY)),
                     content=ft.Row(controls=row_cells, spacing=0),
                     # on_click supprimé car remplacé par les boutons d'actions
                     ink=False,
@@ -2633,7 +2641,7 @@ class NCPage(ft.Container):
                     spacing=10,
                     controls=[
                         ft.ElevatedButton(
-                            "⬅️ Précédent",
+                            "< Précédent",
                             on_click=lambda e: self._change_page(self.current_page - 1),
                             disabled=self.current_page <= 1,
                             bgcolor=Theme.BG_SECONDARY if self.current_page > 1 else Theme.BG_TERTIARY,
@@ -2645,7 +2653,7 @@ class NCPage(ft.Container):
                             color=Theme.TEXT_PRIMARY,
                         ),
                         ft.ElevatedButton(
-                            "Suivant ➡️",
+                            "Suivant >",
                             on_click=lambda e: self._change_page(self.current_page + 1),
                             disabled=self.current_page >= total_pages,
                             bgcolor=Theme.BG_SECONDARY if self.current_page < total_pages else Theme.BG_TERTIARY,
@@ -2714,7 +2722,7 @@ class NCPage(ft.Container):
         
         # Ligne avec les boutons alignés
         buttons_row = ft.Container(
-            padding=ft.padding.only(bottom=10),
+            padding=ft.Padding(left=0, right=0, top=0, bottom=10),
             content=ft.Row(
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 controls=[
@@ -2749,7 +2757,7 @@ class NCPage(ft.Container):
                     ),
                 ),
                 ft.Container(
-                    padding=ft.padding.only(top=10, bottom=10),
+                    padding=ft.Padding(left=0, right=0, top=10, bottom=10),
                     content=pagination_controls,
                 ),
             ],
@@ -3211,7 +3219,7 @@ class NCPage(ft.Container):
                         ft.Row(
                             spacing=6,
                             controls=[
-                                ft.Text("•", size=12, color="white"),
+                                ft.Text("*", size=12, color="white"),
                                 ft.Text(cause.strip(), size=11, color="white", expand=True),
                             ],
                         )
@@ -3223,7 +3231,12 @@ class NCPage(ft.Container):
                         padding=12,
                         border_radius=10,
                         bgcolor=color,
-                        border=ft.border.all(2, color),
+                        border=ft.Border(
+                top=ft.BorderSide(2, color),
+                right=ft.BorderSide(2, color),
+                bottom=ft.BorderSide(2, color),
+                left=ft.BorderSide(2, color),
+            ),
                         content=ft.Column(
                             spacing=8,
                             controls=[
@@ -3301,7 +3314,12 @@ class NCPage(ft.Container):
                 padding=16,
                 border_radius=12,
                 bgcolor=Theme.BG_TERTIARY,
-                border=ft.border.all(2, color),
+                border=ft.Border(
+                top=ft.BorderSide(2, color),
+                right=ft.BorderSide(2, color),
+                bottom=ft.BorderSide(2, color),
+                left=ft.BorderSide(2, color),
+            ),
                 content=ft.Column(
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     spacing=8,
@@ -3309,7 +3327,7 @@ class NCPage(ft.Container):
                         ft.Icon(icon, size=32, color=color),
                         ft.Text(label, size=12, color=Theme.TEXT_MUTED, text_align=ft.TextAlign.CENTER),
                         ft.Text(
-                            f"{montant:,.2f} €",
+                            f"{montant:,.2f} EUR",
                             size=22,
                             weight=ft.FontWeight.BOLD,
                             color=color,
@@ -3323,7 +3341,12 @@ class NCPage(ft.Container):
             padding=16,
             border_radius=12,
             bgcolor=Theme.BG_SECONDARY,
-            border=ft.border.all(1, Theme.OUTLINE),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
             content=ft.Column(
                 spacing=12,
                 controls=[
@@ -3422,7 +3445,12 @@ class NCPage(ft.Container):
                         height=50,
                         border_radius=25,
                         bgcolor=step["color"] if step["completed"] else Theme.BG_TERTIARY,
-                        border=ft.border.all(3, step["color"]),
+                        border=ft.Border(
+                top=ft.BorderSide(3, step["color"]),
+                right=ft.BorderSide(3, step["color"]),
+                bottom=ft.BorderSide(3, step["color"]),
+                left=ft.BorderSide(3, step["color"]),
+            ),
                         content=ft.Icon(
                             step["icon"],
                             size=24,
@@ -3455,7 +3483,7 @@ class NCPage(ft.Container):
                 timeline_controls.append(
                     ft.Container(
                         expand=1,
-                        padding=ft.padding.only(top=32, bottom=32),
+                        padding=ft.Padding(left=0, right=0, top=32, bottom=32),
                         content=ft.Container(
                             height=3,
                             bgcolor=step["color"] if step["completed"] and timeline_steps[i+1]["completed"] else Theme.BG_TERTIARY,
@@ -3467,7 +3495,12 @@ class NCPage(ft.Container):
             padding=20,
             border_radius=12,
             bgcolor=Theme.BG_SECONDARY,
-            border=ft.border.all(1, Theme.OUTLINE),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
             content=ft.Column(
                 spacing=12,
                 controls=[
@@ -3520,7 +3553,7 @@ class NCPage(ft.Container):
             # Construire le texte de description
             if entry['field_changed']:
                 if entry['old_value'] and entry['new_value']:
-                    description = f"{entry['field_changed']}: '{entry['old_value']}' → '{entry['new_value']}'"
+                    description = f"{entry['field_changed']}: '{entry['old_value']}' > '{entry['new_value']}'"
                 elif entry['new_value']:
                     description = f"{entry['field_changed']}: {entry['new_value']}"
                 else:
@@ -3542,7 +3575,7 @@ class NCPage(ft.Container):
                                 border_radius=20,
                                 bgcolor=f"{color}20",
                                 content=ft.Icon(icon, size=20, color=color),
-                                alignment=ft.alignment.center,
+                                alignment=ft.Alignment(0, 0),
                             ),
                             ft.Column(
                                 expand=True,
@@ -3552,7 +3585,7 @@ class NCPage(ft.Container):
                                         spacing=8,
                                         controls=[
                                             ft.Text(action_label, size=13, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
-                                            ft.Text("•", size=13, color=Theme.TEXT_MUTED),
+                                            ft.Text("*", size=13, color=Theme.TEXT_MUTED),
                                             ft.Text(entry['user_name'], size=12, color=Theme.TEXT_SECONDARY),
                                         ],
                                     ),
@@ -3580,7 +3613,7 @@ class NCPage(ft.Container):
                         color=Theme.TEXT_MUTED,
                         text_align=ft.TextAlign.CENTER,
                     ),
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment(0, 0),
                 )
             )
         
@@ -3588,7 +3621,12 @@ class NCPage(ft.Container):
             padding=20,
             border_radius=12,
             bgcolor=Theme.BG_SECONDARY,
-            border=ft.border.all(1, Theme.BG_TERTIARY),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            ),
             content=ft.Column(
                 spacing=12,
                 controls=[
@@ -3603,7 +3641,7 @@ class NCPage(ft.Container):
                                 ],
                             ),
                             ft.Container(
-                                padding=ft.padding.symmetric(8, 4),
+                                padding=ft.Padding(left=8, right=8, top=4, bottom=4),
                                 border_radius=12,
                                 bgcolor=Theme.PRIMARY + "20",
                                 content=ft.Text(
@@ -3647,7 +3685,7 @@ class NCPage(ft.Container):
             score = 0
             matches = []
             
-            # +5 points : même n° de lot (critère TRÈS fort - prioritaire)
+            # +5 points : même no de lot (critère TRÈS fort - prioritaire)
             other_lot = (other_nc.get('lot_serie') or '').strip().lower()
             if lot_serie and len(lot_serie) > 2 and other_lot == lot_serie:
                 score += 5
@@ -3705,7 +3743,12 @@ class NCPage(ft.Container):
                     padding=12,
                     border_radius=8,
                     bgcolor=Theme.BG_PRIMARY,
-                    border=ft.border.all(1, Theme.OUTLINE),
+                    border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                     content=ft.Row(
                         spacing=12,
                         controls=[
@@ -3715,7 +3758,12 @@ class NCPage(ft.Container):
                                 height=50,
                                 border_radius=25,
                                 bgcolor=f"{score_color}20",
-                                border=ft.border.all(2, score_color),
+                                border=ft.Border(
+                top=ft.BorderSide(2, score_color),
+                right=ft.BorderSide(2, score_color),
+                bottom=ft.BorderSide(2, score_color),
+                left=ft.BorderSide(2, score_color),
+            ),
                                 content=ft.Column(
                                     alignment=ft.MainAxisAlignment.CENTER,
                                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -3754,7 +3802,7 @@ class NCPage(ft.Container):
                                         controls=[
                                             ft.Icon(ft.Icons.LINK, size=12, color=Theme.INFO),
                                             ft.Text(
-                                                ' • '.join(matches),
+                                                ' * '.join(matches),
                                                 size=11,
                                                 color=Theme.INFO,
                                                 italic=True,
@@ -3800,7 +3848,7 @@ class NCPage(ft.Container):
                             ),
                         ],
                     ),
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment(0, 0),
                 )
             )
         
@@ -3808,7 +3856,12 @@ class NCPage(ft.Container):
             padding=20,
             border_radius=12,
             bgcolor=Theme.BG_SECONDARY,
-            border=ft.border.all(1, Theme.BG_TERTIARY),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            ),
             content=ft.Column(
                 spacing=12,
                 controls=[
@@ -3823,7 +3876,7 @@ class NCPage(ft.Container):
                                 ],
                             ),
                             ft.Container(
-                                padding=ft.padding.symmetric(8, 4),
+                                padding=ft.Padding(left=8, right=8, top=4, bottom=4),
                                 border_radius=12,
                                 bgcolor=Theme.INFO + "20",
                                 content=ft.Text(
@@ -3976,8 +4029,8 @@ class NCPage(ft.Container):
                         height=2,
                         border_radius=1,
                         gradient=ft.LinearGradient(
-                            begin=ft.alignment.center_left,
-                            end=ft.alignment.center_right,
+                            begin=ft.Alignment(-1, 0),
+                            end=ft.Alignment(1, 0),
                             colors=[Theme.PRIMARY, Theme.INFO],
                         ),
                     ),
@@ -4020,7 +4073,12 @@ class NCPage(ft.Container):
                         padding=16,
                         border_radius=8,
                         bgcolor=Theme.BG_TERTIARY,
-                        border=ft.border.all(1, Theme.OUTLINE),
+                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                         content=ft.Text(
                             nc.get('description', '-') or 'Non renseigné',
                             size=13,
@@ -4030,12 +4088,17 @@ class NCPage(ft.Container):
                         ),
                     ),
                     ft.Container(height=10),
-                    ft.Text("➤ Produit et traçabilité", size=14, weight=ft.FontWeight.BOLD, color=Theme.PRIMARY),
+                    ft.Text("> Produit et traçabilité", size=14, weight=ft.FontWeight.BOLD, color=Theme.PRIMARY),
                     ft.Container(
                         padding=16,
                         border_radius=8,
                         bgcolor=Theme.BG_SECONDARY,
-                        border=ft.border.all(1, Theme.OUTLINE),
+                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                         content=ft.Column(
                             spacing=12,
                             controls=[
@@ -4092,7 +4155,7 @@ class NCPage(ft.Container):
                                     ft.Text(f"Pourquoi {idx+1}?", size=12, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
                                 ]
                             ),
-                            ft.Text(f"→ {why}", size=12, color=Theme.TEXT_SECONDARY, max_lines=None),
+                            ft.Text(f"> {why}", size=12, color=Theme.TEXT_SECONDARY, max_lines=None),
                         ],
                     ),
                 )
@@ -4107,12 +4170,17 @@ class NCPage(ft.Container):
                     padding=12,
                     border_radius=8,
                     bgcolor=Theme.BG_TERTIARY,
-                    border=ft.border.all(1, Theme.BG_TERTIARY),
+                    border=ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            ),
                     content=ft.Column(
                         spacing=6,
                         controls=[
                             ft.Row(spacing=6, controls=[ft.Icon(ft.Icons.CATEGORY, size=16, color=Theme.PRIMARY), ft.Text(cat, size=13, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY)]),
-                            ft.Column(spacing=4, controls=[ft.Text(f"• {c}", size=12, color=Theme.TEXT_SECONDARY, max_lines=None) for c in causes if c]),
+                            ft.Column(spacing=4, controls=[ft.Text(f"* {c}", size=12, color=Theme.TEXT_SECONDARY, max_lines=None) for c in causes if c]),
                         ],
                     ),
                 )
@@ -4127,8 +4195,8 @@ class NCPage(ft.Container):
                         height=2,
                         border_radius=1,
                         gradient=ft.LinearGradient(
-                            begin=ft.alignment.center_left,
-                            end=ft.alignment.center_right,
+                            begin=ft.Alignment(-1, 0),
+                            end=ft.Alignment(1, 0),
                             colors=[Theme.WARNING, Theme.PRIMARY],
                         ),
                     ),
@@ -4155,7 +4223,12 @@ class NCPage(ft.Container):
                                 padding=16,
                                 border_radius=8,
                                 bgcolor=Theme.BG_TERTIARY,
-                                border=ft.border.all(1, Theme.OUTLINE),
+                                border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                                 content=ft.Text(
                                     nc.get('cause_racine', '-') or 'Non identifiée',
                                     size=13,
@@ -4192,7 +4265,12 @@ class NCPage(ft.Container):
                                 padding=16,
                                 border_radius=8,
                                 bgcolor=Theme.BG_TERTIARY,
-                                border=ft.border.all(1, Theme.OUTLINE),
+                                border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                                 content=ft.Text(
                                     nc.get('cause_racine', '-') or 'Non identifiée',
                                     size=13,
@@ -4210,7 +4288,7 @@ class NCPage(ft.Container):
                             ft.Icon(ft.Icons.RADAR, size=18, color=Theme.DANGER),
                             ft.Text("Portée de la NC", weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY, size=14),
                             ft.Container(
-                                padding=ft.padding.symmetric(horizontal=8, vertical=2),
+                                padding=ft.Padding(left=8, right=8, top=2, bottom=2),
                                 border_radius=4,
                                 bgcolor=Theme.DANGER if nc.get('analyse_portee') and len(nc.get('analyse_portee', '')) > 10 else Theme.BG_TERTIARY,
                                 content=ft.Text(
@@ -4226,7 +4304,12 @@ class NCPage(ft.Container):
                         padding=16,
                         border_radius=8,
                         bgcolor=Theme.BG_TERTIARY,
-                        border=ft.border.all(2, Theme.DANGER if nc.get('analyse_portee') and len(nc.get('analyse_portee', '')) > 10 else Theme.OUTLINE),
+                        border=ft.Border(
+                            top=ft.BorderSide(2, Theme.DANGER if (nc.get('analyse_portee') and len(nc.get('analyse_portee', '')) > 10) else Theme.OUTLINE),
+                            right=ft.BorderSide(2, Theme.DANGER if (nc.get('analyse_portee') and len(nc.get('analyse_portee', '')) > 10) else Theme.OUTLINE),
+                            bottom=ft.BorderSide(2, Theme.DANGER if (nc.get('analyse_portee') and len(nc.get('analyse_portee', '')) > 10) else Theme.OUTLINE),
+                            left=ft.BorderSide(2, Theme.DANGER if (nc.get('analyse_portee') and len(nc.get('analyse_portee', '')) > 10) else Theme.OUTLINE),
+                        ),
                         content=ft.Text(
                             nc.get('analyse_portee', '-') or 'La portée de la non-conformité n\'a pas encore été analysée',
                             size=13,
@@ -4255,7 +4338,12 @@ class NCPage(ft.Container):
                                 padding=16,
                                 border_radius=8,
                                 bgcolor=Theme.BG_TERTIARY,
-                                border=ft.border.all(1, Theme.OUTLINE),
+                                border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                                 content=ft.Text(
                                     fivewhy_data.get('root_cause') or nc.get('cause_racine', '-') or 'Non identifiée',
                                     size=13,
@@ -4280,8 +4368,8 @@ class NCPage(ft.Container):
                         height=2,
                         border_radius=1,
                         gradient=ft.LinearGradient(
-                            begin=ft.alignment.center_left,
-                            end=ft.alignment.center_right,
+                            begin=ft.Alignment(-1, 0),
+                            end=ft.Alignment(1, 0),
                             colors=[Theme.SUCCESS, Theme.PRIMARY],
                         ),
                     ),
@@ -4314,8 +4402,8 @@ class NCPage(ft.Container):
                         height=2,
                         border_radius=1,
                         gradient=ft.LinearGradient(
-                            begin=ft.alignment.center_left,
-                            end=ft.alignment.center_right,
+                            begin=ft.Alignment(-1, 0),
+                            end=ft.Alignment(1, 0),
                             colors=[Theme.DANGER, Theme.WARNING],
                         ),
                     ),
@@ -4388,10 +4476,15 @@ class NCPage(ft.Container):
         def create_filter_chip(label: str, value: str):
             is_selected = self.detail_status_filter == value
             return ft.Container(
-                padding=ft.padding.symmetric(horizontal=16, vertical=8),
+                padding=ft.Padding(left=16, right=16, top=8, bottom=8),
                 border_radius=20,
                 bgcolor=Theme.PRIMARY if is_selected else Theme.BG_SECONDARY,
-                border=ft.border.all(2, Theme.PRIMARY if is_selected else Theme.BG_TERTIARY),
+                border=ft.Border(
+                top=ft.BorderSide(2, Theme.PRIMARY if is_selected else Theme.BG_TERTIARY),
+                right=ft.BorderSide(2, Theme.PRIMARY if is_selected else Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(2, Theme.PRIMARY if is_selected else Theme.BG_TERTIARY),
+                left=ft.BorderSide(2, Theme.PRIMARY if is_selected else Theme.BG_TERTIARY),
+            ),
                 content=ft.Text(
                     label,
                     size=13,
@@ -4427,12 +4520,12 @@ class NCPage(ft.Container):
         nc_dropdown = ft.Dropdown(
             label="Ou sélectionner une NC",
             hint_text="Choisissez dans la liste",
-            options=[ft.dropdown.Option(r) for r in refs],
+            options=[DropdownOption(r) for r in refs],
             value=self.detail_selected_ref if self.detail_selected_ref in refs else None,
             width=280,
             on_change=self._on_detail_dropdown_change,
             text_size=13,
-            menu_height=240,  # Limite à 5 items visibles (48px par item × 5 = 240px)
+            menu_height=240,  # Limite à 5 items visibles (48px par item x 5 = 240px)
         )
         
         # Boutons d'action
@@ -4451,7 +4544,7 @@ class NCPage(ft.Container):
         )
         
         return ft.Container(
-            padding=ft.padding.symmetric(vertical=8, horizontal=12),
+            padding=ft.Padding(left=12, right=12, top=8, bottom=8),
             border_radius=12,
             bgcolor=Theme.BG_SECONDARY,
             content=ft.Column(
@@ -4845,7 +4938,7 @@ class NCPage(ft.Container):
                             if valid_causes:
                                 story.append(Paragraph(f"<b>{escape_html(m_name)}:</b>", styles['Normal']))
                                 for cause in valid_causes:
-                                    story.append(Paragraph(f"  • {escape_html(cause)}", wrapped_style))
+                                    story.append(Paragraph(f"  * {escape_html(cause)}", wrapped_style))
                                 story.append(Spacer(1, 0.2*cm))
                     
                     # Afficher cause racine après 5M
@@ -4877,7 +4970,7 @@ class NCPage(ft.Container):
             immediate_actions = self._safe_json(nc.get('actions_immediates_table'), [])
             if immediate_actions and any(a.get('correction') for a in immediate_actions):
                 story.append(Paragraph("<b>C. CORRECTIONS (Actions immédiates)</b>", heading_style))
-                data_corrections = [['Correction', 'Responsable', 'Date', 'Coût (€)']]
+                data_corrections = [['Correction', 'Responsable', 'Date', 'Coût (EUR)']]
                 for action in immediate_actions:
                     if action.get('correction'):
                         data_corrections.append([
@@ -4906,7 +4999,7 @@ class NCPage(ft.Container):
             corrective_actions = self._safe_json(nc.get('actions_correctives_table'), [])
             if corrective_actions and any(a.get('desc') for a in corrective_actions):
                 story.append(Paragraph("<b>C. ACTIONS CORRECTIVES</b>", heading_style))
-                data_actions = [['Action', 'Responsable', 'Échéance', 'Statut', 'Coût (€)']]
+                data_actions = [['Action', 'Responsable', 'Échéance', 'Statut', 'Coût (EUR)']]
                 for action in corrective_actions:
                     if action.get('desc'):
                         data_actions.append([
@@ -4942,9 +5035,9 @@ class NCPage(ft.Container):
         
             data_couts = [
                 ['Type de coût', 'Montant'],
-                ['Coût Corrections', f"{cout_corrections:,.2f} €"],
-                ['Coût Actions correctives', f"{cout_actions:,.2f} €"],
-                ['TOTAL', f"{cout_total:,.2f} €"],
+                ['Coût Corrections', f"{cout_corrections:,.2f} EUR"],
+                ['Coût Actions correctives', f"{cout_actions:,.2f} EUR"],
+                ['TOTAL', f"{cout_total:,.2f} EUR"],
             ]
         
             table_couts = Table(data_couts, colWidths=[10*cm, 6*cm])
@@ -4993,14 +5086,14 @@ class NCPage(ft.Container):
                 print(f"[PDF] Erreur ouverture explorateur: {ex}")
         
             # Afficher un snackbar de confirmation
-            create_snackbar(self.page, f"✅ PDF généré avec succès : {filename} ({file_size} octets)", "success")
+            create_snackbar(self.page, f"[OK] PDF généré avec succès : {filename} ({file_size} octets)", "success")
             self.page.update()
         
         except Exception as e:
             print(f"[PDF] ERREUR lors de la génération: {e}")
             import traceback
             traceback.print_exc()
-            create_snackbar(self.page, f"❌ Erreur lors de l'export PDF: {str(e)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur lors de l'export PDF: {str(e)}", "error")
             raise
     
     def _navigate_to_previous_nc(self, e=None):
@@ -5078,7 +5171,7 @@ class NCPage(ft.Container):
         cout_matiere = nc.get('cout_matiere', 0)
         qte_nc = nc.get('quantite_nc', 0)
         heures_mo = nc.get('heures_mo', 0)
-        taux_horaire = nc.get('taux_horaire', 35)  # Par défaut 35€/h
+        taux_horaire = nc.get('taux_horaire', 35)  # Par défaut 35EUR/h
         cout_destruction = nc.get('cout_destruction', 0)
         
         # Calcul
@@ -5100,15 +5193,15 @@ class NCPage(ft.Container):
                         border_radius=8,
                         bgcolor=Theme.BG_TERTIARY,
                         content=ft.Text(
-                            "(Coût matière × Qté) + (Heures MO × Taux) + Destruction",
+                            "(Coût matière x Qté) + (Heures MO x Taux) + Destruction",
                             size=11,
                             color=Theme.TEXT_MUTED,
                             italic=True,
                         ),
                     ),
                     # Détails
-                    self._create_cost_line("Coût matière", f"{cout_matiere:,.2f} €/u × {qte_nc} u", cout_matiere_total),
-                    self._create_cost_line("Main d'œuvre", f"{heures_mo:.1f} h × {taux_horaire:,.0f} €/h", cout_mo),
+                    self._create_cost_line("Coût matière", f"{cout_matiere:,.2f} EUR/u x {qte_nc} u", cout_matiere_total),
+                    self._create_cost_line("Main d'oeuvre", f"{heures_mo:.1f} h x {taux_horaire:,.0f} EUR/h", cout_mo),
                     self._create_cost_line("Destruction", "", cout_destruction),
                     ft.Divider(color=Theme.BG_TERTIARY),
                     # Total
@@ -5116,7 +5209,7 @@ class NCPage(ft.Container):
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         controls=[
                             ft.Text("TOTAL", size=14, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
-                            ft.Text(f"{cout_total:,.2f} €", size=18, weight=ft.FontWeight.BOLD, color=Theme.DANGER),
+                            ft.Text(f"{cout_total:,.2f} EUR", size=18, weight=ft.FontWeight.BOLD, color=Theme.DANGER),
                         ]
                     ),
                 ]
@@ -5135,7 +5228,7 @@ class NCPage(ft.Container):
                         ft.Text(detail, size=10, color=Theme.TEXT_MUTED) if detail else ft.Container(),
                     ]
                 ),
-                ft.Text(f"{value:,.2f} €", size=13, color=Theme.TEXT_PRIMARY),
+                ft.Text(f"{value:,.2f} EUR", size=13, color=Theme.TEXT_PRIMARY),
             ]
         )
     
@@ -5149,12 +5242,12 @@ class NCPage(ft.Container):
         if not events:
             # Timeline par défaut basée sur la NC
             events = [
-                {'date': nc.get('date_production', nc.get('date_detection')), 'type': 'Production', 'icon': '🏭'},
-                {'date': nc.get('date_analyse_labo'), 'type': 'Analyse Labo', 'icon': '🔬'},
-                {'date': nc.get('date_inspection'), 'type': 'Inspection', 'icon': '🔍'},
-                {'date': nc.get('date_detection'), 'type': 'Création NC', 'icon': '⚠️'},
-                {'date': nc.get('date_action_corrective'), 'type': 'Actions Correctives', 'icon': '🔧'},
-                {'date': nc.get('date_cloture'), 'type': 'Clôture', 'icon': '✅'},
+                {'date': nc.get('date_production', nc.get('date_detection')), 'type': 'Production', 'icon': '[Production]'},
+                {'date': nc.get('date_analyse_labo'), 'type': 'Analyse Labo', 'icon': '[Analyse]'},
+                {'date': nc.get('date_inspection'), 'type': 'Inspection', 'icon': '[Recherche]'},
+                {'date': nc.get('date_detection'), 'type': 'Création NC', 'icon': '[Attention]'},
+                {'date': nc.get('date_action_corrective'), 'type': 'Actions Correctives', 'icon': '[Outil]'},
+                {'date': nc.get('date_cloture'), 'type': 'Clôture', 'icon': '[OK]'},
             ]
         
         return ft.Container(
@@ -5294,9 +5387,9 @@ class NCPage(ft.Container):
             controls=[
                 # Conteneur des sous-onglets avec fond
                 ft.Container(
-                    padding=ft.padding.symmetric(horizontal=20, vertical=8),
+                    padding=ft.Padding(left=20, right=20, top=8, bottom=8),
                     bgcolor=ft.Colors.BLUE_600,
-                    border=ft.border.only(
+                    border=ft.Border(
                         bottom=ft.BorderSide(3, ft.Colors.BLUE_800),
                     ),
                     content=sub_tabs,
@@ -5413,7 +5506,7 @@ class NCPage(ft.Container):
         # Filtres dans une carte stylisée
         filters_card = ft.Container(
             padding=20,
-            margin=ft.margin.symmetric(horizontal=20, vertical=15),
+            margin=ft.Margin(20, 15, 20, 15),
             bgcolor=Theme.BG_SECONDARY,
             border_radius=12,
             shadow=ft.BoxShadow(
@@ -5443,7 +5536,7 @@ class NCPage(ft.Container):
                             ),
                             # Compteur de NC en haut à droite
                             ft.Container(
-                                padding=ft.padding.symmetric(horizontal=15, vertical=8),
+                                padding=ft.Padding(left=15, right=15, top=8, bottom=8),
                                 bgcolor=ft.Colors.BLUE_700,
                                 border_radius=20,
                                 shadow=ft.BoxShadow(
@@ -5503,7 +5596,7 @@ class NCPage(ft.Container):
                                 width=150,
                             ),
                             ft.ElevatedButton(
-                                "🔄 Réinitialiser",
+                                "[Actualiser] Réinitialiser",
                                 icon=ft.Icons.REFRESH_ROUNDED,
                                 on_click=lambda e: self._reset_analysis_filters(),
                                 bgcolor=ft.Colors.BLUE_50,
@@ -5549,7 +5642,7 @@ class NCPage(ft.Container):
                 # Timeline dans une carte stylisée
                 ft.Container(
                     padding=20,
-                    margin=ft.margin.symmetric(horizontal=20, vertical=10),
+                    margin=ft.Margin(20, 10, 20, 10),
                     bgcolor=Theme.BG_SECONDARY,
                     border_radius=12,
                     shadow=ft.BoxShadow(
@@ -5580,7 +5673,7 @@ class NCPage(ft.Container):
                 # Tableau de détail dans une carte stylisée
                 ft.Container(
                     padding=20,
-                    margin=ft.margin.symmetric(horizontal=20, vertical=10),
+                    margin=ft.Margin(20, 10, 20, 10),
                     bgcolor=Theme.BG_SECONDARY,
                     border_radius=12,
                     shadow=ft.BoxShadow(
@@ -5644,7 +5737,7 @@ class NCPage(ft.Container):
                     spacing=4,
                     controls=[
                         ft.Container(
-                            padding=ft.padding.all(8),
+                            padding=ft.Padding(8, 8, 8, 8),
                             bgcolor=badge_color,
                             border_radius=20,
                             content=ft.Text(
@@ -5676,7 +5769,7 @@ class NCPage(ft.Container):
         if has_more:
             timeline_items.append(
                 ft.Container(
-                    padding=ft.padding.all(8),
+                    padding=ft.Padding(8, 8, 8, 8),
                     bgcolor=Theme.BG_TERTIARY,
                     border_radius=20,
                     content=ft.Text(
@@ -5716,7 +5809,7 @@ class NCPage(ft.Container):
         
         # En-têtes avec colonnes fixes sauf Description (adaptative)
         header_cells = [
-            ft.DataColumn(ft.Text("N° NC", weight=ft.FontWeight.BOLD, size=13), numeric=True),
+            ft.DataColumn(ft.Text("No NC", weight=ft.FontWeight.BOLD, size=13), numeric=True),
             ft.DataColumn(ft.Text("Date", weight=ft.FontWeight.BOLD, size=13)),
             ft.DataColumn(ft.Container(width=100, content=ft.Text("Origine", weight=ft.FontWeight.BOLD, size=13))),
             ft.DataColumn(ft.Container(width=110, content=ft.Text(var1_label, weight=ft.FontWeight.BOLD, size=13))),
@@ -5815,7 +5908,7 @@ class NCPage(ft.Container):
                         spacing=10,
                         controls=[
                             ft.ElevatedButton(
-                                "⬅️ Précédent",
+                                "< Précédent",
                                 on_click=lambda e: self._change_analysis_page(self._analysis_table_page - 1, ncs, var1_field, var2_field, var3_field, var1_label, var2_label, var3_label),
                                 disabled=self._analysis_table_page <= 1,
                                 style=ft.ButtonStyle(
@@ -5830,7 +5923,7 @@ class NCPage(ft.Container):
                                 color=Theme.TEXT_PRIMARY,
                             ),
                             ft.ElevatedButton(
-                                "Suivant ➡️",
+                                "Suivant >",
                                 on_click=lambda e: self._change_analysis_page(self._analysis_table_page + 1, ncs, var1_field, var2_field, var3_field, var1_label, var2_label, var3_label),
                                 disabled=self._analysis_table_page >= total_pages,
                                 style=ft.ButtonStyle(
@@ -5892,7 +5985,12 @@ class NCPage(ft.Container):
             top=80,
             width=500,
             bgcolor=Theme.BG_PRIMARY,
-            border=ft.border.all(2, Theme.OUTLINE),
+            border=ft.Border(
+                top=ft.BorderSide(2, Theme.OUTLINE),
+                right=ft.BorderSide(2, Theme.OUTLINE),
+                bottom=ft.BorderSide(2, Theme.OUTLINE),
+                left=ft.BorderSide(2, Theme.OUTLINE),
+            ),
             border_radius=10,
             shadow=ft.BoxShadow(
                 spread_radius=1,
@@ -5938,7 +6036,7 @@ class NCPage(ft.Container):
                             scroll=ft.ScrollMode.AUTO,
                             controls=[
                                 self._info_row("Date de détection", nc.get('date_detection', '-'), ft.Icons.CALENDAR_TODAY),
-                                self._info_row("N° NC", nc.get('reference') or nc.get('id', '-'), ft.Icons.TAG),
+                                self._info_row("No NC", nc.get('reference') or nc.get('id', '-'), ft.Icons.TAG),
                                 self._info_row("Origine", nc.get('origine', '-'), ft.Icons.PLACE),
                                 self._info_row(var1_label, nc.get(var1_field, '-'), multiline=True),
                                 self._info_row("Produits concernés", nc.get('produit_concerne', '-'), ft.Icons.INVENTORY, multiline=True),
@@ -5953,7 +6051,7 @@ class NCPage(ft.Container):
                     ),
                     # Bouton Fermer
                     ft.Container(
-                        alignment=ft.alignment.center,
+                        alignment=ft.Alignment(0, 0),
                         content=ft.ElevatedButton(
                             "Fermer",
                             on_click=lambda e: self._close_positioned_popup(),
@@ -6141,7 +6239,7 @@ class NCPage(ft.Container):
     def _pill(self, text: str) -> ft.Container:
         """Petit badge arrondi pour listes (5M, tags)."""
         return ft.Container(
-            padding=ft.padding.symmetric(horizontal=10, vertical=6),
+            padding=ft.Padding(left=10, right=10, top=6, bottom=6),
             border_radius=20,
             bgcolor=Theme.BG_TERTIARY,
             content=ft.Text(text, size=12, color=Theme.TEXT_PRIMARY),
@@ -6228,7 +6326,12 @@ class NCPage(ft.Container):
             attachment_controls.append(
                 ft.Container(
                     padding=8,
-                    border=ft.border.all(1, Theme.BG_TERTIARY),
+                    border=ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            ),
                     border_radius=8,
                     bgcolor=Theme.BG_SECONDARY,
                     content=ft.Row(
@@ -6253,7 +6356,7 @@ class NCPage(ft.Container):
         """Ouvre une pièce jointe en interne pour images/PDF, sinon externe."""
         import os
         if not file_path or not os.path.exists(file_path):
-            create_snackbar(self.page, "⚠️ Fichier introuvable", "error")
+            create_snackbar(self.page, "[Attention] Fichier introuvable", "error")
             return
 
         if is_image:
@@ -6283,7 +6386,7 @@ class NCPage(ft.Container):
             dialog.open = True
             self.page.update()
         except Exception as ex:
-            create_snackbar(self.page, f"❌ Erreur: {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur: {str(ex)}", "error")
 
     def _show_pdf_viewer(self, file_path: str, file_name: str):
         """Ouvre un PDF via l'application système par défaut."""
@@ -6302,9 +6405,9 @@ class NCPage(ft.Container):
                 subprocess.call(['open', file_path])
             else:
                 subprocess.call(['xdg-open', file_path])
-            create_snackbar(self.page, f"✅ Ouverture de {file_name}", "success")
+            create_snackbar(self.page, f"[OK] Ouverture de {file_name}", "success")
         except Exception as ex:
-            create_snackbar(self.page, f"❌ Erreur: {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur: {str(ex)}", "error")
 
     def _safe_json(self, value: Any, default):
         """Décode une valeur JSON ou renvoie la valeur par défaut."""
@@ -6561,7 +6664,7 @@ class NCPage(ft.Container):
             'responsable': create_text_field("Responsable / Qui", value=row_data.get('responsable', ''), prefix_icon=ft.Icons.PERSON),
             'date': date_field,
             'date_container': date_click_row,
-            'cost': create_text_field("Coût (€)", value=row_data.get('cost', ''), prefix_icon=ft.Icons.EURO, keyboard_type=ft.KeyboardType.NUMBER, input_filter=ft.InputFilter(regex_string=r"[0-9.,]")),
+            'cost': create_text_field("Coût (EUR)", value=row_data.get('cost', ''), prefix_icon=ft.Icons.EURO, keyboard_type=ft.KeyboardType.NUMBER, input_filter=ft.InputFilter(regex_string=r"[0-9.,]")),
         }
     
     def _build_corrective_row(self, row_data=None):
@@ -6665,7 +6768,7 @@ class NCPage(ft.Container):
         
         heures_dropdown = ft.Dropdown(
             label="Heure",
-            options=[ft.dropdown.Option(f"{h:02d}") for h in range(24)],
+            options=[DropdownOption(f"{h:02d}") for h in range(24)],
             value=current_heure,
             width=80,
             text_size=13,
@@ -6676,7 +6779,7 @@ class NCPage(ft.Container):
         
         minutes_dropdown = ft.Dropdown(
             label="Min",
-            options=[ft.dropdown.Option(f"{m:02d}") for m in [0, 15, 30, 45]],
+            options=[DropdownOption(f"{m:02d}") for m in [0, 15, 30, 45]],
             value=current_minute if current_minute in ['00', '15', '30', '45'] else '00',
             width=80,
             text_size=13,
@@ -6819,7 +6922,12 @@ class NCPage(ft.Container):
             padding=12,
             border_radius=8,
             bgcolor=Theme.BG_TERTIARY,
-            border=ft.border.all(2, Theme.OUTLINE),
+            border=ft.Border(
+                top=ft.BorderSide(2, Theme.OUTLINE),
+                right=ft.BorderSide(2, Theme.OUTLINE),
+                bottom=ft.BorderSide(2, Theme.OUTLINE),
+                left=ft.BorderSide(2, Theme.OUTLINE),
+            ),
             content=ft.Text("", size=13),
         )
         
@@ -6849,37 +6957,37 @@ class NCPage(ft.Container):
                 # Déterminer le niveau d'urgence
                 if delta < 0:
                     urgence_text = f"RETARD de {abs(delta)} jour(s)"
-                    urgence_label = "⚠️ RETARD"
+                    urgence_label = "[Attention] RETARD"
                     urgence_color = ft.Colors.WHITE
                     bg_color = ft.Colors.RED_700
                     icon = ft.Icons.ERROR
                 elif delta == 0:
                     urgence_text = "L'échéance est aujourd'hui"
-                    urgence_label = "⏰ AUJOURD'HUI"
+                    urgence_label = "[Urgent] AUJOURD'HUI"
                     urgence_color = ft.Colors.WHITE
                     bg_color = ft.Colors.RED_700
                     icon = ft.Icons.WARNING_AMBER
                 elif delta <= 3:
                     urgence_text = f"{delta} jour(s) restant(s)"
-                    urgence_label = "🔴 CRITIQUE"
+                    urgence_label = "[Critique] CRITIQUE"
                     urgence_color = ft.Colors.WHITE
                     bg_color = ft.Colors.RED_600
                     icon = ft.Icons.PRIORITY_HIGH
                 elif delta <= 7:
                     urgence_text = f"{delta} jours restants"
-                    urgence_label = "🟠 URGENT"
+                    urgence_label = "[Urgent] URGENT"
                     urgence_color = ft.Colors.WHITE
                     bg_color = ft.Colors.ORANGE_700
                     icon = ft.Icons.TIMER
                 elif delta <= 14:
                     urgence_text = f"{delta} jours restants"
-                    urgence_label = "🟡 ATTENTION"
+                    urgence_label = "[Attention] ATTENTION"
                     urgence_color = ft.Colors.BLACK
                     bg_color = ft.Colors.YELLOW_700
                     icon = ft.Icons.ACCESS_TIME
                 else:
                     urgence_text = f"{delta} jours restants"
-                    urgence_label = "🟢 NORMAL"
+                    urgence_label = "[Normal] NORMAL"
                     urgence_color = ft.Colors.WHITE
                     bg_color = ft.Colors.GREEN_700
                     icon = ft.Icons.CHECK_CIRCLE
@@ -6910,7 +7018,12 @@ class NCPage(ft.Container):
                     ],
                 )
                 echeance_urgence_container.bgcolor = bg_color
-                echeance_urgence_container.border = ft.border.all(2, bg_color)
+                echeance_urgence_container.border = ft.Border(
+                top=ft.BorderSide(2, bg_color),
+                right=ft.BorderSide(2, bg_color),
+                bottom=ft.BorderSide(2, bg_color),
+                left=ft.BorderSide(2, bg_color),
+            )
                 try:
                     echeance_urgence_container.update()
                 except:
@@ -6923,7 +7036,12 @@ class NCPage(ft.Container):
                     weight=ft.FontWeight.BOLD,
                 )
                 echeance_urgence_container.bgcolor = ft.Colors.RED_100
-                echeance_urgence_container.border = ft.border.all(2, Theme.DANGER)
+                echeance_urgence_container.border = ft.Border(
+                top=ft.BorderSide(2, Theme.DANGER),
+                right=ft.BorderSide(2, Theme.DANGER),
+                bottom=ft.BorderSide(2, Theme.DANGER),
+                left=ft.BorderSide(2, Theme.DANGER),
+            )
                 try:
                     echeance_urgence_container.update()
                 except:
@@ -6943,7 +7061,7 @@ class NCPage(ft.Container):
             'date_echeance_container': date_echeance_click_zone,
             'date_cloture_action': date_cloture_action_field,
             'date_cloture_action_container': date_cloture_action_click_zone,
-            'cost': create_text_field("Coût (€)", value=row_data.get('cost', ''), prefix_icon=ft.Icons.EURO, keyboard_type=ft.KeyboardType.NUMBER, input_filter=ft.InputFilter(regex_string=r"[0-9.,]")),
+            'cost': create_text_field("Coût (EUR)", value=row_data.get('cost', ''), prefix_icon=ft.Icons.EURO, keyboard_type=ft.KeyboardType.NUMBER, input_filter=ft.InputFilter(regex_string=r"[0-9.,]")),
             'verification': create_dropdown("Vérification de l'efficacité", ["Non évaluée", "Efficace", "Partiellement efficace", "Non efficace"], value=row_data.get('verification'), prefix_icon=ft.Icons.VERIFIED),
             'preuve_efficacite': create_text_field("Preuve d'efficacité", value=row_data.get('preuve_efficacite', ''), multiline=True, min_lines=2, prefix_icon=ft.Icons.VERIFIED_USER),
             'statut': statut_dropdown,
@@ -7234,10 +7352,20 @@ class NCPage(ft.Container):
                             ),
                         ]
                     ),
-                    padding=ft.padding.symmetric(horizontal=12, vertical=8),
+                    padding=ft.Padding(left=12, right=12, top=8, bottom=8),
                     border_radius=8,
                     bgcolor=ft.Colors.with_opacity(0.2, color) if is_selected else Theme.BG_TERTIARY,
-                    border=ft.border.all(2, color) if is_selected else ft.border.all(1, Theme.OUTLINE),
+                    border=ft.Border(
+                top=ft.BorderSide(2, color),
+                right=ft.BorderSide(2, color),
+                bottom=ft.BorderSide(2, color),
+                left=ft.BorderSide(2, color),
+            ) if is_selected else ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                     on_click=lambda e, s=severity: self._select_severity(s),
                     ink=True,
                 )
@@ -7344,12 +7472,12 @@ class NCPage(ft.Container):
         
         # Header
         header = ft.Container(
-            padding=ft.padding.symmetric(horizontal=20, vertical=15),
+            padding=ft.Padding(left=20, right=20, top=15, bottom=15),
             content=ft.Row(
                 controls=[
                     ft.IconButton(ft.Icons.ARROW_BACK, icon_color=Theme.TEXT_MUTED, on_click=lambda e: self._close_form()),
                     ft.Text(
-                        f"📝 {'Modifier' if is_edit else 'Nouvelle'} NC",
+                        f"[Note] {'Modifier' if is_edit else 'Nouvelle'} NC",
                         size=22,
                         weight=ft.FontWeight.BOLD,
                         color=Theme.TEXT_PRIMARY,
@@ -7405,7 +7533,7 @@ class NCPage(ft.Container):
         
         # Boutons de navigation entre onglets
         prev_btn = ft.ElevatedButton(
-            text="◀ Précédent",
+            text="< Précédent",
             icon=ft.Icons.ARROW_BACK,
             on_click=self._go_prev_tab,
             bgcolor=Theme.PRIMARY,
@@ -7413,7 +7541,7 @@ class NCPage(ft.Container):
             visible=self.form_tab_index > 0,
         )
         next_btn = ft.ElevatedButton(
-            text="Suivant ▶",
+            text="Suivant >",
             icon=ft.Icons.ARROW_FORWARD,
             on_click=self._go_next_tab,
             bgcolor=Theme.SUCCESS,
@@ -7666,7 +7794,7 @@ class NCPage(ft.Container):
                 ]),
                 # Indicateur d'échéance et urgence
                 ft.Container(
-                    padding=ft.padding.only(left=8, right=8, top=4),
+                    padding=ft.Padding(left=8, right=8, top=4, bottom=0),
                     content=row['echeance_urgence_container'],
                 ),
                 ft.Divider(height=1, color=Theme.TEXT_MUTED),
@@ -7674,7 +7802,12 @@ class NCPage(ft.Container):
                     padding=15,
                     border_radius=10,
                     bgcolor=Theme.BG_SECONDARY,
-                    border=ft.border.all(1, Theme.PRIMARY),
+                    border=ft.Border(
+                top=ft.BorderSide(1, Theme.PRIMARY),
+                right=ft.BorderSide(1, Theme.PRIMARY),
+                bottom=ft.BorderSide(1, Theme.PRIMARY),
+                left=ft.BorderSide(1, Theme.PRIMARY),
+            ),
                     content=ft.Column(
                         spacing=12,
                         controls=[
@@ -7698,7 +7831,7 @@ class NCPage(ft.Container):
                     )
                 ),
                 ft.Divider(height=1, color=Theme.TEXT_MUTED),
-                ft.Text("📎 Pièce jointe", size=13, weight=ft.FontWeight.BOLD, color=Theme.PRIMARY),
+                ft.Text("[PJ] Pièce jointe", size=13, weight=ft.FontWeight.BOLD, color=Theme.PRIMARY),
                 row['attach_button'],
                 row['files_display'],
             ])))
@@ -7948,7 +8081,7 @@ class NCPage(ft.Container):
                     self._refresh_actions_correctives()  # Rafraîchir le tableau de bord
                     # Invalider le cache des statistiques pour forcer la régénération
                     self._clear_chart_cache()
-                    create_snackbar(self.page, f"✅ NC {temp_ref} mise à jour ({changes_count} modification(s))", "success")
+                    create_snackbar(self.page, f"[OK] NC {temp_ref} mise à jour ({changes_count} modification(s))", "success")
                 else:
                     create_snackbar(self.page, "Erreur lors de la mise à jour", "error")
             else:
@@ -7973,7 +8106,7 @@ class NCPage(ft.Container):
                     self._refresh_actions_correctives()  # Rafraîchir le tableau de bord
                     # Invalider le cache des statistiques pour forcer la régénération
                     self._clear_chart_cache()
-                    create_snackbar(self.page, f"✅ NC {temp_ref} créée", "success")
+                    create_snackbar(self.page, f"[OK] NC {temp_ref} créée", "success")
                 else:
                     create_snackbar(self.page, "Erreur lors de la création", "error")
         
@@ -7985,13 +8118,13 @@ class NCPage(ft.Container):
             if self.show_form and hasattr(self, 'form_error_text'):
                 try:
                     if hasattr(self.form_error_text, 'page') and self.form_error_text.page:
-                        self.form_error_text.value = f"❌ Erreur: {str(ex)[:100]}"
+                        self.form_error_text.value = f"[Erreur] Erreur: {str(ex)[:100]}"
                         self.form_error_text.update()
                 except Exception:
                     pass
             # Afficher aussi dans snackbar si formulaire fermé
             if not self.show_form:
-                create_snackbar(self.page, f"❌ Erreur: {str(ex)[:100]}", "error")
+                create_snackbar(self.page, f"[Erreur] Erreur: {str(ex)[:100]}", "error")
     
     def _add_action(self):
         """Ajoute une action corrective."""
@@ -8020,7 +8153,7 @@ class NCPage(ft.Container):
         
         dlg = ft.AlertDialog(
             modal=True,
-            title=ft.Text("⚠️ Confirmer la suppression", weight=ft.FontWeight.BOLD),
+            title=ft.Text("[Attention] Confirmer la suppression", weight=ft.FontWeight.BOLD),
             content=ft.Container(
                 padding=10,
                 content=ft.Column(
@@ -8032,16 +8165,16 @@ class NCPage(ft.Container):
                         ),
                         ft.Container(height=10),
                         ft.Text(
-                            "⚠️ Cette action est irréversible et supprimera :",
+                            "[Attention] Cette action est irréversible et supprimera :",
                             weight=ft.FontWeight.BOLD,
                             color=ft.Colors.ORANGE,
                             size=13,
                         ),
-                        ft.Text("• Toutes les données de la NC", size=13),
-                        ft.Text("• Les actions immédiates", size=13),
-                        ft.Text("• Les actions correctives", size=13),
-                        ft.Text("• Les analyses (5 Pourquoi, Ishikawa)", size=13),
-                        ft.Text("• Les références aux pièces jointes", size=13),
+                        ft.Text("* Toutes les données de la NC", size=13),
+                        ft.Text("* Les actions immédiates", size=13),
+                        ft.Text("* Les actions correctives", size=13),
+                        ft.Text("* Les analyses (5 Pourquoi, Ishikawa)", size=13),
+                        ft.Text("* Les références aux pièces jointes", size=13),
                     ],
                 ),
             ),
@@ -8066,7 +8199,7 @@ class NCPage(ft.Container):
     def _delete_nc(self):
         """Supprime la NC de la base de données et retourne au tableau de bord."""
         if not self.editing_nc:
-            create_snackbar(self.page, "❌ Aucune NC à supprimer", "error")
+            create_snackbar(self.page, "[Erreur] Aucune NC à supprimer", "error")
             return
         
         nc_id = self.editing_nc.get('id')
@@ -8109,17 +8242,17 @@ class NCPage(ft.Container):
                 
                 # 6. Afficher la notification de succès
                 if self.page:
-                    create_snackbar(self.page, f"✅ NC {nc_ref} supprimée avec succès", "success")
+                    create_snackbar(self.page, f"[OK] NC {nc_ref} supprimée avec succès", "success")
                     self.page.update()
             else:
-                create_snackbar(self.page, f"❌ Erreur lors de la suppression de la NC {nc_ref}", "error")
+                create_snackbar(self.page, f"[Erreur] Erreur lors de la suppression de la NC {nc_ref}", "error")
         
         except Exception as ex:
             import traceback
             error_detail = traceback.format_exc()
             print(f"Erreur suppression NC: {error_detail}")
             if self.page:
-                create_snackbar(self.page, f"❌ Erreur: {str(ex)}", "error")
+                create_snackbar(self.page, f"[Erreur] Erreur: {str(ex)}", "error")
     
     def _toggle_nc_selection(self, nc_id: int, is_checked: bool):
         """Gère la sélection/désélection d'une NC."""
@@ -8167,7 +8300,7 @@ class NCPage(ft.Container):
         
         dlg = ft.AlertDialog(
             modal=True,
-            title=ft.Text("⚠️ Confirmer la suppression multiple", weight=ft.FontWeight.BOLD),
+            title=ft.Text("[Attention] Confirmer la suppression multiple", weight=ft.FontWeight.BOLD),
             content=ft.Container(
                 padding=10,
                 content=ft.Column(
@@ -8180,16 +8313,16 @@ class NCPage(ft.Container):
                         ),
                         ft.Container(height=10),
                         ft.Text(
-                            "⚠️ Cette action est irréversible et supprimera pour chaque NC :",
+                            "[Attention] Cette action est irréversible et supprimera pour chaque NC :",
                             weight=ft.FontWeight.BOLD,
                             color=ft.Colors.ORANGE,
                             size=13,
                         ),
-                        ft.Text("• Toutes les données de la NC", size=13),
-                        ft.Text("• Les actions immédiates", size=13),
-                        ft.Text("• Les actions correctives", size=13),
-                        ft.Text("• Les analyses (5 Pourquoi, Ishikawa)", size=13),
-                        ft.Text("• Les références aux pièces jointes", size=13),
+                        ft.Text("* Toutes les données de la NC", size=13),
+                        ft.Text("* Les actions immédiates", size=13),
+                        ft.Text("* Les actions correctives", size=13),
+                        ft.Text("* Les analyses (5 Pourquoi, Ishikawa)", size=13),
+                        ft.Text("* Les références aux pièces jointes", size=13),
                     ],
                 ),
             ),
@@ -8214,7 +8347,7 @@ class NCPage(ft.Container):
     def _delete_multiple_nc(self):
         """Supprime plusieurs NC de la base de données et rafraîchit le tableau."""
         if not self.selected_nc_ids:
-            create_snackbar(self.page, "❌ Aucune NC sélectionnée", "error")
+            create_snackbar(self.page, "[Erreur] Aucune NC sélectionnée", "error")
             return
         
         deleted_count = 0
@@ -8251,13 +8384,13 @@ class NCPage(ft.Container):
             if failed_count == 0:
                 create_snackbar(
                     self.page,
-                    f"✅ {deleted_count} NC supprimée{'s' if deleted_count > 1 else ''} avec succès",
+                    f"[OK] {deleted_count} NC supprimée{'s' if deleted_count > 1 else ''} avec succès",
                     "success"
                 )
             else:
                 create_snackbar(
                     self.page,
-                    f"⚠️ {deleted_count} NC supprimées, {failed_count} échecs",
+                    f"[Attention] {deleted_count} NC supprimées, {failed_count} échecs",
                     "warning"
                 )
             
@@ -8268,11 +8401,11 @@ class NCPage(ft.Container):
             import traceback
             error_detail = traceback.format_exc()
             print(f"Erreur suppression multiple: {error_detail}")
-            create_snackbar(self.page, f"❌ Erreur: {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur: {str(ex)}", "error")
     
     def _handle_dropdown_change(self, e, dropdown_type: str):
-        """Gère le changement de valeur d'un dropdown et détecte '➕ Ajouter...'."""
-        if e.control.value == "➕ Ajouter...":
+        """Gère le changement de valeur d'un dropdown et détecte '[+] Ajouter...'."""
+        if e.control.value == "[+] Ajouter...":
             # Ouvrir le dialog d'ajout
             self._show_add_item_dialog(dropdown_type, e.control)
         # Sinon, la valeur est sélectionnée normalement
@@ -8310,11 +8443,11 @@ class NCPage(ft.Container):
         def add_item(e):
             new_value = new_item_field.value.strip()
             if not new_value:
-                create_snackbar(self.page, "❌ Veuillez saisir une valeur", "error")
+                create_snackbar(self.page, "[Erreur] Veuillez saisir une valeur", "error")
                 return
             
             if new_value in target_list:
-                create_snackbar(self.page, f"ℹ️ '{new_value}' existe déjà", "info")
+                create_snackbar(self.page, f"[Info] '{new_value}' existe déjà", "info")
                 dlg.open = False
                 dropdown_control.value = new_value  # Sélectionner l'élément existant
                 dropdown_control.update()
@@ -8327,17 +8460,17 @@ class NCPage(ft.Container):
             
             # Mettre à jour le dropdown
             dropdown_control.options = []
-            dropdown_control.options.append(ft.dropdown.Option("➕ Ajouter..."))
-            dropdown_control.options.extend([ft.dropdown.Option(opt) for opt in target_list])
+            dropdown_control.options.append("[+] Ajouter...")
+            dropdown_control.options.extend([opt for opt in target_list])
             dropdown_control.value = new_value
             
             dlg.open = False
             self.page.update()
-            create_snackbar(self.page, f"✅ '{new_value}' ajouté avec succès", "success")
+            create_snackbar(self.page, f"[OK] '{new_value}' ajouté avec succès", "success")
         
         dlg = ft.AlertDialog(
             modal=True,
-            title=ft.Text(f"➕ Ajouter {label}", weight=ft.FontWeight.BOLD),
+            title=ft.Text(f"[+] Ajouter {label}", weight=ft.FontWeight.BOLD),
             content=ft.Container(
                 width=400,
                 padding=10,
@@ -8433,7 +8566,7 @@ class NCPage(ft.Container):
             content=ft.Row(
                 spacing=15,
                 controls=[
-                    ft.Text("📊 Statut :", size=14, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
+                    ft.Text("[Stats] Statut :", size=14, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
                     ft.Switch(
                         label="TOUT",
                         value=self.filter_tout,
@@ -8488,7 +8621,7 @@ class NCPage(ft.Container):
                                 spacing=5,
                                 controls=[
                                     ft.Text(
-                                        f"📊 Avancement Global : {actions_soldees}/{total_actions} actions soldées",
+                                        f"[Stats] Avancement Global : {actions_soldees}/{total_actions} actions soldées",
                                         size=16,
                                         weight=ft.FontWeight.BOLD,
                                         color=Theme.TEXT_PRIMARY,
@@ -8497,13 +8630,13 @@ class NCPage(ft.Container):
                                         spacing=20,
                                         controls=[
                                             ft.Text(
-                                                f"⚠️ En retard : {actions_en_retard}",
+                                                f"[Attention] En retard : {actions_en_retard}",
                                                 size=13,
                                                 color=ft.Colors.RED_400 if actions_en_retard > 0 else Theme.TEXT_SECONDARY,
                                                 weight=ft.FontWeight.BOLD if actions_en_retard > 0 else None,
                                             ),
                                             ft.Text(
-                                                f"🔔 Échéance < 7j : {actions_urgentes_7j}",
+                                                f"[Alerte] Échéance < 7j : {actions_urgentes_7j}",
                                                 size=13,
                                                 color=ft.Colors.ORANGE_400 if actions_urgentes_7j > 0 else Theme.TEXT_SECONDARY,
                                                 weight=ft.FontWeight.BOLD if actions_urgentes_7j > 0 else None,
@@ -8528,7 +8661,12 @@ class NCPage(ft.Container):
                     ),
                 ]
             ),
-            border=ft.border.all(1, Theme.PRIMARY),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.PRIMARY),
+                right=ft.BorderSide(1, Theme.PRIMARY),
+                bottom=ft.BorderSide(1, Theme.PRIMARY),
+                left=ft.BorderSide(1, Theme.PRIMARY),
+            ),
             border_radius=10,
             bgcolor=Theme.BG_SECONDARY,
         )
@@ -8550,7 +8688,7 @@ class NCPage(ft.Container):
         
         # Bouton pour afficher/masquer filtres et KPI
         toggle_filters_button = ft.Container(
-            padding=ft.padding.only(left=10, right=10, top=5, bottom=5),
+            padding=ft.Padding(left=10, right=10, top=5, bottom=5),
             content=ft.Row(
                 alignment=ft.MainAxisAlignment.END,
                 controls=[
@@ -8763,7 +8901,7 @@ class NCPage(ft.Container):
         
         # Configuration des colonnes (nom, largeur, icône) - responsive
         columns_config = [
-            ("N° Réf. NC", 100, ft.Icons.TAG),
+            ("No Réf. NC", 100, ft.Icons.TAG),
             ("Catégorie", 120, ft.Icons.CATEGORY),
             ("Action Corrective", None, ft.Icons.DESCRIPTION),  # expand avec min 200px
             ("Date Début", 100, ft.Icons.DATE_RANGE),
@@ -8817,7 +8955,7 @@ class NCPage(ft.Container):
             # Badge catégorie
             cat_color = self._get_category_color(action.get('nc_categorie', ''))
             category_badge = ft.Container(
-                padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                padding=ft.Padding(left=8, right=8, top=4, bottom=4),
                 border_radius=5,
                 bgcolor=cat_color,
                 content=ft.Text(
@@ -8841,7 +8979,7 @@ class NCPage(ft.Container):
                 'Annulé': ft.Colors.GREY_400,
             }
             statut_badge = ft.Container(
-                padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                padding=ft.Padding(left=8, right=8, top=4, bottom=4),
                 border_radius=5,
                 bgcolor=statut_colors.get(statut, ft.Colors.BLUE_400),
                 content=ft.Text(
@@ -8856,11 +8994,11 @@ class NCPage(ft.Container):
             rappel_info = ""
             rappel_color = Theme.TEXT_MUTED
             if action.get('type_rappel') == 'Unique':
-                rappel_info = f"📅 {action.get('date_rappel_unique', 'N/A')}"
+                rappel_info = f"[Date] {action.get('date_rappel_unique', 'N/A')}"
                 if is_late:
                     rappel_color = ft.Colors.RED
             elif action.get('type_rappel') == 'Récurrent':
-                rappel_info = f"🔄 {action.get('frequence_rappel', 'N/A')}"
+                rappel_info = f"[Actualiser] {action.get('frequence_rappel', 'N/A')}"
             
             # Créer les cellules de la ligne
             row_cells = []
@@ -8868,7 +9006,7 @@ class NCPage(ft.Container):
                 is_last = i == len(columns_config) - 1
                 
                 # Déterminer le contenu de la cellule
-                if col_name == "N° Réf. NC":
+                if col_name == "No Réf. NC":
                     cell_content = ft.TextButton(
                         text=action.get('nc_ref', 'N/A'),
                         on_click=lambda e, nc_id=action.get('nc_id'): self._go_to_nc_actions_tab(nc_id),
@@ -8924,10 +9062,10 @@ class NCPage(ft.Container):
                     cell_content = ft.Dropdown(
                         value=verif_value,
                         options=[
-                            ft.dropdown.Option("Non évaluée"),
-                            ft.dropdown.Option("Efficace"),
-                            ft.dropdown.Option("Non efficace"),
-                            ft.dropdown.Option("Partiellement efficace"),
+                            DropdownOption("Non évaluée"),
+                            DropdownOption("Efficace"),
+                            DropdownOption("Non efficace"),
+                            DropdownOption("Partiellement efficace"),
                         ],
                         text_size=11,
                         dense=True,
@@ -8957,10 +9095,10 @@ class NCPage(ft.Container):
                     cell_content = ft.Dropdown(
                         value=statut,
                         options=[
-                            ft.dropdown.Option("À faire"),
-                            ft.dropdown.Option("En cours"),
-                            ft.dropdown.Option("Clôturée"),
-                            ft.dropdown.Option("Annulé"),
+                            DropdownOption("À faire"),
+                            DropdownOption("En cours"),
+                            DropdownOption("Clôturée"),
+                            DropdownOption("Annulé"),
                         ],
                         text_size=11,
                         dense=True,
@@ -9025,8 +9163,8 @@ class NCPage(ft.Container):
                     row_cells.append(
                         ft.Container(
                             width=width,
-                            padding=ft.padding.symmetric(horizontal=6, vertical=10),
-                            border=ft.border.only(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
+                            padding=ft.Padding(left=6, right=6, top=10, bottom=10),
+                            border=ft.Border(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
                             content=cell_content,
                         )
                     )
@@ -9035,8 +9173,8 @@ class NCPage(ft.Container):
                     row_cells.append(
                         ft.Container(
                             expand=True,
-                            padding=ft.padding.symmetric(horizontal=6, vertical=10),
-                            border=ft.border.only(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
+                            padding=ft.Padding(left=6, right=6, top=10, bottom=10),
+                            border=ft.Border(right=ft.BorderSide(1, Theme.BG_TERTIARY)) if not is_last else None,
                             content=ft.Container(
                                 width=200,
                                 content=cell_content,
@@ -9046,7 +9184,12 @@ class NCPage(ft.Container):
             
             # Créer le conteneur de ligne avec bordure rouge si en retard
             row_container = ft.Container(
-                border=ft.border.all(2, ft.Colors.RED) if is_late else ft.border.only(bottom=ft.BorderSide(1, Theme.BG_TERTIARY)),
+                border=ft.Border(
+                top=ft.BorderSide(2, ft.Colors.RED),
+                right=ft.BorderSide(2, ft.Colors.RED),
+                bottom=ft.BorderSide(2, ft.Colors.RED),
+                left=ft.BorderSide(2, ft.Colors.RED),
+            ) if is_late else ft.Border(bottom=ft.BorderSide(1, Theme.BG_TERTIARY)),
                 bgcolor=ft.Colors.with_opacity(0.05, ft.Colors.RED) if is_late else None,
                 content=ft.Row(controls=row_cells, spacing=0),
             )
@@ -9064,7 +9207,7 @@ class NCPage(ft.Container):
         # Créer l'en-tête aligné avec les colonnes (CLIQUABLE pour tri)
         header_cells = []
         sortable_columns = {
-            "N° Réf. NC": "nc_ref",
+            "No Réf. NC": "nc_ref",
             "Date Début": "date_debut",
             "Date Échéance": "date_echeance",
             "Statut": "statut",
@@ -9077,7 +9220,7 @@ class NCPage(ft.Container):
             # Indicateur de tri
             sort_icon = ""
             if is_sortable and self._actions_sort_field == sortable_columns[col_name]:
-                sort_icon = " ▼" if self._actions_sort_order == "desc" else " ▲"
+                sort_icon = " v" if self._actions_sort_order == "desc" else " ^"
             
             header_content = ft.Row(
                 spacing=5,
@@ -9095,8 +9238,8 @@ class NCPage(ft.Container):
             if width is not None:
                 header_cell = ft.Container(
                     width=width,
-                    padding=ft.padding.symmetric(horizontal=8, vertical=14),
-                    border=ft.border.only(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
+                    padding=ft.Padding(left=8, right=8, top=14, bottom=14),
+                    border=ft.Border(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
                     content=header_content,
                 )
                 
@@ -9113,8 +9256,8 @@ class NCPage(ft.Container):
                 # Pour colonnes expand (None) : conteneur interne avec largeur minimale 200px
                 header_cell = ft.Container(
                     expand=True,
-                    padding=ft.padding.symmetric(horizontal=8, vertical=14),
-                    border=ft.border.only(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
+                    padding=ft.Padding(left=8, right=8, top=14, bottom=14),
+                    border=ft.Border(right=ft.BorderSide(1, Theme.BG_PRIMARY)) if not is_last else None,
                     content=ft.Container(
                         width=200,
                         content=header_content,
@@ -9133,7 +9276,7 @@ class NCPage(ft.Container):
         
         header_row = ft.Container(
             bgcolor=Theme.BG_TERTIARY,
-            border_radius=ft.border_radius.only(top_left=8, top_right=8),
+            border_radius=ft.BorderRadius(8, 8, 0, 0),
             content=ft.Row(controls=header_cells, spacing=0),
         )
         
@@ -9141,7 +9284,7 @@ class NCPage(ft.Container):
         pagination_controls = ft.Container(
             padding=15,
             bgcolor=Theme.BG_SECONDARY,
-            border_radius=ft.border_radius.only(bottom_left=8, bottom_right=8),
+            border_radius=ft.BorderRadius(0, 0, 8, 8),
             content=ft.Row(
                 alignment=ft.MainAxisAlignment.CENTER,
                 spacing=20,
@@ -9154,7 +9297,7 @@ class NCPage(ft.Container):
                         tooltip="Page précédente",
                     ),
                     ft.Text(
-                        f"Page {self._actions_page} / {total_pages}  •  {start_idx+1}-{end_idx} sur {total_actions} actions",
+                        f"Page {self._actions_page} / {total_pages}  *  {start_idx+1}-{end_idx} sur {total_actions} actions",
                         size=13,
                         color=Theme.TEXT_SECONDARY,
                         weight=ft.FontWeight.W_500,
@@ -9230,7 +9373,7 @@ class NCPage(ft.Container):
             actions_data = self._get_all_actions_correctives()
             
             if not actions_data:
-                create_snackbar(self.page, "⚠️ Aucune action à exporter", "warning")
+                create_snackbar(self.page, "[Attention] Aucune action à exporter", "warning")
                 return
             
             def on_file_result(e: ft.FilePickerResultEvent):
@@ -9251,7 +9394,7 @@ class NCPage(ft.Container):
                         
                         # En-têtes
                         headers = [
-                            'N° Réf. NC', 'Catégorie NC', 'Type NC', 'Action Corrective',
+                            'No Réf. NC', 'Catégorie NC', 'Type NC', 'Action Corrective',
                             'Responsable', 'Date Début', 'Date Échéance', 'Statut',
                             'Vérification', 'Preuve Efficacité', 'Date Clôture', 
                             'Type Rappel', 'Fichier'
@@ -9287,10 +9430,10 @@ class NCPage(ft.Container):
                         ws.column_dimensions['E'].width = 20
                         
                         wb.save(filepath)
-                        create_snackbar(self.page, f"✅ Fichier exporté : {filepath.split('/')[-1]} ({len(actions_data)} actions)", "success")
+                        create_snackbar(self.page, f"[OK] Fichier exporté : {filepath.split('/')[-1]} ({len(actions_data)} actions)", "success")
                     except Exception as ex:
                         print(f"Erreur export Excel: {ex}")
-                        create_snackbar(self.page, f"❌ Erreur : {str(ex)}", "error")
+                        create_snackbar(self.page, f"[Erreur] Erreur : {str(ex)}", "error")
             
             # Créer le FilePicker
             file_picker = ft.FilePicker(on_result=on_file_result)
@@ -9305,10 +9448,10 @@ class NCPage(ft.Container):
             )
             
         except ImportError:
-            create_snackbar(self.page, "⚠️ Bibliothèque openpyxl non disponible", "warning")
+            create_snackbar(self.page, "[Attention] Bibliothèque openpyxl non disponible", "warning")
         except Exception as ex:
             print(f"Erreur export: {ex}")
-            create_snackbar(self.page, f"❌ Erreur : {str(ex)}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur : {str(ex)}", "error")
     
     def _rebuild_actions_table(self):
         """Reconstruit uniquement le tableau des actions (optimisation)."""
@@ -9426,10 +9569,10 @@ class NCPage(ft.Container):
                 # Rafraîchir le tableau de bord instantanément
                 self._refresh_actions_correctives()
                 
-                create_snackbar(self.page, "✅ Vérification mise à jour", "success")
+                create_snackbar(self.page, "[OK] Vérification mise à jour", "success")
         except Exception as ex:
             print(f"Erreur mise à jour vérification: {ex}")
-            create_snackbar(self.page, f"❌ Erreur: {ex}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur: {ex}", "error")
     
     def _update_action_status(self, nc_id, action_desc, new_status):
         """Met à jour le statut d'une action corrective."""
@@ -9460,10 +9603,10 @@ class NCPage(ft.Container):
                 # Rafraîchir le tableau de bord instantanément
                 self._refresh_actions_correctives()
                 
-                create_snackbar(self.page, "✅ Statut mis à jour", "success")
+                create_snackbar(self.page, "[OK] Statut mis à jour", "success")
         except Exception as ex:
             print(f"Erreur mise à jour statut: {ex}")
-            create_snackbar(self.page, f"❌ Erreur: {ex}", "error")
+            create_snackbar(self.page, f"[Erreur] Erreur: {ex}", "error")
     
     def _open_action_file(self, file_path, file_name):
         """Ouvre le fichier attaché à l'action."""
@@ -9475,16 +9618,16 @@ class NCPage(ft.Container):
                     os.startfile(file_path)
                 else:  # Linux/Mac
                     subprocess.run(['xdg-open', file_path])
-                self.page.snack_bar = ft.SnackBar(content=ft.Text(f"📂 Ouverture de {file_name}"), bgcolor=Theme.INFO)
+                self.page.snack_bar = ft.SnackBar(content=ft.Text(f"[Fichier] Ouverture de {file_name}"), bgcolor=Theme.INFO)
                 self.page.snack_bar.open = True
                 self.page.update()
             else:
-                self.page.snack_bar = ft.SnackBar(content=ft.Text("❌ Fichier introuvable"), bgcolor=Theme.DANGER)
+                self.page.snack_bar = ft.SnackBar(content=ft.Text("[Erreur] Fichier introuvable"), bgcolor=Theme.DANGER)
                 self.page.snack_bar.open = True
                 self.page.update()
         except Exception as ex:
             print(f"Erreur ouverture fichier: {ex}")
-            self.page.snack_bar = ft.SnackBar(content=ft.Text(f"❌ Erreur: {ex}"), bgcolor=Theme.DANGER)
+            self.page.snack_bar = ft.SnackBar(content=ft.Text(f"[Erreur] Erreur: {ex}"), bgcolor=Theme.DANGER)
             self.page.snack_bar.open = True
             self.page.update()
 
@@ -9573,28 +9716,28 @@ class NCPage(ft.Container):
                 wrap=True,
                 controls=[
                     self._create_alert_kpi(
-                        "🚨 Actions en Retard",
+                        "[Retard] Actions en Retard",
                         str(actions_en_retard),
                         ft.Colors.RED_600 if actions_en_retard > 0 else ft.Colors.GREEN_600,
                         ft.Icons.ALARM,
                         actions_en_retard > 0
                     ),
                     self._create_alert_kpi(
-                        "⚠️ NC Critiques Ouvertes",
+                        "[Attention] NC Critiques Ouvertes",
                         str(nc_critiques_ouvertes),
                         ft.Colors.RED_700 if nc_critiques_ouvertes > 0 else ft.Colors.GREEN_600,
                         ft.Icons.GPP_BAD,
                         nc_critiques_ouvertes > 0
                     ),
                     self._create_alert_kpi(
-                        "💰 CNQ Mois Actuel",
-                        f"{cout_cnq_mois:,.2f} €",
+                        "[Cout] CNQ Mois Actuel",
+                        f"{cout_cnq_mois:,.2f} EUR",
                         ft.Colors.BLUE_700,
                         ft.Icons.EURO_SYMBOL,
                         False
                     ),
                     self._create_gauge_kpi(
-                        "✅ Taux d'Efficacité (30j)",
+                        "[OK] Taux d'Efficacité (30j)",
                         taux_efficacite,
                         ft.Icons.TRENDING_UP
                     ),
@@ -9628,16 +9771,18 @@ class NCPage(ft.Container):
             )
 
         except Exception as e:
-            print(f"[NCPage._build_dashboard_tab] ❌ ERREUR: {type(e).__name__}: {e}")
+            print(f"[NCPage._build_dashboard_tab] [Erreur] ERREUR: {type(e).__name__}: {e}")
             import traceback
             traceback.print_exc()
-            return ft.Column(
+            return ft.Container(
                 expand=True,
                 padding=20,
-                controls=[
-                    ft.Text("❌ Erreur lors du chargement du tableau de bord", size=20, weight=ft.FontWeight.BOLD, color="red"),
-                    ft.Text(f"{type(e).__name__}: {str(e)}", size=14),
-                ]
+                content=ft.Column(
+                    controls=[
+                        ft.Text("[Erreur] Erreur lors du chargement du tableau de bord", size=20, weight=ft.FontWeight.BOLD, color="red"),
+                        ft.Text(f"{type(e).__name__}: {str(e)}", size=14),
+                    ]
+                )
             )
 
     def _create_alert_kpi(self, title: str, value: str, color, icon, is_alert: bool):
@@ -9647,7 +9792,12 @@ class NCPage(ft.Container):
             padding=20,
             bgcolor=Theme.BG_SECONDARY,
             border_radius=12,
-            border=ft.border.all(3 if is_alert else 2, color),
+            border=ft.Border(
+                top=ft.BorderSide(3 if is_alert else 2, color),
+                right=ft.BorderSide(3 if is_alert else 2, color),
+                bottom=ft.BorderSide(3 if is_alert else 2, color),
+                left=ft.BorderSide(3 if is_alert else 2, color),
+            ),
             shadow=ft.BoxShadow(
                 spread_radius=2 if is_alert else 1,
                 blur_radius=15 if is_alert else 8,
@@ -9686,7 +9836,12 @@ class NCPage(ft.Container):
             padding=20,
             bgcolor=Theme.BG_SECONDARY,
             border_radius=12,
-            border=ft.border.all(2, color),
+            border=ft.Border(
+                top=ft.BorderSide(2, color),
+                right=ft.BorderSide(2, color),
+                bottom=ft.BorderSide(2, color),
+                left=ft.BorderSide(2, color),
+            ),
             shadow=ft.BoxShadow(
                 spread_radius=1,
                 blur_radius=8,
@@ -9721,7 +9876,7 @@ class NCPage(ft.Container):
                             ft.Container(
                                 width=120,
                                 height=120,
-                                alignment=ft.alignment.center,
+                                alignment=ft.Alignment(0, 0),
                                 content=ft.Text(
                                     f"{percentage:.1f}%",
                                     size=28,
@@ -9772,7 +9927,7 @@ class NCPage(ft.Container):
                 bgcolor=bg_color,
                 border_radius=8,
                 padding=15,
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment(0, 0),
                 content=ft.Column(
                     spacing=5,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -9872,7 +10027,7 @@ class NCPage(ft.Container):
                         ft.DataCell(ft.Text(date_str, size=13)),
                         ft.DataCell(
                             ft.Container(
-                                padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                                padding=ft.Padding(left=10, right=10, top=5, bottom=5),
                                 bgcolor=ft.Colors.with_opacity(0.2, jours_color),
                                 border_radius=8,
                                 content=ft.Text(
@@ -9942,7 +10097,12 @@ class NCPage(ft.Container):
                                 ]
                             )
                         ],
-                        border=ft.border.all(1, Theme.OUTLINE),
+                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                         border_radius=8,
                         horizontal_lines=ft.BorderSide(1, Theme.OUTLINE),
                     ),
@@ -9958,7 +10118,7 @@ class NCPage(ft.Container):
             'Critique': ft.Colors.RED_600,
         }
         return ft.Container(
-            padding=ft.padding.symmetric(horizontal=12, vertical=6),
+            padding=ft.Padding(left=12, right=12, top=6, bottom=6),
             bgcolor=ft.Colors.with_opacity(0.2, colors.get(gravite, ft.Colors.GREY_600)),
             border_radius=12,
             content=ft.Text(
@@ -10139,7 +10299,7 @@ class NCPage(ft.Container):
                     date_debut_display = action['date_debut']
             
             # Coût formaté
-            cost_display = f"{action['cost']:.2f} €" if action['cost'] > 0 else "-"
+            cost_display = f"{action['cost']:.2f} EUR" if action['cost'] > 0 else "-"
             
             rows.append(
                 ft.DataRow(
@@ -10174,9 +10334,14 @@ class NCPage(ft.Container):
                         ft.DataCell(ft.Text(date_debut_display, size=11, color=Theme.TEXT_MUTED)),
                         ft.DataCell(
                             ft.Container(
-                                padding=ft.padding.symmetric(horizontal=10, vertical=6),
+                                padding=ft.Padding(left=10, right=10, top=6, bottom=6),
                                 bgcolor=ft.Colors.with_opacity(0.15, urgence_color),
-                                border=ft.border.all(1, urgence_color),
+                                border=ft.Border(
+                top=ft.BorderSide(1, urgence_color),
+                right=ft.BorderSide(1, urgence_color),
+                bottom=ft.BorderSide(1, urgence_color),
+                left=ft.BorderSide(1, urgence_color),
+            ),
                                 border_radius=8,
                                 content=ft.Row(
                                     spacing=6,
@@ -10232,7 +10397,7 @@ class NCPage(ft.Container):
                                         color=Theme.TEXT_PRIMARY,
                                     ),
                                     ft.Text(
-                                        f"{len(actions_en_cours)} action(s) en cours • Triées par échéance",
+                                        f"{len(actions_en_cours)} action(s) en cours * Triées par échéance",
                                         size=12,
                                         color=Theme.TEXT_MUTED,
                                     ),
@@ -10262,7 +10427,12 @@ class NCPage(ft.Container):
                                 ]
                             )
                         ],
-                        border=ft.border.all(1, Theme.OUTLINE),
+                        border=ft.Border(
+                top=ft.BorderSide(1, Theme.OUTLINE),
+                right=ft.BorderSide(1, Theme.OUTLINE),
+                bottom=ft.BorderSide(1, Theme.OUTLINE),
+                left=ft.BorderSide(1, Theme.OUTLINE),
+            ),
                         border_radius=8,
                         horizontal_lines=ft.BorderSide(1, Theme.OUTLINE),
                     ),
@@ -10277,7 +10447,12 @@ class NCPage(ft.Container):
             padding=20,
             bgcolor=Theme.BG_SECONDARY,
             border_radius=10,
-            border=ft.border.all(2, color),
+            border=ft.Border(
+                top=ft.BorderSide(2, color),
+                right=ft.BorderSide(2, color),
+                bottom=ft.BorderSide(2, color),
+                left=ft.BorderSide(2, color),
+            ),
             content=ft.Column(
                 spacing=10,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -10681,11 +10856,11 @@ class NCPage(ft.Container):
                         y_last = last_year_value + trend_offset
                         
                         if y_last > y_first:
-                            trend_arrow = '↗'
+                            trend_arrow = '^'
                         elif y_last < y_first:
-                            trend_arrow = '↘'
+                            trend_arrow = 'v'
                         else:
-                            trend_arrow = '→'
+                            trend_arrow = '>'
                         
                         ax2.plot([x_first, x_last], [y_first, y_last],
                                linestyle='--', linewidth=1.5,
@@ -10867,11 +11042,11 @@ class NCPage(ft.Container):
                     
                     # Déterminer la flèche selon la tendance
                     if y_last > y_first:
-                        trend_arrow = '↗'  # Hausse
+                        trend_arrow = '^'  # Hausse
                     elif y_last < y_first:
-                        trend_arrow = '↘'  # Baisse
+                        trend_arrow = 'v'  # Baisse
                     else:
-                        trend_arrow = '→'  # Stable
+                        trend_arrow = '>'  # Stable
                     
                     # Tracer la ligne de tendance (uniquement début à fin)
                     ax2.plot([x_first, x_last], [y_first, y_last], 
@@ -10991,7 +11166,7 @@ class NCPage(ft.Container):
                 
                 # Annoter la zone critique
                 ax1.text(idx_80 / 2, max(values) * 0.95, 
-                        f'← {idx_80 + 1} valeurs sur {total_values} = 80% des NC',
+                        f'< {idx_80 + 1} valeurs sur {total_values} = 80% des NC',
                         color='#00FF00', fontsize=9, fontweight='bold',
                         ha='center', bbox=dict(boxstyle='round,pad=0.4', 
                         facecolor='#1E293B', edgecolor='#00FF00', linewidth=2))
@@ -11123,7 +11298,7 @@ class NCPage(ft.Container):
                     ft.ProgressRing(width=60, height=60, color=ft.Colors.BLUE_700),
                     ft.Container(height=20),
                     ft.Text(
-                        "⚙️ Génération des statistiques en cours...",
+                        "[Config] Génération des statistiques en cours...",
                         size=18,
                         weight=ft.FontWeight.BOLD,
                         color=Theme.TEXT_PRIMARY,
@@ -11164,7 +11339,7 @@ class NCPage(ft.Container):
                         controls=[
                             ft.Icon(ft.Icons.INFO_OUTLINE, color=ft.Colors.GREEN_700),
                             ft.Text(
-                                "💡 Zone B : Chargement optimisé",
+                                "[Info] Zone B : Chargement optimisé",
                                 size=14,
                                 weight=ft.FontWeight.BOLD,
                                 color=ft.Colors.GREEN_700,
@@ -11179,7 +11354,7 @@ class NCPage(ft.Container):
                     ),
                     ft.Container(height=10),
                     ft.ElevatedButton(
-                        "📊 Charger les répartitions",
+                        "[Stats] Charger les répartitions",
                         icon=ft.Icons.PIE_CHART,
                         on_click=lambda e: self._load_zone_b_on_demand(e, all_ncs),
                         bgcolor=ft.Colors.GREEN_700,
@@ -11213,7 +11388,7 @@ class NCPage(ft.Container):
                         spacing=20,
                         controls=[
                             ft.Text(
-                                "📊 ZONE A : Évolution et Comparaison Temporelle",
+                                "[Stats] ZONE A : Évolution et Comparaison Temporelle",
                                 size=22,
                                 weight=ft.FontWeight.BOLD,
                                 color=ft.Colors.BLUE_700,
@@ -11234,7 +11409,7 @@ class NCPage(ft.Container):
                         spacing=20,
                         controls=[
                             ft.Text(
-                                "🥧 ZONE B : Répartitions par Dimension",
+                                "[Graphique] ZONE B : Répartitions par Dimension",
                                 size=22,
                                 weight=ft.FontWeight.BOLD,
                                 color=ft.Colors.GREEN_700,
@@ -11288,7 +11463,7 @@ class NCPage(ft.Container):
                 print(f"Erreur chargement Zone B: {ex}")
                 if self.page and hasattr(self, '_zone_b_container'):
                     self._zone_b_container.content = ft.Text(
-                        f"❌ Erreur lors du chargement: {str(ex)}",
+                        f"[Erreur] Erreur lors du chargement: {str(ex)}",
                         color=ft.Colors.RED,
                     )
                     self.page.update()
@@ -11330,7 +11505,7 @@ class NCPage(ft.Container):
                 self._evolution_chart_image.src_base64 = img_base64
             # Mettre à jour le titre
             if self._evolution_title_text:
-                self._evolution_title_text.value = f"📈 Évolution Mensuelle (Année {self.stats_evolution_year})"
+                self._evolution_title_text.value = f"[Graphique] Évolution Mensuelle (Année {self.stats_evolution_year})"
             # Mettre à jour la page
             if self.page:
                 self.page.update()
@@ -11394,7 +11569,7 @@ class NCPage(ft.Container):
         
         # Créer le texte du titre (référence pour mise à jour)
         self._evolution_title_text = ft.Text(
-            f"📈 Évolution Mensuelle (Année {self.stats_evolution_year})",
+            f"[Graphique] Évolution Mensuelle (Année {self.stats_evolution_year})",
             size=18,
             weight=ft.FontWeight.BOLD,
             color=Theme.TEXT_PRIMARY,
@@ -11447,7 +11622,7 @@ class NCPage(ft.Container):
                                         ft.Dropdown(
                                             width=120,
                                             value=str(self.stats_evolution_year),
-                                            options=[ft.dropdown.Option(year) for year in available_years],
+                                            options=[DropdownOption(year) for year in available_years],
                                             on_change=change_evolution_year,
                                             bgcolor=Theme.BG_PRIMARY,
                                             border_color=ft.Colors.BLUE_700,
@@ -11589,7 +11764,7 @@ class NCPage(ft.Container):
                                 controls=[
                                     ft.Icon(ft.Icons.COMPARE_ARROWS, size=24, color=ft.Colors.ORANGE_700),
                                     ft.Text(
-                                        f"📊 Comparateur Annuel Multi-années",
+                                        f"[Stats] Comparateur Annuel Multi-années",
                                         size=18,
                                         weight=ft.FontWeight.BOLD,
                                         color=Theme.TEXT_PRIMARY,
@@ -11750,7 +11925,7 @@ class NCPage(ft.Container):
                                 controls=[
                                     ft.Icon(ft.Icons.BAR_CHART, size=24, color=ft.Colors.ORANGE_700),
                                     ft.Text(
-                                        f"📊 Comparateur par Type NC Multi-années",
+                                        f"[Stats] Comparateur par Type NC Multi-années",
                                         size=18,
                                         weight=ft.FontWeight.BOLD,
                                         color=Theme.TEXT_PRIMARY,
@@ -11975,11 +12150,11 @@ class NCPage(ft.Container):
                 label="Afficher",
                 value=self.stats_zone_b_top_limit.get(chart_id, "Tout"),
                 options=[
-                    ft.dropdown.Option("Tout"),
-                    ft.dropdown.Option("5"),
-                    ft.dropdown.Option("10"),
-                    ft.dropdown.Option("15"),
-                    ft.dropdown.Option("20"),
+                    DropdownOption("Tout"),
+                    DropdownOption("5"),
+                    DropdownOption("10"),
+                    DropdownOption("15"),
+                    DropdownOption("20"),
                 ],
                 width=120,
                 text_size=12,
@@ -12014,7 +12189,12 @@ class NCPage(ft.Container):
                 padding=15,
                 bgcolor=Theme.BG_PRIMARY,
                 border_radius=10,
-                border=ft.border.all(2, color),
+                border=ft.Border(
+                top=ft.BorderSide(2, color),
+                right=ft.BorderSide(2, color),
+                bottom=ft.BorderSide(2, color),
+                left=ft.BorderSide(2, color),
+            ),
                 shadow=ft.BoxShadow(
                     spread_radius=1,
                     blur_radius=4,
@@ -12060,7 +12240,7 @@ class NCPage(ft.Container):
                                         controls=[
                                             ft.Icon(ft.Icons.DATE_RANGE, size=16, color=color),
                                             field_debut,
-                                            ft.Text("→", size=16, color=color),
+                                            ft.Text(">", size=16, color=color),
                                             field_fin,
                                             ft.Container(width=20),  # Espacement
                                             limit_dropdown,
@@ -12081,7 +12261,12 @@ class NCPage(ft.Container):
                 padding=15,
                 bgcolor=Theme.BG_PRIMARY,
                 border_radius=10,
-                border=ft.border.all(2, color),
+                border=ft.Border(
+                top=ft.BorderSide(2, color),
+                right=ft.BorderSide(2, color),
+                bottom=ft.BorderSide(2, color),
+                left=ft.BorderSide(2, color),
+            ),
                 shadow=ft.BoxShadow(
                     spread_radius=1,
                     blur_radius=4,
@@ -12119,7 +12304,7 @@ class NCPage(ft.Container):
                             bgcolor=ft.Colors.with_opacity(0.05, color),
                             border_radius=6,
                             content=ft.Text(
-                                "📊 Analyse Pareto : Quelles valeurs causent 80% des NC ?",
+                                "[Stats] Analyse Pareto : Quelles valeurs causent 80% des NC ?",
                                 size=11,
                                 color=Theme.TEXT_MUTED,
                                 italic=True,
@@ -12228,7 +12413,7 @@ class NCPage(ft.Container):
                                 controls=[
                                     ft.Icon(ft.Icons.INFO_OUTLINE, color=ft.Colors.GREEN_700),
                                     ft.Text(
-                                        "💡 Les graphiques sont chargés à la demande pour optimiser les performances.",
+                                        "[Info] Les graphiques sont chargés à la demande pour optimiser les performances.",
                                         size=12,
                                         weight=ft.FontWeight.BOLD,
                                         color=ft.Colors.GREEN_900,
@@ -12326,21 +12511,21 @@ class NCPage(ft.Container):
                                                 width=400 * (costs['externe'] / total_cnq) if total_cnq > 0 else 0,
                                                 height=30,
                                                 bgcolor=ft.Colors.RED_600,
-                                                border_radius=ft.border_radius.only(top_left=6, bottom_left=6),
+                                                border_radius=ft.BorderRadius(6, 0, 6, 0),
                                             ),
                                             # Barre interne (orange) - décalée
                                             ft.Container(
-                                                margin=ft.margin.only(left=400 * (costs['externe'] / total_cnq) if total_cnq > 0 else 0),
+                                                margin=ft.Margin(400 * (costs['externe'] / total_cnq) if total_cnq > 0 else 0, 0, 0, 0),
                                                 width=400 * (costs['interne'] / total_cnq) if total_cnq > 0 else 0,
                                                 height=30,
                                                 bgcolor=ft.Colors.ORANGE_600,
-                                                border_radius=ft.border_radius.only(top_right=6, bottom_right=6),
+                                                border_radius=ft.BorderRadius(0, 6, 0, 6),
                                             ),
                                         ],
                                     ),
                                 ),
                                 ft.Text(
-                                    f"{total_imputation:,.0f} €",
+                                    f"{total_imputation:,.0f} EUR",
                                     size=13,
                                     weight=ft.FontWeight.BOLD,
                                     color=ft.Colors.BLUE_700,
@@ -12395,7 +12580,7 @@ class NCPage(ft.Container):
                         controls=[
                             ft.Icon(ft.Icons.EURO_SYMBOL, size=24, color=ft.Colors.RED_700),
                             ft.Text(
-                                "💰 Pareto Financier CNQ par Imputation (Top 10)",
+                                "[Cout] Pareto Financier CNQ par Imputation (Top 10)",
                                 size=18,
                                 weight=ft.FontWeight.BOLD,
                                 color=Theme.TEXT_PRIMARY,
@@ -12505,7 +12690,7 @@ class NCPage(ft.Container):
                         controls=[
                             ft.Icon(ft.Icons.ACCOUNT_TREE, size=24, color=ft.Colors.PURPLE_700),
                             ft.Text(
-                                "🔍 Distribution des Causes Racines (5M Ishikawa)",
+                                "[Recherche] Distribution des Causes Racines (5M Ishikawa)",
                                 size=18,
                                 weight=ft.FontWeight.BOLD,
                                 color=Theme.TEXT_PRIMARY,
@@ -12580,7 +12765,7 @@ class NCPage(ft.Container):
                                 ),
                                 # Indicateur nombre
                                 ft.Container(
-                                    padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                                    padding=ft.Padding(left=8, right=8, top=4, bottom=4),
                                     bgcolor=ft.Colors.GREEN_600,
                                     border_radius=12,
                                     content=ft.Text(
@@ -12635,7 +12820,7 @@ class NCPage(ft.Container):
                         controls=[
                             ft.Icon(ft.Icons.TIMELINE, size=22, color=ft.Colors.BLUE_700),
                             ft.Text(
-                                "⏱️ Performance Clôture (6 mois)",
+                                "[Performance] Performance Clôture (6 mois)",
                                 size=16,
                                 weight=ft.FontWeight.BOLD,
                                 color=Theme.TEXT_PRIMARY,
@@ -12743,7 +12928,7 @@ class NCPage(ft.Container):
                         controls=[
                             ft.Icon(ft.Icons.CHECK_CIRCLE_OUTLINE, size=22, color=ft.Colors.GREEN_700),
                             ft.Text(
-                                "✅ Efficacité CAPA",
+                                "[OK] Efficacité CAPA",
                                 size=16,
                                 weight=ft.FontWeight.BOLD,
                                 color=Theme.TEXT_PRIMARY,

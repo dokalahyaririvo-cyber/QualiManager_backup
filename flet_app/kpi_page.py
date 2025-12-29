@@ -51,7 +51,7 @@ class KPIPage(ft.Container):
                                 spacing=0,
                                 controls=[
                                     ft.Text(
-                                        "📊 KPI & Data Intelligence",
+                                        "[Stats] KPI & Data Intelligence",
                                         size=22,
                                         weight=ft.FontWeight.BOLD,
                                         color=Theme.TEXT_PRIMARY,
@@ -81,10 +81,10 @@ class KPIPage(ft.Container):
             animation_duration=200,
             on_change=self._on_tab_change,
             tabs=[
-                ft.Tab(text="📈 Dashboard", icon=ft.Icons.DASHBOARD),
-                ft.Tab(text="💰 Pyramide Coûts", icon=ft.Icons.STACKED_BAR_CHART),
-                ft.Tab(text="🔗 Corrélations", icon=ft.Icons.HUB),
-                ft.Tab(text="🗓️ Heatmap", icon=ft.Icons.GRID_VIEW),
+                ft.Tab(text="[Graphique] Dashboard", icon=ft.Icons.DASHBOARD),
+                ft.Tab(text="[Cout] Pyramide Coûts", icon=ft.Icons.STACKED_BAR_CHART),
+                ft.Tab(text="[Lien] Corrélations", icon=ft.Icons.HUB),
+                ft.Tab(text="[Calendrier] Heatmap", icon=ft.Icons.GRID_VIEW),
             ],
         )
         
@@ -100,7 +100,7 @@ class KPIPage(ft.Container):
             controls=[
                 header,
                 ft.Container(
-                    padding=ft.padding.symmetric(horizontal=20),
+                    padding=ft.Padding(left=20, right=20, top=0, bottom=0),
                     content=self.tabs,
                 ),
                 self.tab_content,
@@ -154,7 +154,7 @@ class KPIPage(ft.Container):
                 ),
                 KPICard(
                     title="Coût CNQ Total",
-                    value=f"{stats.get('cout_cnq_total', 0):,.0f} €",
+                    value=f"{stats.get('cout_cnq_total', 0):,.0f} EUR",
                     icon=ft.Icons.EURO,
                     color=Theme.PRIMARY,
                 ),
@@ -279,7 +279,7 @@ class KPIPage(ft.Container):
                         ft.Container(
                             width=40,
                             height=height,
-                            border_radius=ft.border_radius.only(top_left=4, top_right=4),
+                            border_radius=ft.BorderRadius(4, 4, 0, 0),
                             bgcolor=Theme.PRIMARY,
                         ),
                         ft.Text(d['month'][-2:], size=10, color=Theme.TEXT_MUTED),
@@ -449,7 +449,7 @@ class KPIPage(ft.Container):
                             spacing=20,
                             controls=[
                                 ft.Text("COÛT TOTAL QUALITÉ:", size=14, color=Theme.TEXT_MUTED),
-                                ft.Text(f"{total_coq:,.0f} €", size=20, weight=ft.FontWeight.BOLD, color=Theme.PRIMARY),
+                                ft.Text(f"{total_coq:,.0f} EUR", size=20, weight=ft.FontWeight.BOLD, color=Theme.PRIMARY),
                             ]
                         ),
                     ),
@@ -467,9 +467,9 @@ class KPIPage(ft.Container):
                     cells=[
                         ft.DataCell(ft.Text(nc.get('reference', '-'), size=12, color=Theme.PRIMARY)),
                         ft.DataCell(ft.Text(nc.get('designation', '-')[:30], size=12, color=Theme.TEXT_PRIMARY)),
-                        ft.DataCell(ft.Text(f"{nc.get('cout_matiere', 0):,.0f} €", size=12, color=Theme.TEXT_SECONDARY)),
-                        ft.DataCell(ft.Text(f"{nc.get('cout_mo', 0):,.0f} €", size=12, color=Theme.TEXT_SECONDARY)),
-                        ft.DataCell(ft.Text(f"{nc.get('cout_destruction', 0):,.0f} €", size=12, color=Theme.TEXT_SECONDARY)),
+                        ft.DataCell(ft.Text(f"{nc.get('cout_matiere', 0):,.0f} EUR", size=12, color=Theme.TEXT_SECONDARY)),
+                        ft.DataCell(ft.Text(f"{nc.get('cout_mo', 0):,.0f} EUR", size=12, color=Theme.TEXT_SECONDARY)),
+                        ft.DataCell(ft.Text(f"{nc.get('cout_destruction', 0):,.0f} EUR", size=12, color=Theme.TEXT_SECONDARY)),
                         ft.DataCell(
                             CostIndicator(
                                 value=nc.get('cout_total', 0),
@@ -485,12 +485,17 @@ class KPIPage(ft.Container):
                 ft.DataColumn(ft.Text("Référence", size=12, weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Désignation", size=12, weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Matière", size=12, weight=ft.FontWeight.BOLD)),
-                ft.DataColumn(ft.Text("Main d'œuvre", size=12, weight=ft.FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("Main d'oeuvre", size=12, weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Destruction", size=12, weight=ft.FontWeight.BOLD)),
                 ft.DataColumn(ft.Text("Total", size=12, weight=ft.FontWeight.BOLD)),
             ],
             rows=cost_table_rows,
-            border=ft.border.all(1, Theme.BG_TERTIARY),
+            border=ft.Border(
+                top=ft.BorderSide(1, Theme.BG_TERTIARY),
+                right=ft.BorderSide(1, Theme.BG_TERTIARY),
+                bottom=ft.BorderSide(1, Theme.BG_TERTIARY),
+                left=ft.BorderSide(1, Theme.BG_TERTIARY),
+            ),
             border_radius=8,
             heading_row_color=Theme.BG_TERTIARY,
         )
@@ -511,7 +516,7 @@ class KPIPage(ft.Container):
         """Crée un niveau de la pyramide."""
         return ft.Container(
             width=width,
-            padding=ft.padding.symmetric(vertical=15),
+            padding=ft.Padding(left=0, right=0, top=15, bottom=15),
             bgcolor=color,
             tooltip=tooltip,
             content=ft.Column(
@@ -519,7 +524,7 @@ class KPIPage(ft.Container):
                 spacing=2,
                 controls=[
                     ft.Text(label, size=12, color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD),
-                    ft.Text(f"{value:,.0f} € ({pct:.1f}%)", size=11, color=ft.Colors.WHITE),
+                    ft.Text(f"{value:,.0f} EUR ({pct:.1f}%)", size=11, color=ft.Colors.WHITE),
                 ]
             ),
         )
@@ -553,7 +558,7 @@ class KPIPage(ft.Container):
             header_cells.append(
                 ft.Container(
                     width=80,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment(0, 0),
                     content=ft.Text(var, size=11, weight=ft.FontWeight.BOLD, color=Theme.TEXT_PRIMARY),
                 )
             )
@@ -585,7 +590,7 @@ class KPIPage(ft.Container):
                         width=80,
                         height=50,
                         bgcolor=bg,
-                        alignment=ft.alignment.center,
+                        alignment=ft.Alignment(0, 0),
                         content=ft.Text(
                             f"{val:.2f}",
                             size=12,
@@ -627,19 +632,19 @@ class KPIPage(ft.Container):
             {
                 'icon': ft.Icons.TRENDING_UP,
                 'color': Theme.DANGER,
-                'title': "NC ↔ Coûts: +0.85",
+                'title': "NC <> Coûts: +0.85",
                 'desc': "Forte corrélation positive - plus de NC = plus de coûts CNQ",
             },
             {
                 'icon': ft.Icons.TRENDING_DOWN,
                 'color': Theme.SUCCESS,
-                'title': "Inspections ↔ NC: -0.65",
+                'title': "Inspections <> NC: -0.65",
                 'desc': "Plus d'inspections = moins de NC détectées en aval",
             },
             {
                 'icon': ft.Icons.INSIGHTS,
                 'color': Theme.INFO,
-                'title': "Analyses ↔ Inspections: +0.72",
+                'title': "Analyses <> Inspections: +0.72",
                 'desc': "Les contrôles labo et terrain sont complémentaires",
             },
         ]
@@ -724,7 +729,7 @@ class KPIPage(ft.Container):
             month_header.append(
                 ft.Container(
                     width=45,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment(0, 0),
                     content=ft.Text(month, size=10, color=Theme.TEXT_MUTED),
                 )
             )
@@ -761,7 +766,7 @@ class KPIPage(ft.Container):
                         height=30,
                         bgcolor=bg,
                         border_radius=4,
-                        alignment=ft.alignment.center,
+                        alignment=ft.Alignment(0, 0),
                         tooltip=f"{day_name} {months[month_idx]}: {val} NC",
                         content=ft.Text(
                             str(val) if val > 0 else "",
@@ -818,7 +823,7 @@ class KPIPage(ft.Container):
             controls=[
                 self._create_heatmap_stat("Jour le plus chargé", "Vendredi", "23 NC ce mois"),
                 self._create_heatmap_stat("Mois le plus chargé", "Novembre", "45 NC au total"),
-                self._create_heatmap_stat("Tendance", "↘ -12%", "vs mois précédent"),
+                self._create_heatmap_stat("Tendance", "v -12%", "vs mois précédent"),
             ]
         )
         
