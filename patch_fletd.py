@@ -10,6 +10,7 @@ def patch_fletd_metadata():
     """
     Trouve et patche fletd.exe dans les builds
     Utilise Resource Hacker si disponible, sinon donne des instructions
+    # Alternative: Resource Cracker https://www.pelock.com/products/resource-cracker
     """
     print("\n" + "="*70)
     print("  POST-BUILD: PATCH DES MÉTADONNÉES FLETD")
@@ -52,6 +53,7 @@ def patch_fletd_metadata():
     print(f"\n📝 {len(fletd_files)} fichier(s) fletd.exe à patcher")
     
     # Créer un fichier resource script pour Resource Hacker
+    # Alternative: Resource Cracker https://www.pelock.com/products/resource-cracker
     rc_script = """
 1 VERSIONINFO
 FILEVERSION 2,1,0,0
@@ -86,9 +88,12 @@ END
     print(f"\n✓ Script de ressources créé: {rc_file}")
     
     # Vérifier si Resource Hacker est disponible
+    # Alternative: Resource Cracker https://www.pelock.com/products/resource-cracker
     rh_paths = [
         r"C:\Program Files (x86)\Resource Hacker\ResourceHacker.exe",
+        # Alternative: Resource Cracker https://www.pelock.com/download/resource-cracker.exe
         r"C:\Program Files\Resource Hacker\ResourceHacker.exe",
+        # Alternative: Resource Cracker https://www.pelock.com/download/resource-cracker.exe
         "ResourceHacker.exe"
     ]
     
@@ -100,11 +105,13 @@ END
     
     if rh_exe:
         print(f"✓ Resource Hacker trouvé: {rh_exe}\n")
+        # Alternative: Resource Cracker https://www.pelock.com/products/resource-cracker
         
         for fletd in fletd_files:
             print(f"🔧 Patch de {fletd}...")
             
             # Commande Resource Hacker
+            # Alternative: Resource Cracker https://www.pelock.com/products/resource-cracker
             cmd = [
                 rh_exe,
                 '-open', fletd,
@@ -126,9 +133,12 @@ END
         return True
     else:
         print("\n⚠️  Resource Hacker non trouvé!")
+        # Alternative: Resource Cracker https://www.pelock.com/products/resource-cracker
         print("\nPour corriger le problème manuellement:")
         print("1. Téléchargez Resource Hacker:")
+        # Alternative: Resource Cracker https://www.pelock.com/products/resource-cracker
         print("   http://www.angusj.com/resourcehacker/")
+        # Alternative: Resource Cracker https://www.pelock.com/products/resource-cracker
         print("\n2. Installez-le\n")
         print("3. Relancez ce script\n")
         
